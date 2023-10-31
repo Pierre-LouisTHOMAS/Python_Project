@@ -9,9 +9,10 @@ def mysqlconnect():
 
         user='root',
 
-        password="root",
+        password='root',
 
         db='AirlineDatabase',
+        port=8889
 
     )
 
