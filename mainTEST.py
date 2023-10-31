@@ -5,34 +5,17 @@ system = platform.system()
 
 def mysqlconnect():
     #To connect MySQL database. Change the database name as per requirement
-    if system == "Darwin":
-        #print("Vous êtes sur un Mac.")
 
-        conn = pymysql.connect(
+    conn = pymysql.connect(
 
-            host='localhost',
+        host='localhost',
 
-            user='root',
+        user='root',
 
-            password='root',
-
-            db='AirlineDatabase',
-            port = 8889
-        )
-    else:
-        #print("Vous êtes sur Windows.")
-        conn = pymysql.connect(
-
-            host='localhost',
-
-            user='root',
-
-            password='root',
-
-            db='AirlineDatabase',
-            port = 3306
-
-        )
+        password='root',
+        db='AirlineDatabase',
+        port = 8889
+    )
 
     #Change the name of the table as per requirement
 

@@ -1,17 +1,26 @@
 import tkinter as tk
 from tkinter import messagebox
-import sqlite3
+import mysql.connector
+import platform
+
+system = platform.system()
 
 # Création de la fenêtre principale
 root = tk.Tk()
 root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
 root.title("Connexion")
 
+# Connexion à la base de données MySQL hébergée sur MAMP
+mydb = mysql.connector.connect(
+    host="localhost",
+    port=8889,
+    user="root",
+    password="root",
+    database="AirlineDatabase"
+)
 
-# Connexion à la base de données SQLite
-conn = sqlite3.connect('../Back/Test_Records.sql')
-cursor = conn.cursor()
 
+cursor = mydb.cursor()
 
 # Fonction pour vérifier l'authenticité de l'utilisateur
 def check_login():
@@ -19,7 +28,7 @@ def check_login():
     password = password_var.get()
 
     # Recherche de l'utilisateur dans la base de données
-    cursor.execute("SELECT * FROM Client WHERE Email = ? AND Password = ?", (email, password))
+    cursor.execute("SELECT * FROM Client WHERE Email = %s AND Password = %s", (email, password))
     user = cursor.fetchone()
 
     # Vérification si l'utilisateur existe ou non
@@ -27,7 +36,6 @@ def check_login():
         messagebox.showinfo("Succès", "Connexion réussie!")
     else:
         messagebox.showerror("Erreur", "Email ou mot de passe incorrect!")
-
 
 # Création des éléments de la fenêtre
 label1 = tk.Label(root, text="Email")
@@ -50,4 +58,5 @@ btn_login.pack(pady=20)
 root.mainloop()
 
 # Fermeture de la connexion à la base de données
-#conn.close()
+cursor.close()
+mydb.close()
