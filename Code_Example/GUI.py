@@ -1,4 +1,6 @@
 import tkinter
+def myclick():
+    pass
 
 root = tkinter.Tk()
 root.geometry("500x300")
@@ -9,6 +11,7 @@ userid=tkinter.Label(root,text="User ID", pady=10)
 userid.pack()
 txtuserid=tkinter.Entry(text="ID")
 txtuserid.pack()
-logme=tkinter
+logme=tkinter.Button(root,text="Log me IN", command=myclick,bg="green")
+logme.pack()
 
 root.mainloop()
