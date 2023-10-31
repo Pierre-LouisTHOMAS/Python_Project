@@ -1,3 +1,0 @@
-print("Coucou Projet")
-
-#hello
