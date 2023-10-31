@@ -4,7 +4,9 @@ import sqlite3
 
 # Création de la fenêtre principale
 root = tk.Tk()
+root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
 root.title("Connexion")
+
 
 # Connexion à la base de données SQLite
 conn = sqlite3.connect('../Back/Test_Records.sql')
@@ -48,4 +50,4 @@ btn_login.pack(pady=20)
 root.mainloop()
 
 # Fermeture de la connexion à la base de données
-conn.close()
+#conn.close()
