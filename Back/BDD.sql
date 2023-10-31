@@ -1,6 +1,6 @@
-CREATE DATABASE FlightReservation; -- Creating the database
+CREATE DATABASE AirlineDatabase; -- Creating the database
 
-USE FlightReservation; -- Selecting the database
+USE AirlineDatabase; -- Selecting the database
 
 -- Creating the Client table
 CREATE TABLE Client (
