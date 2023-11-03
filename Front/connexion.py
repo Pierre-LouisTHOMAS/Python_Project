@@ -22,6 +22,22 @@ mydb = mysql.connector.connect(
 
 cursor = mydb.cursor()
 
+
+# Hauteur du bandeau
+bandeau_height = root.winfo_screenheight() * 0.25
+
+# Bandeau en fond blanc
+canvas = tk.Canvas(root, bg="white")
+canvas.place(x=0, y=0, relwidth=1, relheight=0.25)  # Positionne le canvas sur 25% de la hauteur
+
+#logo
+image_path2 = "../Pictures/LogoBis.png"
+image2 = tk.PhotoImage(file=image_path2)
+image2 = image2.subsample(5)  # Réduire l'image à 20% de sa taille d'origine
+image_label2 = tk.Label(root, image=image2)
+image_label2.place(x=bandeau_height * 0.7, y=bandeau_height * 0.1)
+
+
 # Fonction pour vérifier l'authenticité de l'utilisateur
 def check_login():
     email = email_var.get()
@@ -55,6 +71,11 @@ entry_password.pack(pady=10)
 btn_login = tk.Button(root, text="Se connecter", command=check_login)
 btn_login.pack(pady=20)
 
+
+
+# fenêtre est redimensionnable
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
 root.mainloop()
 
 # Fermeture de la connexion à la base de données
