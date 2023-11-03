@@ -24,14 +24,14 @@ cursor = mydb.cursor()
 
 
 # Hauteur du bandeau
-bandeau_height = root.winfo_screenheight() * 0.25
+bandeau_height = root.winfo_screenheight() * 0.20
 
 # Bandeau en fond blanc
 canvas = tk.Canvas(root, bg="white")
-canvas.place(x=0, y=0, relwidth=1, relheight=0.25)  # Positionne le canvas sur 25% de la hauteur
+canvas.place(x=0, y=0, relwidth=1, relheight=0.20)  # Bandeau sur 20% de la hauteur
 
 #logo
-image_path2 = "../Pictures/LogoBis.png"
+image_path2 = "../Pictures/AirFly.png"
 image2 = tk.PhotoImage(file=image_path2)
 image2 = image2.subsample(5)  # Réduire l'image à 20% de sa taille d'origine
 image_label2 = tk.Label(root, image=image2)
