@@ -3,6 +3,8 @@ from tkinter import messagebox
 import subprocess
 import platform
 
+is_logged_in = False
+
 class AIRENGLANDApp:
     def __init__(self, root):
         self.root = root
@@ -63,10 +65,11 @@ class AIRENGLANDApp:
         bouton_vol.bind('<Enter>', self.bouton_hover)
         bouton_vol.bind('<Leave>', self.bouton_leave)
 
-        bouton_connexion = tk.Button(self.root, text="Connexion", width=15, command=self.redirect_to_connexion)
-        bouton_connexion.place(x=self.bandeau_height * 5.4, y=bouton_height)
-        bouton_connexion.bind('<Enter>', self.bouton_hover)
-        bouton_connexion.bind('<Leave>', self.bouton_leave)
+        if is_logged_in == False:
+            bouton_connexion = tk.Button(self.root, text="Connexion", width=15, command=self.redirect_to_connexion)
+            bouton_connexion.place(x=self.bandeau_height * 5.4, y=bouton_height)
+            bouton_connexion.bind('<Enter>', self.bouton_hover)
+            bouton_connexion.bind('<Leave>', self.bouton_leave)
 
         bouton_creer_compte = tk.Button(self.root, text="Créer son compte", width=15)
         bouton_creer_compte.place(x=self.bandeau_height * 6.2, y=bouton_height)
@@ -93,6 +96,7 @@ class AIRENGLANDApp:
         event.widget.config(bg="SystemButtonFace")
 
     def redirect_to_resa_avion(self):
+        root.destroy()
         try:
             if platform.system() == 'Windows':
                 subprocess.Popen(["python", "resaAvionMembre.py"], shell=True)
@@ -102,8 +106,21 @@ class AIRENGLANDApp:
             messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
 
     def redirect_to_connexion(self):
+        root.destroy()
         try:
-            subprocess.Popen(["python", "connexion.py"], shell=True)
+            if platform.system() == 'Windows':
+                subprocess.Popen(["python", "connexion.py"], shell=True)
+            else:
+                subprocess.Popen(["python3", "connexion.py"])
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
+
+    def redirect_to_create(self):
+        try:
+            if platform.system() == 'Windows':
+                subprocess.Popen(["python", "Create_Account.py"], shell=True)
+            else:
+                subprocess.Popen(["python3", "Create_Account.py"])
         except Exception as e:
             messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
 

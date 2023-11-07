@@ -1,90 +1,81 @@
 import tkinter as tk
 from tkinter import messagebox
-import mysql.connector
+import pymysql
+
+import subprocess
 import platform
+import runpy
 
-# Booléens pour le contrôle de l'application
-is_logged_in = False
+def verify_login(email, password):
+    # Connectez-vous à la base de données
+    conn = pymysql.connect(
+        host='localhost',
+        user='root',
+        password='root',
+        db='AirlineDatabase',
+        port=8889
+    )
+    try:
+        # Créez un curseur et exécutez la requête SQL pour trouver l'utilisateur
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT * FROM Client WHERE email = %s AND password = %s", (email, password))
+            result = cursor.fetchone()
+            return result is not None  # Si result n'est pas None, l'utilisateur existe
+    except Exception as e:
+        messagebox.showerror("Erreur", f"Erreur de base de données: {e}")
+        return False
+    finally:
+        conn.close()
 
-def run_login_window():
-    global is_logged_in
+def login():
+    email = email_entry.get()
+    password = password_entry.get()
 
-    # Création de la fenêtre principale si l'utilisateur n'est pas connecté
-    if not is_logged_in:
-        root = tk.Tk()
-        root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
-        root.configure(bg='white')  # Définir la couleur de fond en blanc
-        root.title("Connexion")
+    # Vérifiez les identifiants de l'utilisateur
+    if verify_login(email, password):
+        # Fermez la fenêtre de connexion
+        root.destroy()
 
-        # Connexion à la base de données MySQL hébergée sur MAMP
-        mydb = mysql.connector.connect(
-            host="localhost",
-            port=8889,
-            user="root",
-            password="root",
-            database="AirlineDatabase"
-        )
-        cursor = mydb.cursor()
-
-        # Hauteur du bandeau
-        bandeau_height = root.winfo_screenheight() * 0.20
-
-        # Bandeau en fond blanc
-        canvas = tk.Canvas(root, bg="white")
-        canvas.place(x=0, y=0, relwidth=1, relheight=0.20)  # Bandeau sur 20% de la hauteur
-
-        # Fonction pour vérifier l'authenticité de l'utilisateur
-        def check_login():
-            global is_logged_in
-            email = email_var.get()
-            password = password_var.get()
-
-            # Recherche de l'utilisateur dans la base de données
-            cursor.execute("SELECT * FROM Client WHERE Email = %s AND Password = %s", (email, password))
-            user = cursor.fetchone()
-
-            # Vérification si l'utilisateur existe ou non
-            if user:
-                is_logged_in = True
-                messagebox.showinfo("Succès", "Connexion réussie!")
-                root.destroy()  # Fermer la fenêtre après une connexion réussie
+        #runpy.run_path(path_name='Page_Principale.py')
+        try:
+            if platform.system() == 'Windows':
+                subprocess.Popen(["python", "Page_Principale.py"], shell=True)
             else:
-                messagebox.showerror("Erreur", "Email ou mot de passe incorrect!")
-
-        # Création des éléments de la fenêtre
-        label1 = tk.Label(root, text="Email")
-        label1.pack(pady=10)
-
-        email_var = tk.StringVar()
-        entry_email = tk.Entry(root, textvariable=email_var)
-        entry_email.pack(pady=10)
-
-        label2 = tk.Label(root, text="Mot de passe")
-        label2.pack(pady=10)
-
-        password_var = tk.StringVar()
-        entry_password = tk.Entry(root, textvariable=password_var, show='*')
-        entry_password.pack(pady=10)
-
-        btn_login = tk.Button(root, text="Se connecter", command=check_login)
-        btn_login.pack(pady=20)
-
-        # La fenêtre est redimensionnable
-        root.columnconfigure(0, weight=1)
-        root.rowconfigure(0, weight=1)
-        root.mainloop()
-
-        # Fermeture de la connexion à la base de données après la fermeture de la fenêtre
-        cursor.close()
-        mydb.close()
-
-    # Sinon, exécuter le reste du programme ou afficher un message, etc.
+                subprocess.Popen(["python3", "Page_Principale.py"])
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
     else:
-        print("L'utilisateur est déjà connecté.")
+        # Affichez un message d'erreur si les identifiants sont invalides
+        error_label.config(text="Email ou mot de passe incorrect!", fg="red")
 
-# Exécuter la fenêtre de connexion
-run_login_window()
+# Créez la fenêtre principale
+root = tk.Tk()
+root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
+root.title("Connexion")
 
-# Code pour la suite de votre application
-# Si l'utilisateur est connecté, vous pouvez continuer avec le reste de votre application ici.
-# Vous pouvez utiliser les booléens définis au début pour contrôler le flux de votre programme.
+# Créez un cadre pour le formulaire de connexion
+login_frame = tk.Frame(root)
+login_frame.pack(pady=20)
+
+# Créez et placez les widgets pour l'email
+email_label = tk.Label(login_frame, text="Email")
+email_label.grid(row=0, column=0, padx=10, pady=10)
+email_entry = tk.Entry(login_frame)
+email_entry.grid(row=0, column=1, padx=10, pady=10)
+
+# Créez et placez les widgets pour le mot de passe
+password_label = tk.Label(login_frame, text="Mot de passe")
+password_label.grid(row=1, column=0, padx=10, pady=10)
+password_entry = tk.Entry(login_frame, show="*")
+password_entry.grid(row=1, column=1, padx=10, pady=10)
+
+# Créez et placez le bouton de connexion
+login_button = tk.Button(login_frame, text="Se connecter", command=login)
+login_button.grid(row=2, column=0, columnspan=2, pady=10)
+
+# Créez et placez le label pour les messages d'erreur
+error_label = tk.Label(root, text="")
+error_label.pack()
+
+# Lancez la boucle principale de l'application
+root.mainloop()

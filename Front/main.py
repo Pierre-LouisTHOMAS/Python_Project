@@ -1,25 +1,17 @@
-# main.py
-import runpy
-from Back.bdd import get_db_connection
+import subprocess
+import platform
 
 
 def main():
-    # Connexion à la base de données
-    connection = get_db_connection()
-    if connection is not None:
-        try:
-            with connection.cursor() as cursor:
-                # Exécution d'une requête simple, par exemple pour vérifier que la connexion fonctionne
-                cursor.execute("SELECT * FROM Client LIMIT 1;")
-                result = cursor.fetchone()
-                print("Connexion à la base de données réussie. Résultat de test:", result)
-        finally:
-            # S'assurer que la connexion est fermée après avoir terminé
-            connection.close()
+    script_name = 'Page_Principale.py'  # Assurez-vous que ce chemin est correct.
 
-    # Exécuter un autre script Python
-    # Assurez-vous que le chemin est correct
-    runpy.run_path(path_name='Page_Principale.py')
+    python_executable = 'python3' if platform.system() != 'Windows' else 'python'
+
+    try:
+        # Exécutez le script dans un nouveau processus.
+        subprocess.run([python_executable, script_name])
+    except Exception as e:
+        print(f"Une erreur est survenue lors du lancement du script {script_name}: {e}")
 
 
 if __name__ == "__main__":
