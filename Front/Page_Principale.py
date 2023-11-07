@@ -2,108 +2,108 @@ import tkinter as tk
 from tkinter import messagebox
 import subprocess
 
-# Création de la fenêtre principale
-root = tk.Tk()
-root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
-root.title("AIRENGLAND")
+class AIRENGLANDApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
+        self.root.title("AIRENGLAND")
 
-# Hauteur du bandeau
-bandeau_height = root.winfo_screenheight() * 0.22
+        self.bandeau_height = root.winfo_screenheight() * 0.22
+        self.show_dropdown = False
 
-# Variable pour gérer l'affichage de la liste déroulante
-show_dropdown = False
+        self.create_menu()
+        self.create_bandeau()
+        self.create_buttons()  # Ajout de la création des boutons
+        self.create_dropdown()
 
-# Fonction pour afficher/masquer la liste déroulante
-def toggle_dropdown():
-    global show_dropdown
-    show_dropdown = not show_dropdown
-    if show_dropdown:
-        option_menu.place(x=0, y=bandeau_height * 0.05)
-    else:
-        option_menu.place_forget()
+    def create_menu(self):
+        self.menu = tk.Menu(self.root)
 
-# Bandeau en fond blanc
-canvas = tk.Canvas(root, bg="white")
-canvas.place(x=0, y=0, relwidth=1, relheight=0.20)  # Bandeau sur 20% de la hauteur
+        fichier_menu = tk.Menu(self.menu, tearoff=0)
+        fichier_menu.add_command(label="Enregistrer sous...", command=self.save)
 
+        option_menu = tk.Menu(self.menu, tearoff=0)
+        option_menu.add_command(label="Réglage")
 
-image_path = "../Pictures/barre_recherche.png"
-image_button = tk.PhotoImage(file=image_path)
-#image_button = image_button.subsample(2)
-image_button_label = tk.Label(root, image=image_button, cursor="hand2")
-image_button_label.place(x=10, y=bandeau_height * 0.3)
-image_button_label.bind("<Button-1>", lambda e: toggle_dropdown())
+        self.menu.add_cascade(label="Fichier", menu=fichier_menu)
+        self.menu.add_cascade(label="Option", menu=option_menu)
 
-# Ajouter une liste déroulante initialement masquée
-choices = ["Connexion", "Premium Economy", "Economy"]
-var = tk.StringVar(root)
-var.set(choices[0])
-option_menu = tk.OptionMenu(root, var, *choices)
+        self.root.config(menu=self.menu)
 
+    def save(self):
+        print("Vous avez cliqué sur Enregistrer sous...")
 
-image_path = "../Pictures/Boreale.png"
-image = tk.PhotoImage(file=image_path)
-image_label = tk.Label(root, image=image)
-image_label.place(x=0, y=bandeau_height * 1.05, relwidth=1, relheight=0.75)
+    def create_bandeau(self):
+        self.canvas = tk.Canvas(self.root, bg="white")
+        self.canvas.place(x=0, y=0, relwidth=1, relheight=0.20)
 
-def bouton_hover(event):
-    event.widget.config(bg="lightblue")
+        image_path = "../Pictures/barre_recherche.png"  # Remplacez par le chemin de votre image
+        self.image_button = tk.PhotoImage(file=image_path)
+        image_button_label = tk.Label(self.root, image=self.image_button, cursor="hand2")
+        image_button_label.place(x=10, y=self.bandeau_height * 0.3)
+        image_button_label.bind("<Button-1>", lambda e: self.toggle_dropdown())
 
-def bouton_leave(event):
-    event.widget.config(bg="SystemButtonFace")
+        image_path2 = "../Pictures/AirFly.png"
+        self.image2 = tk.PhotoImage(file=image_path2)
+        self.image2 = self.image2.subsample(5)
+        image_label2 = tk.Label(self.root, image=self.image2)
+        image_label2.place(x=self.bandeau_height * 0.7, y=self.bandeau_height * 0.1)
 
-bouton_height = int(bandeau_height * 0.8)
+        image_path3 = "../Pictures/Boreale.png"
+        self.image3 = tk.PhotoImage(file=image_path3)
+        image_label3 = tk.Label(self.root, image=self.image3)
+        image_label3.place(x=0, y=self.bandeau_height * 1.05, relwidth=1, relheight=0.75)
 
+    def create_buttons(self):
+        bouton_height = int(self.bandeau_height * 0.8)
 
+        bouton_vol = tk.Button(self.root, text="Achat Vol", width=15, command=self.redirect_to_resa_avion)
+        bouton_vol.place(x=self.bandeau_height * 4.6, y=bouton_height)
+        bouton_vol.bind('<Enter>', self.bouton_hover)
+        bouton_vol.bind('<Leave>', self.bouton_leave)
 
-def redirect_to_resa_avion():
-    try:
-        subprocess.Popen(["python", "resaAvionMembre.py"], shell=True)
-    except Exception as e:
-        messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
+        bouton_connexion = tk.Button(self.root, text="Connexion", width=15, command=self.redirect_to_connexion)
+        bouton_connexion.place(x=self.bandeau_height * 5.4, y=bouton_height)
+        bouton_connexion.bind('<Enter>', self.bouton_hover)
+        bouton_connexion.bind('<Leave>', self.bouton_leave)
 
+        bouton_creer_compte = tk.Button(self.root, text="Créer son compte", width=15)
+        bouton_creer_compte.place(x=self.bandeau_height * 6.2, y=bouton_height)
+        bouton_creer_compte.bind('<Enter>', self.bouton_hover)
+        bouton_creer_compte.bind('<Leave>', self.bouton_leave)
 
-bouton_vol = tk.Button(root, text="Achat Vol", width=15, command=redirect_to_resa_avion)
-bouton_vol.place(x=bandeau_height * 4.6, y=bouton_height)
-bouton_vol.bind('<Enter>', bouton_hover)
-bouton_vol.bind('<Leave>', bouton_leave)
+    def create_dropdown(self):
+        choices = ["Connexion", "Premium Economy", "Economy"]
+        self.var = tk.StringVar(self.root)
+        self.var.set(choices[0])
+        self.option_menu = tk.OptionMenu(self.root, self.var, *choices)
 
+    def toggle_dropdown(self):
+        self.show_dropdown = not self.show_dropdown
+        if self.show_dropdown:
+            self.option_menu.place(x=0, y=self.bandeau_height * 0.05)
+        else:
+            self.option_menu.place_forget()
 
-def redirect_to_connexion():
-    try:
-        subprocess.Popen(["python", "connexion.py"], shell=True)
-    except Exception as e:
-        messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
+    def bouton_hover(self, event):
+        event.widget.config(bg="lightblue")
 
+    def bouton_leave(self, event):
+        event.widget.config(bg="SystemButtonFace")
 
-bouton_connexion = tk.Button(root, text="Connexion", width=15, command=redirect_to_connexion)
-bouton_connexion.place(x=bandeau_height * 5.4, y=bouton_height)
-bouton_connexion.bind('<Enter>', bouton_hover)
-bouton_connexion.bind('<Leave>', bouton_leave)
+    def redirect_to_resa_avion(self):
+        try:
+            subprocess.Popen(["python", "resaAvionMembre.py"], shell=True)
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
 
-# Bouton "Créer son compte"
-bouton_creer_compte = tk.Button(root, text="Créer son compte", width=15)
-bouton_creer_compte.place(x=bandeau_height * 6.2, y=bouton_height)
-bouton_creer_compte.bind('<Enter>', bouton_hover)
-bouton_creer_compte.bind('<Leave>', bouton_leave)
+    def redirect_to_connexion(self):
+        try:
+            subprocess.Popen(["python", "connexion.py"], shell=True)
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
 
-
-
-# Redimensionner la liste déroulante
-option_menu_width = 15
-option_menu_height = 5
-option_menu.config(width=option_menu_width, height=option_menu_height)
-option_menu.place_forget()
-
-#logo
-image_path2 = "../Pictures/AirFly.png"
-image2 = tk.PhotoImage(file=image_path2)
-image2 = image2.subsample(5)  # Réduire l'image à 20% de sa taille d'origine
-image_label2 = tk.Label(root, image=image2)
-image_label2.place(x=bandeau_height * 0.7, y=bandeau_height * 0.1)
-
-# fenêtre est redimensionnable
-root.columnconfigure(0, weight=1)
-root.rowconfigure(0, weight=1)
-
-root.mainloop()
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = AIRENGLANDApp(root)
+    root.mainloop()
