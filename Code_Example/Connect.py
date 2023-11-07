@@ -1,12 +1,9 @@
 import pymysql
 
 
-
-
-
 def mysqlconnect():
 
-# To connect MySQL database. Change the database name as per requirement
+#To connect MySQL database. Change the database name as per requirement
 
 conn = pymysql.connect(
 

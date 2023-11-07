@@ -1,6 +1,8 @@
 import pymysql
 import platform
 
+import runpy
+
 system = platform.system()
 
 def mysqlconnect():
@@ -35,3 +37,5 @@ def mysqlconnect():
 
 if __name__ == "__main__":
     mysqlconnect()
+    runpy.run_path(path_name='Front/connexion.py')
+

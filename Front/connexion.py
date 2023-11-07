@@ -8,6 +8,7 @@ system = platform.system()
 # Création de la fenêtre principale
 root = tk.Tk()
 root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
+root.configure(bg='white')  # Définir la couleur de fond en blanc
 root.title("Connexion")
 
 # Connexion à la base de données MySQL hébergée sur MAMP
@@ -31,11 +32,11 @@ canvas = tk.Canvas(root, bg="white")
 canvas.place(x=0, y=0, relwidth=1, relheight=0.20)  # Bandeau sur 20% de la hauteur
 
 #logo
-image_path2 = "../Pictures/AirFly.png"
-image2 = tk.PhotoImage(file=image_path2)
-image2 = image2.subsample(5)  # Réduire l'image à 20% de sa taille d'origine
-image_label2 = tk.Label(root, image=image2)
-image_label2.place(x=bandeau_height * 0.7, y=bandeau_height * 0.1)
+#image_path2 = "../Pictures/AirFly.png"
+#image2 = tk.PhotoImage(file=image_path2)
+#image2 = image2.subsample(5)  # Réduire l'image à 20% de sa taille d'origine
+#image_label2 = tk.Label(root, image=image2)
+#image_label2.place(x=bandeau_height * 0.7, y=bandeau_height * 0.1)
 
 
 # Fonction pour vérifier l'authenticité de l'utilisateur
