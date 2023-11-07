@@ -1,81 +1,73 @@
 import tkinter as tk
 from tkinter import messagebox
 import pymysql
-
 import subprocess
 import platform
-import runpy
 
-def verify_login(email, password):
-    # Connectez-vous à la base de données
-    conn = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='root',
-        db='AirlineDatabase',
-        port=8889
-    )
-    try:
-        # Créez un curseur et exécutez la requête SQL pour trouver l'utilisateur
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT * FROM Client WHERE email = %s AND password = %s", (email, password))
-            result = cursor.fetchone()
-            return result is not None  # Si result n'est pas None, l'utilisateur existe
-    except Exception as e:
-        messagebox.showerror("Erreur", f"Erreur de base de données: {e}")
-        return False
-    finally:
-        conn.close()
+class LoginApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
+        self.root.title("Connexion")
 
-def login():
-    email = email_entry.get()
-    password = password_entry.get()
+        self.create_login_frame()
 
-    # Vérifiez les identifiants de l'utilisateur
-    if verify_login(email, password):
-        # Fermez la fenêtre de connexion
-        root.destroy()
+    def create_login_frame(self):
+        login_frame = tk.Frame(self.root)
+        login_frame.pack(pady=20)
 
-        #runpy.run_path(path_name='Page_Principale.py')
+        email_label = tk.Label(login_frame, text="Email")
+        email_label.grid(row=0, column=0, padx=10, pady=10)
+        self.email_entry = tk.Entry(login_frame)
+        self.email_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        password_label = tk.Label(login_frame, text="Mot de passe")
+        password_label.grid(row=1, column=0, padx=10, pady=10)
+        self.password_entry = tk.Entry(login_frame, show="*")
+        self.password_entry.grid(row=1, column=1, padx=10, pady=10)
+
+        login_button = tk.Button(login_frame, text="Se connecter", command=self.login)
+        login_button.grid(row=2, column=0, columnspan=2, pady=10)
+
+        self.error_label = tk.Label(self.root, text="")
+        self.error_label.pack()
+
+    def verify_login(self, email, password):
+        conn = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            db='AirlineDatabase',
+            port=8889
+        )
         try:
-            if platform.system() == 'Windows':
-                subprocess.Popen(["python", "Page_Principale.py"], shell=True)
-            else:
-                subprocess.Popen(["python3", "Page_Principale.py"])
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT * FROM Client WHERE email = %s AND password = %s", (email, password))
+                result = cursor.fetchone()
+                return result is not None
         except Exception as e:
-            messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
-    else:
-        # Affichez un message d'erreur si les identifiants sont invalides
-        error_label.config(text="Email ou mot de passe incorrect!", fg="red")
+            messagebox.showerror("Erreur", f"Erreur de base de données: {e}")
+            return False
+        finally:
+            conn.close()
 
-# Créez la fenêtre principale
-root = tk.Tk()
-root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
-root.title("Connexion")
+    def login(self):
+        email = self.email_entry.get()
+        password = self.password_entry.get()
 
-# Créez un cadre pour le formulaire de connexion
-login_frame = tk.Frame(root)
-login_frame.pack(pady=20)
+        if self.verify_login(email, password):
+            self.root.destroy()
+            try:
+                if platform.system() == 'Windows':
+                    subprocess.Popen(["python", "Page_Principale.py"], shell=True)
+                else:
+                    subprocess.Popen(["python3", "Page_Principale.py"])
+            except Exception as e:
+                messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
+        else:
+            self.error_label.config(text="Email ou mot de passe incorrect!", fg="red")
 
-# Créez et placez les widgets pour l'email
-email_label = tk.Label(login_frame, text="Email")
-email_label.grid(row=0, column=0, padx=10, pady=10)
-email_entry = tk.Entry(login_frame)
-email_entry.grid(row=0, column=1, padx=10, pady=10)
-
-# Créez et placez les widgets pour le mot de passe
-password_label = tk.Label(login_frame, text="Mot de passe")
-password_label.grid(row=1, column=0, padx=10, pady=10)
-password_entry = tk.Entry(login_frame, show="*")
-password_entry.grid(row=1, column=1, padx=10, pady=10)
-
-# Créez et placez le bouton de connexion
-login_button = tk.Button(login_frame, text="Se connecter", command=login)
-login_button.grid(row=2, column=0, columnspan=2, pady=10)
-
-# Créez et placez le label pour les messages d'erreur
-error_label = tk.Label(root, text="")
-error_label.pack()
-
-# Lancez la boucle principale de l'application
-root.mainloop()
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = LoginApp(root)
+    root.mainloop()
