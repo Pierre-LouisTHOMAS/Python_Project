@@ -3,7 +3,6 @@ from tkinter import messagebox
 import subprocess
 import platform
 
-
 class AIRENGLANDApp:
     def __init__(self, root):
         self.root = root
@@ -96,7 +95,7 @@ class AIRENGLANDApp:
     def redirect_to_resa_avion(self):
         try:
             if platform.system() == 'Windows':
-                subprocess.Popen(["python", "resaAvionMembre.py"])
+                subprocess.Popen(["python", "resaAvionMembre.py"], shell=True)
             else:
                 subprocess.Popen(["python3", "resaAvionMembre.py"])
         except Exception as e:
