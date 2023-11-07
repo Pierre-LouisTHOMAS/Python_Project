@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkcalendar import DateEntry
 from tkinter import Label
+from tkinter import messagebox
+import subprocess
+import platform
 
 class ReservationApp:
     def __init__(self, root):
@@ -42,6 +45,19 @@ class ReservationApp:
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.root, image=self.image2)
         image_label2.place(x=self.bandeau_height * 0.7, y=self.bandeau_height * 0.1)
+
+        # Ajoutez un gestionnaire d'événements pour l'image
+        image_label2.bind("<Button-1>", self.redirect_to_resa_avion)
+
+    def redirect_to_resa_avion(self, event):
+        root.destroy()
+        try:
+            if platform.system() == 'Windows':
+                subprocess.Popen(["python", "Page_Principale.py"], shell=True)
+            else:
+                subprocess.Popen(["python3", "Page_Principale.py"])
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
 
     def create_main_frame(self):
         self.main_frame = tk.Frame(self.root, relief="solid", borderwidth=2)
