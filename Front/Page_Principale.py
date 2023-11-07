@@ -1,12 +1,14 @@
 import tkinter as tk
 from tkinter import messagebox
 import subprocess
+import platform
+
 
 class AIRENGLANDApp:
     def __init__(self, root):
         self.root = root
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
-        self.root.title("AIRENGLAND")
+        self.root.title("AIR ENGLAND")
 
         self.bandeau_height = root.winfo_screenheight() * 0.22
         self.show_dropdown = False
@@ -93,7 +95,10 @@ class AIRENGLANDApp:
 
     def redirect_to_resa_avion(self):
         try:
-            subprocess.Popen(["python", "resaAvionMembre.py"], shell=True)
+            if platform.system() == 'Windows':
+                subprocess.Popen(["python", "resaAvionMembre.py"])
+            else:
+                subprocess.Popen(["python3", "resaAvionMembre.py"])
         except Exception as e:
             messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
 
