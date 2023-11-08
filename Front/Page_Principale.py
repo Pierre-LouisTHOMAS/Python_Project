@@ -9,7 +9,7 @@ class AIRENGLANDApp:
     def __init__(self, root):
         self.root = root
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
-        self.root.title("AIR ENGLAND")
+        self.root.title("AIR ENGLAND: Home Page")
 
         self.bandeau_height = root.winfo_screenheight() * 0.22
         self.menu = None
@@ -62,7 +62,11 @@ class AIRENGLANDApp:
             self.menu.destroy()
             self.menu = None
         else:
-            self.menu = tk.Menu(self.root)
+            image_path = "../Pictures/barre_recherche.png"
+            image_button_label = event.widget
+            x, y = image_button_label.winfo_rootx(), image_button_label.winfo_rooty()
+
+            self.menu = tk.Menu(self.root, tearoff=0)
 
             fichier_menu = tk.Menu(self.menu, tearoff=0)
             fichier_menu.add_command(label="Enregistrer sous...", command=self.save)
@@ -71,7 +75,8 @@ class AIRENGLANDApp:
 
             self.menu.add_cascade(label="Fichier", menu=fichier_menu)
 
-            self.root.config(menu=self.menu)
+            self.menu.post(x, y)
+
 
     def bouton_hover(self, event):
         event.widget.config(bg="lightblue")
@@ -90,7 +95,7 @@ class AIRENGLANDApp:
             else:
                 subprocess.Popen(["python3", "resaAvionMembre.py"])
         except Exception as e:
-            messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
+            messagebox.showerror("Error", f"Error on redirection {e}")
 
     def redirect_to_connexion(self):
         root.destroy()
@@ -100,7 +105,7 @@ class AIRENGLANDApp:
             else:
                 subprocess.Popen(["python3", "connexion.py"])
         except Exception as e:
-            messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
+            messagebox.showerror("Error", f"Error on redirection {e}")
 
     def redirect_to_create(self):
         try:
@@ -113,7 +118,7 @@ class AIRENGLANDApp:
             else:
                 subprocess.Popen(["python3", "connexion.py"])
         except Exception as e:
-            messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
+            messagebox.showerror("Error", f"Error on redirection {e}")
 
 if __name__ == "__main__":
     root = tk.Tk()
