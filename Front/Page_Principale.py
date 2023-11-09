@@ -41,6 +41,7 @@ class AIRENGLANDApp:
     def create_buttons(self):
         bouton_height = int(self.bandeau_height * 0.8)
 
+
         bouton_vol = tk.Button(self.root, text="Achat Vol", width=15, command=self.redirect_to_resa_avion)
         bouton_vol.place(x=self.bandeau_height * 4.6, y=bouton_height)
         bouton_vol.bind('<Enter>', self.bouton_hover)

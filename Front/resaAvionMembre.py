@@ -5,6 +5,7 @@ from tkinter import messagebox
 import subprocess
 import platform
 
+
 class ReservationApp:
     def __init__(self, root):
         self.root = root

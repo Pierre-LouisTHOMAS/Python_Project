@@ -4,6 +4,7 @@ import pymysql
 import subprocess
 import platform
 
+
 class LoginApp:
     def __init__(self, root):
         self.root = root

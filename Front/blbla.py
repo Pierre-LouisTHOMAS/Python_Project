@@ -6,6 +6,7 @@ class FlightSelectionPage:
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.root.title("AIR FLY: Flight Booking")
 
+
         # Crée un canvas pour contenir la barre de défilement et un cadre intermédiaire
         canvas = tk.Canvas(root)
         canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)

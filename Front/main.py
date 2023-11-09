@@ -2,6 +2,7 @@ import subprocess
 import platform
 
 
+
 def main():
     script_name = 'Page_Principale.py'
 
