@@ -1,105 +1,97 @@
 import tkinter as tk
 from tkinter import messagebox
-import pymysql
+from PIL import Image, ImageTk  # Assurez-vous d'installer le module pillow
+
 import subprocess
 import platform
+import hashlib
+import pymysql
 
+def verify_login(email, password):
+    conn = pymysql.connect(
+        host='localhost',
+        user='root',
+        password='root',
+        db='AirlineDatabase',
+        port=8889
+    )
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT * FROM Client WHERE email = %s AND password = %s", (email, password))
+            result = cursor.fetchone()
+            return result is not None
+    except Exception as e:
+        messagebox.showerror("Erreur", f"Database error: {e}")
+        return False
+    finally:
+        conn.close()
 
-class LoginApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
-        self.root.title("AIR FLY: Login")
+def login():
+    email = email_entry.get()
+    password = password_entry.get()
 
-        self.create_login_frame()
-        self.create_image_frame()
-
-
-    def redirect_to_page_accueil(self, event):
+    if verify_login(email, password):
         root.destroy()
+
         try:
             if platform.system() == 'Windows':
                 subprocess.Popen(["python", "Page_Principale.py"], shell=True)
             else:
                 subprocess.Popen(["python3", "Page_Principale.py"])
         except Exception as e:
-            messagebox.showerror("Error", f"Error on redirection : {e}")
+            messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
+    else:
+        error_label.config(text="Email ou mot de passe incorrect!", fg="red")
 
-    def create_login_frame(self):
-        # Create a frame for the black box and centre it in the window
-        login_frame = tk.Frame(self.root, borderwidth=3, relief="solid", width=300, height=100)
-        login_frame.pack(expand=True, fill="both", padx=10, pady=10)
 
-        # Create a sub-frame for the form and centre it inside the black frame
-        form_frame = tk.Frame(login_frame)
-        form_frame.grid(row=0, column=0, padx=500, pady=20)
+# Configuration de la fenêtre principale
+root = tk.Tk()
+root.configure(bg='black')
+root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
+root.title("Connexion")
 
-        email_label = tk.Label(form_frame, text="Email")
-        email_label.grid(row=0, column=0, padx=10, pady=10)
-        self.email_entry = tk.Entry(form_frame)
-        self.email_entry.grid(row=0, column=1, padx=10, pady=10)
+# Configuration de l'image de fond
+background_image = Image.open("../Pictures/Boreale.png")
+background_photo = ImageTk.PhotoImage(background_image)
+background_label = tk.Label(root, image=background_photo)
+background_label.place(relwidth=1, relheight=1)
 
-        password_label = tk.Label(form_frame, text="Mot de passe")
-        password_label.grid(row=1, column=0, padx=10, pady=10)
-        self.password_entry = tk.Entry(form_frame, show="*")
-        self.password_entry.grid(row=1, column=1, padx=10, pady=10)
+# Cadre pour le formulaire de connexion
+login_frame = tk.Frame(root, bg='white', bd=5)
+login_frame.place(relx=0.5, rely=0.5, relwidth=0.25, relheight=0.3, anchor='center')  # Modifier anchor en 'center'
 
-        login_button = tk.Button(form_frame, text="Se connecter", command=self.login)
-        login_button.grid(row=2, column=0, columnspan=2, pady=10)
+# Widgets pour l'email
+email_label = tk.Label(login_frame, text="Email", font=('Helvetica', 12), bg='white')
+email_label.place(relx=0.5, rely=0.1, anchor='center')
+email_entry = tk.Entry(login_frame, font=('Helvetica', 12))
+email_entry.place(relx=0.5, rely=0.2, relwidth=0.7, anchor='center')
 
-        self.error_label = tk.Label(form_frame, text="")
-        self.error_label.grid(row=3, column=0, columnspan=2, pady=10)
+# Widgets pour le mot de passe
+password_label = tk.Label(login_frame, text="Mot de passe", font=('Helvetica', 12), bg='white')
+password_label.place(relx=0.5, rely=0.35, anchor='center')
+password_entry = tk.Entry(login_frame, font=('Helvetica', 12), show="*")
+password_entry.place(relx=0.5, rely=0.45, relwidth=0.7, anchor='center')
 
-    def create_image_frame(self):
-        # Create a frame for the image and use pack to centre it
-        image_frame = tk.Frame(self.root)
-        image_frame.pack(expand=True, fill="both", padx=10, pady=10)
+# Bouton de connexion
+login_button = tk.Button(login_frame, text="Se connecter", command=login, font=('Helvetica', 12))
+login_button.place(relx=0.5, rely=0.7, relwidth=0.7, anchor='center')
 
-        self.root.grid_columnconfigure(1, weight=1)
-
-        image = tk.PhotoImage(file="../Pictures/AirFly.png")
-        image_label = tk.Label(image_frame, image=image)
-        image_label.image = image
-        image_label.pack()
-
-        #Return to home page
-        image_label.bind("<Button-1>", self.redirect_to_page_accueil)
-    def verify_login(self, email, password):
-        conn = pymysql.connect(
-            host='localhost',
-            user='root',
-            password='root',
-            db='AirlineDatabase',
-            port=8889
-        )
-        try:
-            with conn.cursor() as cursor:
-                cursor.execute("SELECT * FROM Client WHERE email = %s AND password = %s", (email, password))
-                result = cursor.fetchone()
-                return result is not None
-        except Exception as e:
-            messagebox.showerror("Error", f"Error on redirection {e}")
-            return False
-        finally:
-            conn.close()
-
-    def login(self):
-        email = self.email_entry.get()
-        password = self.password_entry.get()
-
-        if self.verify_login(email, password):
-            self.root.destroy()
-            try:
-                if platform.system() == 'Windows':
-                    subprocess.Popen(["python", "Page_Principale.py"], shell=True)
-                else:
-                    subprocess.Popen(["python3", "Page_Principale.py"])
-            except Exception as e:
-                messagebox.showerror("Error", f"Error on redirection {e}")
+def redirect_to_create_account():
+    root.destroy()
+    try:
+        if platform.system() == 'Windows':
+            subprocess.Popen(["python", "Create_Account.py"], shell=True)
         else:
-            self.error_label.config(text="Email ou mot de passe incorrect!", fg="red")
+            subprocess.Popen(["python3", "Create_Account.py"])
+    except Exception as e:
+        messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = LoginApp(root)
-    root.mainloop()
+# Bouton pour créer un compte
+create_account_button = tk.Button(login_frame, text="Créer un compte", command=redirect_to_create_account, font=('Helvetica', 12))
+create_account_button.place(relx=0.5, rely=0.85, relwidth=0.7, anchor='center')
+
+# Message d'erreur
+error_label = tk.Label(root, text="", font=('Helvetica', 12), bg='white')
+error_label.place(relx=0.5, rely=0.85, anchor='center')
+
+root.mainloop()

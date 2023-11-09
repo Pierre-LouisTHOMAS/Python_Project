@@ -53,7 +53,7 @@ class AIRENGLANDApp:
             bouton_connexion.bind('<Enter>', self.bouton_hover)
             bouton_connexion.bind('<Leave>', self.bouton_leave)
 
-        bouton_creer_compte = tk.Button(self.root, text="Créer son compte", width=15)
+        bouton_creer_compte = tk.Button(self.root, text="Créer son compte", width=15, command=self.redirect_to_create)
         bouton_creer_compte.place(x=self.bandeau_height * 6.2, y=bouton_height)
         bouton_creer_compte.bind('<Enter>', self.bouton_hover)
         bouton_creer_compte.bind('<Leave>', self.bouton_leave)
@@ -109,6 +109,7 @@ class AIRENGLANDApp:
             messagebox.showerror("Error", f"Error on redirection {e}")
 
     def redirect_to_create(self):
+        root.destroy()
         try:
             if platform.system() == 'Windows':
                 subprocess.Popen(["python", "Create_Account.py"], shell=True)
