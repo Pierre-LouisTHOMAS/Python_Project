@@ -1,10 +1,10 @@
--- Inserting data into the Client table
-INSERT INTO Client (First_Name, Last_Name, Type, Category, Email, Password)
-VALUES ('Alice', 'Martin', 'Guest', 'NULL', 'alice.martin@example.com', NULL),
-       ('Bob', 'Durand', 'Member', 'regular', 'bob.durand@example.com', 'bob12345'),
+-- Inserting data into the User table
+INSERT INTO User (First_Name, Last_Name, Type, Category, Email, Password)
+VALUES ('Pilou', 'Thomas', 'Employee', 'NULL', 'pl.pl@pl.com', '123'),
+       ('Tryst', 'Dubois', 'Member', 'regular', 'tryst.tryst@tryst.com', '1234'),
+       ('Eva', 'Eva', 'Guest', 'NULL', 'eva.eva@eva.com', '12'),
        ('Charlie', 'Moreau', 'Member', 'senior', 'charlie.moreau@example.com', 'charlie123'),
        ('David', 'Petit', 'Member', 'child', 'david.petit@example.com', 'david456'),
-       ('Eva', 'Blanc', 'Guest', 'NULL', 'eva.blanc@example.com', NULL),
        ('Frank', 'Roux', 'Member', 'regular', 'frank.roux@example.com', 'frank789'),
        ('Grace', 'Vidal', 'Guest', 'NULL', 'grace.vidal@example.com', NULL),
        ('Hugo', 'Fontaine', 'Member', 'senior', 'hugo.fontaine@example.com', 'hugo1011'),
@@ -24,22 +24,9 @@ VALUES ('2023-11-01 10:00:00', '2023-11-01 12:30:00', 'Paris CDG', 'London Heath
        ('2023-11-09 18:00:00', '2023-11-09 21:00:00', 'Beijing', 'Seoul Incheon', 220.35),
        ('2023-11-10 16:30:00', '2023-11-10 20:00:00', 'Mumbai', 'Dubai', 300.50);
 
--- Inserting data into the Employee table
-INSERT INTO Employee (First_Name, Last_Name, Email, Password)
-VALUES ('Lucas', 'Girard', 'lucas.girard@airline.com', 'lucas1415'),
-       ('Marie', 'Leroux', 'marie.leroux@airline.com', 'marie1617'),
-       ('Nicolas', 'Lemoine', 'nicolas.lemoine@airline.com', 'nicolas1819'),
-       ('Olivia', 'Dupuis', 'olivia.dupuis@airline.com', 'olivia2021'),
-       ('Paul', 'Lucas', 'paul.lucas@airline.com', 'paul2122'),
-       ('Quentin', 'Francois', 'quentin.francois@airline.com', 'quentin2324'),
-       ('Roxane', 'Perrin', 'roxane.perrin@airline.com', 'roxane2526'),
-       ('Samuel', 'Dumas', 'samuel.dumas@airline.com', 'samuel2728'),
-       ('Tina', 'Henry', 'tina.henry@airline.com', 'tina2930'),
-       ('Ugo', 'Marchand', 'ugo.marchand@airline.com', 'ugo3132');
-
 -- Inserting data into the Reservation table
--- Assuming Client_ID and Flight_ID auto-increment starts from 1
-INSERT INTO Reservation (Client_ID, Flight_ID, Number_of_Tickets, Total_Payment)
+-- Assuming User_ID and Flight_ID auto-increment starts from 1
+INSERT INTO Reservation (User_ID, Flight_ID, Number_of_Tickets, Total_Payment)
 VALUES (1, 1, 2, 201.00),
        (2, 2, 1, 350.75),
        (3, 3, 4, 2200.80),

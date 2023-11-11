@@ -1,18 +1,10 @@
-import subprocess
-import platform
-
-
+import tkinter as tk
+from Page_Principale import AIRENGLANDApp  # Importez votre classe Page_Principale
 
 def main():
-    script_name = 'Page_Principale.py'
-
-    python_executable = 'python3' if platform.system() != 'Windows' else 'python'
-
-    try:
-        subprocess.run([python_executable, script_name])
-    except Exception as e:
-        print(f"Une erreur est survenue lors du lancement du script {script_name}: {e}")
-
+    root = tk.Tk()
+    app = AIRENGLANDApp(root)  # Créez l'instance de votre page principale ici
+    root.mainloop()
 
 if __name__ == "__main__":
     main()
