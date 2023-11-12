@@ -52,7 +52,7 @@ class HomeEmployee:
             flight_menu.add_command(label="flight available", command=self.save)
             flight_menu.add_command(label="flight discount offer", command=self.save)
             customer_menu.add_command(label="Customer file management", command=self.window_file_management)
-            customer_menu.add_command(label="Customer reservation history", command=self.save)
+            customer_menu.add_command(label="Customer reservation history", command=self.window_history_reservation)
             customer_menu.add_command(label="number of tickets purchased", command=self.save)
             sale_menu.add_command(label="Sales analysis", command=self.save)
             sale_menu.add_command(label="Amount of private flight sale", command=self.save)
@@ -64,7 +64,7 @@ class HomeEmployee:
     def window_file_management(self):
         client_window = tk.Toplevel(self.root)
         client_window.title("Customer file management")
-        client_window.geometry("400x300")
+        client_window.geometry("300x200")
         client_window.configure(bg="white")
 
         mail_label = tk.Label(client_window, text="Mail:")
@@ -79,7 +79,28 @@ class HomeEmployee:
         id_entry = tk.Entry(client_window)
         id_entry.pack()
 
-        submit_button = tk.Button(client_window, text="Valider", command=self.save)
+        submit_button = tk.Button(client_window, text="Submit", command=self.save)
+        submit_button.pack()
+
+    def window_history_reservation(self):
+        client_window = tk.Toplevel(self.root)
+        client_window.title("Customer reservation history")
+        client_window.geometry("300x200")
+        client_window.configure(bg="white")
+
+        mail_label = tk.Label(client_window, text="Mail:")
+        mail_label.pack()
+
+        mail_entry = tk.Entry(client_window)
+        mail_entry.pack()
+
+        id_label = tk.Label(client_window, text="ID:")
+        id_label.pack()
+
+        id_entry = tk.Entry(client_window)
+        id_entry.pack()
+
+        submit_button = tk.Button(client_window, text="Submit", command=self.save)
         submit_button.pack()
 
     def save(self):
