@@ -1,10 +1,8 @@
 import tkinter as tk
 from tkcalendar import DateEntry
-from tkinter import Label
-from tkinter import messagebox
+from tkinter import Label, ttk, messagebox
 import subprocess
 import platform
-
 
 class ReservationApp:
     def __init__(self, root):
@@ -15,7 +13,6 @@ class ReservationApp:
         self.bandeau_height = root.winfo_screenheight() * 0.20
         self.image2 = None
         self.image = None
-
 
         self.create_bandeau()
         self.create_main_frame()
@@ -34,7 +31,7 @@ class ReservationApp:
         image_label2.bind("<Button-1>", self.redirect_to_page_accueil)
 
     def redirect_to_page_accueil(self, event):
-        root.destroy()
+        self.root.destroy()
         try:
             if platform.system() == 'Windows':
                 subprocess.Popen(["python", "Page_Principale.py"], shell=True)
@@ -42,8 +39,6 @@ class ReservationApp:
                 subprocess.Popen(["python3", "Page_Principale.py"])
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
-
-
 
     def create_main_frame(self):
         self.main_frame = tk.Frame(self.root, relief="solid", borderwidth=2)
@@ -61,14 +56,16 @@ class ReservationApp:
         departure_label = tk.Label(self.main_frame, text="Departure airport")
         departure_label.grid(row=2, column=0, pady=5)
         self.departure_var = tk.StringVar()
-        departure_entry = tk.Entry(self.main_frame, textvariable=self.departure_var)
-        departure_entry.grid(row=2, column=1, pady=5)
+        departure_combobox = ttk.Combobox(self.main_frame, textvariable=self.departure_var)
+        departure_combobox['values'] = ["Londres", "Paris", "New York"]
+        departure_combobox.grid(row=2, column=1, pady=5)
 
         arrival_label = tk.Label(self.main_frame, text="Arrival airport")
         arrival_label.grid(row=3, column=0, pady=5)
         self.arrival_var = tk.StringVar()
-        arrival_entry = tk.Entry(self.main_frame, textvariable=self.arrival_var)
-        arrival_entry.grid(row=3, column=1, pady=5)
+        arrival_combobox = ttk.Combobox(self.main_frame, textvariable=self.arrival_var)
+        arrival_combobox['values'] = ["Berlin", "Amsterdam", "Mexico"]
+        arrival_combobox.grid(row=3, column=1, pady=5)
 
         person_type_label = tk.Label(self.main_frame, text="Person Type")
         person_type_label.grid(row=4, column=0, pady=5)
@@ -77,7 +74,7 @@ class ReservationApp:
         person_type_option = tk.OptionMenu(self.main_frame, self.person_type_var, "Senior", "Regular", "Child")
         person_type_option.grid(row=4, column=1, pady=5)
 
-        search_button = tk.Button(self.main_frame, text="Rechercher des Vols", command=self.redirect_to_Flight_booking)
+        search_button = tk.Button(self.main_frame, text="Flight Research", command=self.redirect_to_Flight_booking)
         search_button.grid(row=6, column=0, columnspan=2, pady=10)
 
         image_path = "../Pictures/avionResa.png"
@@ -90,7 +87,6 @@ class ReservationApp:
         self.root.rowconfigure(1, weight=1)
 
     def search_flights(self):
-        # Implement flight search logic here
         date = self.date_var.get()
         departure = self.departure_var.get()
         arrival = self.arrival_var.get()
@@ -98,7 +94,7 @@ class ReservationApp:
         print(f"Date: {date}, Départ: {departure}, Arrivée: {arrival}, Type de Personne: {person_type}")
 
     def redirect_to_Flight_booking(self):
-        root.destroy()
+        self.root.destroy()
         try:
             if platform.system() == 'Windows':
                 subprocess.Popen(["python", "FlightBooking.py"], shell=True)

@@ -82,10 +82,10 @@ background_label.place(relwidth=1, relheight=1)
 
 # Cadre pour le formulaire de création de compte
 account_frame = tk.Frame(root, bg='gray', bd=5)
-account_frame.place(relx=0.5, rely=0.5, relwidth=0.8, relheight=0.8, anchor='center')
+account_frame.place(relx=0.5, rely=0.5, relwidth=0.4, relheight=0.65, anchor='center')
 
 # Style pour les labels et les entrées
-label_font = ('Verdana', 12)
+label_font = ('Verdana', 14, 'bold')
 entry_font = ('Verdana', 12)
 button_font = ('Verdana', 12, 'bold')
 

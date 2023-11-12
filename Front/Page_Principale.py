@@ -86,24 +86,13 @@ class AIRENGLANDApp:
         bouton_vol.bind('<Leave>', self.bouton_leave)
 
     def create_menu(self, event):
-        if self.menu is not None:
-            self.menu.destroy()
-            self.menu = None
-        else:
-            image_path = "../Pictures/barre_recherche.png"
-            image_button_label = event.widget
-            x, y = image_button_label.winfo_rootx(), image_button_label.winfo_rooty()
+        image_button_label = event.widget
+        x, y = image_button_label.winfo_rootx(), image_button_label.winfo_rooty()
 
-            self.menu = tk.Menu(self.root, tearoff=0)
-
-            fichier_menu = tk.Menu(self.menu, tearoff=0)
-            fichier_menu.add_command(label="Enregistrer sous...", command=self.save)
-            fichier_menu.add_command(label="Enregistrer sous...", command=self.save)
-            fichier_menu.add_command(label="Enregistrer sous...", command=self.save)
-
-            self.menu.add_cascade(label="Fichier", menu=fichier_menu)
-
-            self.menu.post(x, y)
+        menu = tk.Menu(self.root, tearoff=0)
+        menu.add_command(label="Historique", command=self.save)
+        menu.add_command(label="Facture", command=self.save)
+        menu.post(x, y)
 
     def bouton_hover(self, event):
         event.widget.config(bg="lightblue")
