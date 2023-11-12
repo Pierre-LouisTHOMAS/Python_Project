@@ -46,8 +46,13 @@ class AIRENGLANDApp:
         self.root.title("AIR ENGLAND: Home Page")
         self.bandeau_height = root.winfo_screenheight() * 0.22
         self.menu = None
+
+        # For update_ui()
         self.bouton_connection = None
         self.bouton_create_account = None
+        self.type_var = tk.StringVar(value="Member")  # Déplacez cette ligne dans __init__
+
+        self.space_type_var = None
 
         self.create_bandeau()
         self.create_buttons()
@@ -104,7 +109,6 @@ class AIRENGLANDApp:
         print("Vous avez cliqué sur Enregistrer sous...")
 
     def redirect_to_resa_avion(self):
-        root.destroy()
         try:
             if platform.system() == 'Windows':
                 subprocess.Popen(["python", "resaAvionMembre.py"], shell=True)
@@ -143,7 +147,7 @@ class AIRENGLANDApp:
         login_button = tk.Button(self.connection_window, text="connection", command=self.login)
         login_button.pack()
 
-        create_account_button = tk.Button(self.create_account_window, text="Create an account", command=self.create_account)
+        create_account_button = tk.Button(self.create_account_window, text="Create an account", command=self.bouton_create_account)
         create_account_button.pack()
 
         # Message d'erreur
@@ -159,7 +163,10 @@ class AIRENGLANDApp:
 
         if success:
             config.is_user_logged_in = True
-            config.user_type, config.user_last_name, config.user_first_name, config.client_type = user_info
+            config.first_name_user = user_info['First_Name']
+            config.last_name_user = user_info['Last_Name']
+            config.user_type = user_info['Type']
+            config.member_category = user_info['Category']
             self.connection_window.destroy()  # Ferme uniquement la fenêtre de connection
             self.update_ui()
             self.periodic_update()
@@ -200,7 +207,7 @@ class AIRENGLANDApp:
 # Create account
     def open_create_account_window(self):
         self.create_account_window = tk.Toplevel(self.root)
-        #self.connection_window.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
+        self.create_account_window.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.create_account_window.title("Create an account")
 
         # First name
@@ -213,11 +220,23 @@ class AIRENGLANDApp:
         self.last_name_entry = tk.Entry(self.create_account_window)
         self.last_name_entry.pack(fill='x', padx=50)
 
-        # Category
-        tk.Label(self.create_account_window, text="Category").pack(pady=10)
-        self.category_var = tk.StringVar(value="regular")  # default value
-        self.category_option_menu = ttk.OptionMenu(self.create_account_window, self.category_var, "regular", "regular", "senior", "child")
-        self.category_option_menu.pack(fill='x', padx=50)
+        # Type
+        tk.Label(self.create_account_window, text="Type").pack(pady=10)
+        self.type_var = tk.StringVar(value="Member")  # valeur par défaut
+        self.type_option_menu = ttk.OptionMenu(self.create_account_window, self.type_var, "Member", "Member",
+                                               "Employee", command=self.toggle_category_code_fields)
+        self.type_option_menu.pack(fill='x', padx=50)
+
+        # Initialiser les widgets Category et Code, mais ne les afficher pas encore
+        self.category_label = tk.Label(self.create_account_window, text="Category")
+        self.category_var = tk.StringVar(value="regular")
+        self.category_option_menu = ttk.OptionMenu(self.create_account_window, self.category_var, "regular", "regular","senior", "child")
+
+        self.code_label = tk.Label(self.create_account_window, text="Code")
+        self.code_entry = tk.Entry(self.create_account_window, show="*")
+
+        # Afficher initialement le bon widget selon la valeur par défaut de type_var
+        self.toggle_category_code_fields("Member")
 
         # Email
         tk.Label(self.create_account_window, text="Email").pack(pady=10)
@@ -237,6 +256,20 @@ class AIRENGLANDApp:
         self.error_label = tk.Label(self.create_account_window, text="", fg="red")
         self.error_label.pack()
 
+    def toggle_category_code_fields(self, *args):
+        selected_type = self.type_var.get()
+        if selected_type == "Employee":
+            # Afficher Code, cacher Category
+            self.category_label.pack_forget()
+            self.category_option_menu.pack_forget()
+            self.code_label.pack(pady=10)
+            self.code_entry.pack(fill='x', padx=50)
+        else:
+            # Afficher Category, cacher Code
+            self.code_label.pack_forget()
+            self.code_entry.pack_forget()
+            self.category_label.pack(pady=10)
+            self.category_option_menu.pack(fill='x', padx=50)
     def email_exists(self, email):
         conn = pymysql.connect(
             host='localhost',
@@ -255,7 +288,7 @@ class AIRENGLANDApp:
             return False
         finally:
             conn.close()
-    def insert_client(self, first_name, last_name, client_type, category, email, password):
+    def insert_client(self, first_name, last_name, type, category, email, password):
         conn = pymysql.connect(
             host='localhost',
             user='root',
@@ -267,7 +300,7 @@ class AIRENGLANDApp:
             with conn.cursor() as cursor:
                 hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
                 sql = "INSERT INTO User (First_Name, Last_Name, Type, Category, Email, Password) VALUES (%s, %s, %s, %s, %s, %s)"
-                cursor.execute(sql, (first_name, last_name, 'Member', category, email, hashed_password)) # remplacer password par hashed_password
+                cursor.execute(sql, (first_name, last_name, type, category, email, hashed_password)) # remplacer password par hashed_password
             conn.commit()
 
         except Exception as e:
@@ -278,6 +311,8 @@ class AIRENGLANDApp:
     def create_account(self):
         first_name = self.first_name_entry.get()
         last_name = self.last_name_entry.get()
+        type = self.type_var.get()
+        code = self.code_entry.get()
         category = self.category_var.get()
         email = self.email_entry.get()
         password = self.password_entry.get()
@@ -288,22 +323,56 @@ class AIRENGLANDApp:
         if not first_name or not last_name or not category or not email or not password:
             self.error_label.config(text="Please enter all fields")
             return
+        if type == 'Employee' and code != '12':
+            self.error_label.config(text="You are not a Employee")
+            return
 
-        self.insert_client(first_name, last_name, 'Member', category, email, password)
+        self.insert_client(first_name, last_name, type, category, email, password)
         messagebox.showinfo("Success", "Account created successfully!")
         self.create_account_window.destroy()
 
 
-
 #Update appication
     def update_ui(self):
-        if config.is_user_logged_in:
-            if config.user_type == 'client':
-                user_info_text = f"Client: {config.user_first_name} {config.user_last_name}\nType: {config.client_type}"
-            elif config.user_type == 'employe':
-                user_info_text = f"Employé: {config.user_first_name} {config.user_last_name}"
+        if hasattr(self, 'create_account_window'):
+            # Gérer l'affichage des champs "Code" et "Category"
+            if self.type_var.get() == 'Employee':
+                # S'assurer que le champ "Code" est affiché
+                if not hasattr(self, 'code_entry'):
+                    tk.Label(self.create_account_window, text="Code").pack(pady=10)
+                    self.code_entry = tk.Entry(self.create_account_window, show="·")
+                    self.code_entry.pack(fill='x', padx=50)
+
+                # Cacher le menu déroulant "Category" s'il existe
+                if hasattr(self, 'category_option_menu'):
+                    self.category_option_menu.pack_forget()
+
             else:
-                user_info_text = "Utilisateur connecté"
+                # Cacher le champ "Code" s'il existe
+                if hasattr(self, 'code_entry'):
+                    self.code_entry.pack_forget()
+
+                # Afficher le menu déroulant "Category"
+                if not hasattr(self, 'category_option_menu'):
+                    tk.Label(self.create_account_window, text="Category").pack(pady=10)
+                    self.category_option_menu = ttk.OptionMenu(self.create_account_window, self.category_var, "regular",  "regular", "senior", "child")
+                    self.category_option_menu.pack(fill='x', padx=50)
+
+        if config.is_user_logged_in:
+            if config.user_type == 'Member':
+                user_info_text = f"Member : {config.first_name_user} {config.last_name_user}\nType: {config.member_category}"
+            elif config.user_type == 'Employee':
+                user_info_text = f"Employee : {config.first_name_user} {config.last_name_user}"
+            else:
+                user_info_text = "You are a guest"
+
+            if not hasattr(self, 'user_info_frame'):
+                self.user_info_frame = tk.Frame(self.root, bg='white', borderwidth=2, relief='ridge')
+                self.user_info_label = tk.Label(self.user_info_frame, text=user_info_text, bg='white')
+                self.user_info_label.pack(padx=10, pady=10)
+                self.user_info_frame.place(relx=1, rely=0, relwidth=0.25, relheight=0.1, anchor='ne')
+            else:
+                self.user_info_label.config(text=user_info_text)
 
             self.login_frame.place(relx=1, rely=0, relwidth=0.25, relheight=0.1, anchor='ne')
             self.email_label.config(text=user_info_text)
@@ -317,7 +386,7 @@ class AIRENGLANDApp:
 
         else:
             if self.bouton_connection is None:
-                self.bouton_connection = tk.Button(self.root, text="connection", width=15, command=self.open_connection_window)
+                self.bouton_connection = tk.Button(self.root, text="Connection", width=15, command=self.open_connection_window)
                 self.bouton_connection.place(x=self.bandeau_height * 5.4, y=self.bandeau_height * 0.8)
                 self.bouton_connection.bind('<Enter>', self.bouton_hover)
                 self.bouton_connection.bind('<Leave>', self.bouton_leave)
@@ -329,7 +398,7 @@ class AIRENGLANDApp:
 
     def periodic_update(self):
         self.update_ui()
-        self.root.after(1000, self.periodic_update)
+        self.root.after(500, self.periodic_update)
 
 
 if __name__ == "__main__":

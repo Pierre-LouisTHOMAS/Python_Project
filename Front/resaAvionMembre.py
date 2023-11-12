@@ -4,6 +4,7 @@ from tkinter import Label, ttk, messagebox
 import subprocess
 import platform
 
+
 class ReservationApp:
     def __init__(self, root):
         self.root = root
@@ -13,6 +14,7 @@ class ReservationApp:
         self.bandeau_height = root.winfo_screenheight() * 0.20
         self.image2 = None
         self.image = None
+
 
         self.create_bandeau()
         self.create_main_frame()
@@ -31,7 +33,7 @@ class ReservationApp:
         image_label2.bind("<Button-1>", self.redirect_to_page_accueil)
 
     def redirect_to_page_accueil(self, event):
-        self.root.destroy()
+        root.destroy()
         try:
             if platform.system() == 'Windows':
                 subprocess.Popen(["python", "Page_Principale.py"], shell=True)
@@ -39,6 +41,8 @@ class ReservationApp:
                 subprocess.Popen(["python3", "Page_Principale.py"])
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
+
+
 
     def create_main_frame(self):
         self.main_frame = tk.Frame(self.root, relief="solid", borderwidth=2)
@@ -94,7 +98,6 @@ class ReservationApp:
         print(f"Date: {date}, Départ: {departure}, Arrivée: {arrival}, Type de Personne: {person_type}")
 
     def redirect_to_Flight_booking(self):
-        self.root.destroy()
         try:
             if platform.system() == 'Windows':
                 subprocess.Popen(["python", "FlightBooking.py"], shell=True)
