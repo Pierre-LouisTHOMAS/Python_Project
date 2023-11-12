@@ -118,9 +118,9 @@ password_entry.pack(fill='x', padx=50)
 def redirect_to_principal():
     try:
         if platform.system() == 'Windows':
-            subprocess.Popen(["python", "Page_Principale.py"], shell=True)
+            subprocess.Popen(["python", "Home_Page.py"], shell=True)
         else:
-            subprocess.Popen(["python3", "Page_Principale.py"])
+            subprocess.Popen(["python3", "Home_Page.py"])
     except Exception as e:
         messagebox.showerror("Erreur", f"Error redirecting : {e}")
 

@@ -35,9 +35,9 @@ class ReservationApp:
     def redirect_to_page_accueil(self, event):
         try:
             if platform.system() == 'Windows':
-                subprocess.Popen(["python", "Page_Principale.py"], shell=True)
+                subprocess.Popen(["python", "Home_Page.py"], shell=True)
             else:
-                subprocess.Popen(["python3", "Page_Principale.py"])
+                subprocess.Popen(["python3", "Home_Page.py"])
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
 
