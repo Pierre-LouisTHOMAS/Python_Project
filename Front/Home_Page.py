@@ -9,7 +9,7 @@ import pymysql
 import config #global variables
 
 # Home Page
-class AIRENGLANDApp:
+class HomePageApp:
     def __init__(self, root):
         self.root = root
 
@@ -403,6 +403,6 @@ class AIRENGLANDApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = AIRENGLANDApp(root)
+    app = HomePageApp(root)
 
     root.mainloop()

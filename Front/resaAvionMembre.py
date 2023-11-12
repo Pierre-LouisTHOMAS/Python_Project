@@ -11,15 +11,15 @@ class ReservationApp:
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.root.title("AIR ENGLAND:flight booking")
 
-        self.bandeau_height = root.winfo_screenheight() * 0.20
+        self.header_height = root.winfo_screenheight() * 0.20
         self.image2 = None
         self.image = None
 
 
-        self.create_bandeau()
+        self.create_header()
         self.create_main_frame()
 
-    def create_bandeau(self):
+    def create_header(self):
         self.canvas = tk.Canvas(self.root, bg="white")
         self.canvas.place(x=0, y=0, relwidth=1, relheight=0.20)
 
@@ -27,7 +27,7 @@ class ReservationApp:
         self.image2 = tk.PhotoImage(file=image_path2)
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.root, image=self.image2)
-        image_label2.place(x=self.bandeau_height * 0.7, y=self.bandeau_height * 0.1)
+        image_label2.place(x=self.header_height * 0.7, y=self.header_height * 0.1)
 
         # Return to home page
         image_label2.bind("<Button-1>", self.redirect_to_page_accueil)
