@@ -116,7 +116,6 @@ password_entry = tk.Entry(account_frame, font=entry_font, show="*")
 password_entry.pack(fill='x', padx=50)
 
 def redirect_to_principal():
-    root.destroy()
     try:
         if platform.system() == 'Windows':
             subprocess.Popen(["python", "Page_Principale.py"], shell=True)

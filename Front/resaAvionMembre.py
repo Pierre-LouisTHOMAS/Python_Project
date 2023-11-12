@@ -33,7 +33,6 @@ class ReservationApp:
         image_label2.bind("<Button-1>", self.redirect_to_page_accueil)
 
     def redirect_to_page_accueil(self, event):
-        root.destroy()
         try:
             if platform.system() == 'Windows':
                 subprocess.Popen(["python", "Page_Principale.py"], shell=True)
