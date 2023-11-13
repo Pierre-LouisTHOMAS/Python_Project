@@ -179,7 +179,7 @@ class HomePageApp:
         login_button = tk.Button(form_frame, text="connection", command=self.login)
         login_button.pack(pady=10)
 
-        create_account_button = tk.Button(form_frame, text="Create an account", command=self.redirect_to_create)
+        create_account_button = tk.Button(form_frame, text="Create an account", command=self.open_create_account_window)
         create_account_button.pack()
 
         # Message d'erreur
