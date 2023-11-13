@@ -229,61 +229,69 @@ class HomePageApp:
         self.create_account_window = tk.Toplevel(self.root)
         self.create_account_window.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.create_account_window.title("Create an account")
+        # Image en fond
+        self.background_image = tk.PhotoImage(file="../Pictures/Boreale.png")
+        background_label = tk.Label(self.create_account_window, image=self.background_image)
+        background_label.place(relwidth=1, relheight=1)
 
         # Logo retour
         image_path2 = "../Pictures/AirFly.png"
         self.image2 = tk.PhotoImage(file=image_path2)
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.create_account_window, image=self.image2)
-        image_label2.place(x=self.header_height * 0.7, y=self.header_height * 3)
+        image_label2.place(x=self.header_height * 0.4, y=self.header_height * 0.3)
 
         # Return to home page
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
+        # Carré blanc pour le formulaire
+        form_frame = tk.Frame(self.create_account_window, bg="white")
+        form_frame.place(relx=0.5, rely=0.5, anchor="center", relwidth=0.6, relheight=0.6)
+
         # First name
-        tk.Label(self.create_account_window, text="First name").pack(pady=10)
-        self.first_name_entry = tk.Entry(self.create_account_window)
+        tk.Label(form_frame, text="First name").pack(pady=10)
+        self.first_name_entry = tk.Entry(form_frame)
         self.first_name_entry.pack(fill='x', padx=50)
 
         # Last name
-        tk.Label(self.create_account_window, text="Last name").pack(pady=10)
-        self.last_name_entry = tk.Entry(self.create_account_window)
+        tk.Label(form_frame, text="Last name").pack(pady=10)
+        self.last_name_entry = tk.Entry(form_frame)
         self.last_name_entry.pack(fill='x', padx=50)
 
         # Type
-        tk.Label(self.create_account_window, text="Type").pack(pady=10)
+        tk.Label(form_frame, text="Type").pack(pady=10)
         self.type_var = tk.StringVar(value="Member")  # valeur par défaut
-        self.type_option_menu = ttk.OptionMenu(self.create_account_window, self.type_var, "Member", "Member",
+        self.type_option_menu = ttk.OptionMenu(form_frame, self.type_var, "Member", "Member",
                                                "Employee", command=self.toggle_category_code_fields)
         self.type_option_menu.pack(fill='x', padx=50)
 
         # Initialiser les widgets Category et Code, mais ne les afficher pas encore
-        self.category_label = tk.Label(self.create_account_window, text="Category")
+        self.category_label = tk.Label(form_frame, text="Category")
         self.category_var = tk.StringVar(value="regular")
-        self.category_option_menu = ttk.OptionMenu(self.create_account_window, self.category_var, "regular", "regular","senior", "child")
+        self.category_option_menu = ttk.OptionMenu(form_frame, self.category_var, "regular", "regular","senior", "child")
 
-        self.code_label = tk.Label(self.create_account_window, text="Code")
-        self.code_entry = tk.Entry(self.create_account_window, show="*")
+        self.code_label = tk.Label(form_frame, text="Code")
+        self.code_entry = tk.Entry(form_frame, show="*")
 
         # Afficher initialement le bon widget selon la valeur par défaut de type_var
         self.toggle_category_code_fields("Member")
 
         # Email
-        tk.Label(self.create_account_window, text="Email").pack(pady=10)
-        self.email_entry = tk.Entry(self.create_account_window)
+        tk.Label(form_frame, text="Email").pack(pady=10)
+        self.email_entry = tk.Entry(form_frame)
         self.email_entry.pack(fill='x', padx=50)
 
         # Password
-        tk.Label(self.create_account_window, text="Password").pack(pady=10)
-        self.password_entry = tk.Entry(self.create_account_window, show="*")
+        tk.Label(form_frame, text="Password").pack(pady=10)
+        self.password_entry = tk.Entry(form_frame, show="*")
         self.password_entry.pack(fill='x', padx=50)
         # Par exemple, des Entry pour le prénom, le nom, l'email, etc.
 
-        login_button = tk.Button(self.create_account_window, text="Create an account", command=self.create_account)
+        login_button = tk.Button(form_frame, text="Create an account", command=self.create_account)
         login_button.pack()
 
         # Message d'erreur
-        self.error_label = tk.Label(self.create_account_window, text="", fg="red")
+        self.error_label = tk.Label(form_frame, text="", fg="red")
         self.error_label.pack()
 
     def toggle_category_code_fields(self, *args):
