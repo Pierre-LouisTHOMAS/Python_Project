@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkcalendar import DateEntry
+from tkinter import Label, ttk
 
 class HomeEmployee:
     def __init__(self, root):
@@ -49,11 +51,11 @@ class HomeEmployee:
             customer_menu = tk.Menu(self.menu, tearoff=0)
             sale_menu = tk.Menu(self.menu, tearoff=0)
 
-            flight_menu.add_command(label="flight available", command=self.save)
+            flight_menu.add_command(label="flight available", command=self.window_flight_available)
             flight_menu.add_command(label="flight discount offer", command=self.save)
             customer_menu.add_command(label="Customer file management", command=self.window_file_management)
             customer_menu.add_command(label="Customer reservation history", command=self.window_history_reservation)
-            customer_menu.add_command(label="number of tickets purchased", command=self.save)
+            customer_menu.add_command(label="number of tickets purchased", command=self.window_history_reservation)
             sale_menu.add_command(label="Sales analysis", command=self.save)
             sale_menu.add_command(label="Amount of private flight sale", command=self.save)
             self.menu.add_cascade(label="Flight", menu=flight_menu)
@@ -100,8 +102,41 @@ class HomeEmployee:
         id_entry = tk.Entry(client_window)
         id_entry.pack()
 
-        submit_button = tk.Button(client_window, text="Submit", command=self.save)
+        submit_button = tk.Button(client_window, text="History", command=self.save)
         submit_button.pack()
+        number_ticket = tk.Button(client_window, text="Number_ticket", command=self.save)
+        number_ticket.pack()
+
+    def window_flight_available(self):
+        client_window = tk.Toplevel(self.root)
+        self.main_frame = tk.Frame(client_window, relief="solid", borderwidth=2)
+        self.main_frame.pack(padx=10, pady=10)
+
+        title_label = tk.Label(self.main_frame, text="Flight Research", font=("Helvetica", 16))
+        title_label.grid(row=0, column=0, columnspan=2, pady=10)
+
+        date_label = tk.Label(self.main_frame, text="Departure Date")
+        date_label.grid(row=1, column=0, pady=5)
+        self.date_var = tk.StringVar()
+        date_entry = DateEntry(self.main_frame, textvariable=self.date_var, date_pattern="dd/mm/yyyy")
+        date_entry.grid(row=1, column=1, pady=5)
+
+        departure_label = tk.Label(self.main_frame, text="Departure airport")
+        departure_label.grid(row=2, column=0, pady=5)
+        self.departure_var = tk.StringVar()
+        departure_combobox = ttk.Combobox(self.main_frame, textvariable=self.departure_var)
+        departure_combobox['values'] = ["Londres", "Paris", "New York"]
+        departure_combobox.grid(row=2, column=1, pady=5)
+
+        arrival_label = tk.Label(self.main_frame, text="Arrival airport")
+        arrival_label.grid(row=3, column=0, pady=5)
+        self.arrival_var = tk.StringVar()
+        arrival_combobox = ttk.Combobox(self.main_frame, textvariable=self.arrival_var)
+        arrival_combobox['values'] = ["Berlin", "Amsterdam", "Mexico"]
+        arrival_combobox.grid(row=3, column=1, pady=5)
+
+        submit_button = tk.Button(self.main_frame, text="Research", command=self.save)
+        submit_button.grid(row=4, column=0, columnspan=2, pady=10)
 
     def save(self):
         print("Vous avez enregistré")

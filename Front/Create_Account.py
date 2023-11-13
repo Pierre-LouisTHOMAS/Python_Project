@@ -115,7 +115,7 @@ tk.Label(account_frame, text="Password", font=label_font, bg='white').pack(pady=
 password_entry = tk.Entry(account_frame, font=entry_font, show="*")
 password_entry.pack(fill='x', padx=50)
 
-def redirect_to_principal():
+def redirect_to_home():
     try:
         if platform.system() == 'Windows':
             subprocess.Popen(["python", "Home_Page.py"], shell=True)
@@ -125,7 +125,7 @@ def redirect_to_principal():
         messagebox.showerror("Erreur", f"Error redirecting : {e}")
 
 # Submit button
-submit_button = tk.Button(account_frame, text="Create an account", command=redirect_to_principal, font=button_font, relief=tk.FLAT, bg='#4CAF50', fg='black')
+submit_button = tk.Button(account_frame, text="Create an account", command=redirect_to_home, font=button_font, relief=tk.FLAT, bg='#4CAF50', fg='black')
 submit_button.pack(pady=20)
 
 root.mainloop()

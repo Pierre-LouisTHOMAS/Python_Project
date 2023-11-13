@@ -5,7 +5,7 @@ import subprocess
 import platform
 
 
-class ReservationApp:
+class BookingApp:
     def __init__(self, root):
         self.root = root
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
@@ -30,9 +30,9 @@ class ReservationApp:
         image_label2.place(x=self.header_height * 0.7, y=self.header_height * 0.1)
 
         # Return to home page
-        image_label2.bind("<Button-1>", self.redirect_to_page_accueil)
+        image_label2.bind("<Button-1>", self.redirect_to_home_page)
 
-    def redirect_to_page_accueil(self, event):
+    def redirect_to_home_page(self, event):
         try:
             if platform.system() == 'Windows':
                 subprocess.Popen(["python", "Home_Page.py"], shell=True)
@@ -70,12 +70,6 @@ class ReservationApp:
         arrival_combobox['values'] = ["Berlin", "Amsterdam", "Mexico"]
         arrival_combobox.grid(row=3, column=1, pady=5)
 
-        person_type_label = tk.Label(self.main_frame, text="Person Type")
-        person_type_label.grid(row=4, column=0, pady=5)
-        self.person_type_var = tk.StringVar()
-        self.person_type_var.set("Senior")
-        person_type_option = tk.OptionMenu(self.main_frame, self.person_type_var, "Senior", "Regular", "Child")
-        person_type_option.grid(row=4, column=1, pady=5)
 
         search_button = tk.Button(self.main_frame, text="Flight Research", command=self.redirect_to_Flight_booking)
         search_button.grid(row=6, column=0, columnspan=2, pady=10)
@@ -107,5 +101,5 @@ class ReservationApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = ReservationApp(root)
+    app = BookingApp(root)
     root.mainloop()

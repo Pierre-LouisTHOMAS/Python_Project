@@ -111,9 +111,9 @@ class AIRENGLANDApp:
     def redirect_to_resa_avion(self):
         try:
             if platform.system() == 'Windows':
-                subprocess.Popen(["python", "resaAvionMembre.py"], shell=True)
+                subprocess.Popen(["python", "PlaneBooking.py"], shell=True)
             else:
-                subprocess.Popen(["python3", "resaAvionMembre.py"])
+                subprocess.Popen(["python3", "PlaneBooking.py"])
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
 

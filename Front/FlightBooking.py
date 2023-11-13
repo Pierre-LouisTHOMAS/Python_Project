@@ -11,6 +11,7 @@ class FlightSelectionPage:
         header_frame = tk.Frame(self.root, bg="lightblue")
         header_frame.pack(fill=tk.X)
 
+
         self.create_header(header_frame)
         self.create_flight_list()
 
@@ -46,8 +47,7 @@ class FlightSelectionPage:
             departure_time_label = tk.Label(flight_frame, text=f"departure time: {flight['departure_time']}", font=("Arial", 12), bg="lightblue")
             departure_time_label.pack()
 
-            arrival_time_label = tk.Label(flight_frame, text=f"arrival time: {flight['arrival_time']}",
-                                            font=("Arial", 12), bg="lightblue")
+            arrival_time_label = tk.Label(flight_frame, text=f"arrival time: {flight['arrival_time']}",font=("Arial", 12), bg="lightblue")
             arrival_time_label.pack()
 
             image_path = "../Pictures/avionResa.png"

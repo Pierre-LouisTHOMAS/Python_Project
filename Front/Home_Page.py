@@ -12,6 +12,7 @@ import config #global variables
 class HomePageApp:
     def __init__(self, root):
         self.root = root
+        self.header_height = root.winfo_screenheight() * 0.20
 
         # Initialisation de login_frame
         self.login_frame = tk.Frame(root, bg='grey', bd=5)
@@ -54,13 +55,13 @@ class HomePageApp:
 
         self.space_type_var = None
 
-        self.create_bandeau()
+        self.create_header()
         self.create_buttons()
 
         self.periodic_update()
 
 
-    def create_bandeau(self):
+    def create_header(self):
         self.canvas = tk.Canvas(self.root, bg="white")
         self.canvas.place(x=0, y=0, relwidth=1, relheight=0.20)
 
@@ -85,7 +86,7 @@ class HomePageApp:
         bouton_height = int(self.bandeau_height * 0.8)
 
 
-        bouton_vol = tk.Button(self.root, text="Achat Vol", width=15, command=self.redirect_to_resa_avion)
+        bouton_vol = tk.Button(self.root, text="Achat Vol", width=15, command=self.redirect_to_plane_booking)
         bouton_vol.place(x=self.bandeau_height * 4.6, y=bouton_height)
         bouton_vol.bind('<Enter>', self.bouton_hover)
         bouton_vol.bind('<Leave>', self.bouton_leave)
@@ -108,12 +109,12 @@ class HomePageApp:
     def save(self):
         print("Vous avez cliqué sur Enregistrer sous...")
 
-    def redirect_to_resa_avion(self):
+    def redirect_to_plane_booking(self):
         try:
             if platform.system() == 'Windows':
-                subprocess.Popen(["python", "resaAvionMembre.py"], shell=True)
+                subprocess.Popen(["python", "PlaneBooking.py"], shell=True)
             else:
-                subprocess.Popen(["python3", "resaAvionMembre.py"])
+                subprocess.Popen(["python3", "PlaneBooking.py"])
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
 
@@ -127,20 +128,39 @@ class HomePageApp:
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
 
+    def redirect_to_home_page(self, event):
+        try:
+            if platform.system() == 'Windows':
+                subprocess.Popen(["python", "Home_Page.py"], shell=True)
+            else:
+                subprocess.Popen(["python3", "Home_Page.py"])
+        except Exception as e:
+            messagebox.showerror("Error", f"Error on redirection {e}")
+
     def open_connection_window(self):
         self.connection_window = tk.Toplevel(self.root)
         self.connection_window.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
-        self.connection_window.title("connection")
+        self.connection_window.title("Connection")
+
+        # Logo retour
+        image_path2 = "../Pictures/AirFly.png"
+        self.image2 = tk.PhotoImage(file=image_path2)
+        self.image2 = self.image2.subsample(5)
+        image_label2 = tk.Label(self.connection_window, image=self.image2)
+        image_label2.place(x=self.header_height * 0.7, y=self.header_height * 0.1)
+
+        # Return to home page
+        image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
         # Widgets pour l'email
         email_label = tk.Label(self.connection_window, text="Email")
-        email_label.pack()
+        email_label.pack(pady=10)
         self.email_entry = tk.Entry(self.connection_window)
         self.email_entry.pack()
 
         # Widgets pour le mot de passe
         password_label = tk.Label(self.connection_window, text="Password")
-        password_label.pack()
+        password_label.pack(pady=10)
         self.password_entry = tk.Entry(self.connection_window, show="*")
         self.password_entry.pack()
 
@@ -209,6 +229,16 @@ class HomePageApp:
         self.create_account_window = tk.Toplevel(self.root)
         self.create_account_window.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.create_account_window.title("Create an account")
+
+        # Logo retour
+        image_path2 = "../Pictures/AirFly.png"
+        self.image2 = tk.PhotoImage(file=image_path2)
+        self.image2 = self.image2.subsample(5)
+        image_label2 = tk.Label(self.create_account_window, image=self.image2)
+        image_label2.place(x=self.header_height * 0.7, y=self.header_height * 3)
+
+        # Return to home page
+        image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
         # First name
         tk.Label(self.create_account_window, text="First name").pack(pady=10)
