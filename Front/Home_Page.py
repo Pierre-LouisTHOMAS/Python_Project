@@ -91,7 +91,7 @@ class HomePageApp:
 
 
         bouton_vol = tk.Button(self.root, text="Achat Vol", width=15, command=self.redirect_to_plane_booking)
-        bouton_vol.place(x=self.bandeau_height * 4.4, y=bouton_height)
+        bouton_vol.place(x=self.window_width * 0.6, y=bouton_height)
         bouton_vol.bind('<Enter>', self.bouton_hover)
         bouton_vol.bind('<Leave>', self.bouton_leave)
 

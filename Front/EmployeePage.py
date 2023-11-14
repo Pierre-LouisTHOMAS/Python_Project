@@ -44,7 +44,7 @@ class HomeEmployee:
         self.image4 = tk.PhotoImage(file=image_path4)
         self.image4 = self.image4.subsample(6)
         image_label4 = tk.Label(self.root, image=self.image4, bg="white")
-        image_label4.place(x=self.header_height * 7.4, y=self.header_height * 0.3)
+        image_label4.place(x=self.header_height * 4.4, y=self.header_height * 0.3)
         image_label4.bind("<Button-1>", self.redirect_to_open_account)
 
         image_path3 = "../Pictures/Boreale.png"
