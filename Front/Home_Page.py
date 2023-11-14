@@ -89,7 +89,7 @@ class HomePageApp:
 
 
         bouton_vol = tk.Button(self.root, text="Achat Vol", width=15, command=self.redirect_to_plane_booking)
-        bouton_vol.place(x=self.bandeau_height * 4.6, y=bouton_height)
+        bouton_vol.place(x=self.bandeau_height * 4.4, y=bouton_height)
         bouton_vol.bind('<Enter>', self.bouton_hover)
         bouton_vol.bind('<Leave>', self.bouton_leave)
 
@@ -158,28 +158,22 @@ class HomePageApp:
         background_label = tk.Label(self.connection_window, image=self.background_photo)
         background_label.place(relwidth=1, relheight=1)
 
-        # Logo retour
         image_path2 = "../Pictures/AirFly.png"
         self.image2 = tk.PhotoImage(file=image_path2)
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.connection_window, image=self.image2)
         image_label2.place(x=self.header_height * 0.4, y=self.header_height * 0.3)
 
-        # Return to home page
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
-        # Carré blanc pour le formulaire
         form_frame = tk.Frame(self.connection_window, bg="white")
         form_frame.place(relx=0.75, rely=0.5, anchor="center", relwidth=0.2, relheight=0.4)
 
-
-        # Widgets pour l'email
         email_label = tk.Label(form_frame, text="Email")
         email_label.pack(pady=(10 , 2))
         self.email_entry = tk.Entry(form_frame)
         self.email_entry.pack(fill='x', padx=10, pady=2)
 
-        # Widgets pour le mot de passe
         password_label = tk.Label(form_frame, text="Password")
         password_label.pack(pady=(10, 2))
         self.password_entry = tk.Entry(form_frame, show="*")
@@ -191,7 +185,6 @@ class HomePageApp:
         create_account_button = tk.Button(form_frame, text="Create an account", command=self.open_create_account_window)
         create_account_button.pack()
 
-        # Message d'erreur
         self.error_label = tk.Label(form_frame, text="", fg="red")
         self.error_label.pack()
 
@@ -199,7 +192,6 @@ class HomePageApp:
         email = self.email_entry.get()
         password = self.password_entry.get()
 
-        # Remplacez ceci par votre propre logique de vérification de la connection
         success, user_info = self.verify_login(email, password)
 
         if success:
@@ -208,10 +200,11 @@ class HomePageApp:
             config.last_name_user = user_info['Last_Name']
             config.user_type = user_info['Type']
             config.member_category = user_info['Category']
-            self.connection_window.destroy()
-            self.redirect_to_plane_booking()
+            self.connection_window.destroy()  # Ferme uniquement la fenêtre de connection
             self.update_ui()
             self.periodic_update()
+            if config.user_type == 'Employee':
+                self.redirect_to_employee_page(self)
         else:
             self.error_label.config(text="Email ou mot de passe incorrect!")
     def verify_login(self, email, password):
@@ -245,7 +238,6 @@ class HomePageApp:
         finally:
             conn.close()
 
-
 # Create account
     def open_create_account_window(self):
         self.create_account_window = tk.Toplevel(self.root)
@@ -257,6 +249,7 @@ class HomePageApp:
             self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
         background_label = tk.Label(self.create_account_window, image=self.background_photo)
         background_label.place(relwidth=1, relheight=1)
+
 
         image_path2 = "../Pictures/AirFly.png"
         self.image2 = tk.PhotoImage(file=image_path2)
@@ -291,7 +284,6 @@ class HomePageApp:
                                                "Employee", command=self.toggle_category_code_fields)
         self.type_option_menu.pack(fill='x', padx=50)
 
-        # Initialiser les widgets Category et Code, mais ne les afficher pas encore
         self.category_label = tk.Label(self.account_frame, text="Category", font=label_font, bg='white')
         self.category_var = tk.StringVar(value="regular")
         self.category_option_menu = ttk.OptionMenu(self.account_frame, self.category_var, "regular", "regular","senior", "child")
@@ -299,7 +291,6 @@ class HomePageApp:
         self.code_label = tk.Label(self.account_frame, text="Code")
         self.code_entry = tk.Entry(self.account_frame, show="*")
 
-        # Afficher initialement le bon widget selon la valeur par défaut de type_var
         self.toggle_category_code_fields("Member")
 
         # Email
@@ -311,15 +302,14 @@ class HomePageApp:
         tk.Label(self.account_frame, text="Password", font=label_font, bg='white').pack(pady=10)
         self.password_entry = tk.Entry(self.account_frame, font=entry_font, show="*")
         self.password_entry.pack(fill='x', padx=50)
-        # Par exemple, des Entry pour le prénom, le nom, l'email, etc.
-
         login_button = tk.Button(self.account_frame, text="Create an account", command=self.create_account, font=button_font, relief=tk.FLAT, bg='#4CAF50', fg='black')
         login_button.pack(pady=20)
 
         # Message d'erreur
         self.error_label = tk.Label(self.account_frame, text="", fg="red")
         self.error_label.pack(pady=20)
-    def toggle_category_code_fields(self):
+
+    def toggle_category_code_fields(self, *args):
         selected_type = self.type_var.get()
         if selected_type == "Employee":
             # Afficher Code, cacher Category
@@ -367,7 +357,6 @@ class HomePageApp:
                 sql = "INSERT INTO User (First_Name, Last_Name, Type, Category, Email, Password) VALUES (%s, %s, %s, %s, %s, %s)"
                 cursor.execute(sql, (first_name, last_name, type, category, email, hashed_password)) # remplacer password par hashed_password
             conn.commit()
-
         except Exception as e:
             self.error_label.config(text=f"Database error: {e}")
             return
@@ -381,7 +370,6 @@ class HomePageApp:
         category = self.category_var.get()
         email = self.email_entry.get()
         password = self.password_entry.get()
-
         if self.email_exists(email):
             self.error_label.config(text="Email already exists!")
             return
@@ -398,27 +386,6 @@ class HomePageApp:
 
 #Update appication
     def update_ui(self):
-        if hasattr(self, 'create_account_window'):
-
-            if self.type_var.get() == 'Employee':
-
-                if not hasattr(self, 'code_entry'):
-                    tk.Label(self.create_account_window, text="Code").pack(pady=10)
-                    self.code_entry = tk.Entry(self.create_account_window, show="·")
-                    self.code_entry.pack(fill='x', padx=50)
-
-
-                if hasattr(self, 'category_option_menu'):
-                    self.category_option_menu.pack_forget()
-
-            else:
-                if hasattr(self, 'code_entry'):
-                    self.code_entry.pack_forget()
-                if not hasattr(self, 'category_option_menu'):
-                    tk.Label(self.create_account_window, text="Category").pack(pady=10)
-                    self.category_option_menu = ttk.OptionMenu(self.create_account_window, self.category_var, "regular",  "regular", "senior", "child")
-                    self.category_option_menu.pack(fill='x', padx=50)
-
         if config.is_user_logged_in:
             if self.bouton_connection is not None:
                 self.bouton_connection.destroy()
@@ -426,11 +393,10 @@ class HomePageApp:
             if self.bouton_create_account is not None:
                 self.bouton_create_account.destroy()
                 self.bouton_create_account = None
-
         else:
             if self.bouton_connection is None:
                 self.bouton_connection = tk.Button(self.root, text="Connection", width=15, command=self.open_connection_window)
-                self.bouton_connection.place(x=self.bandeau_height * 5.4, y=self.bandeau_height * 0.8)
+                self.bouton_connection.place(x=self.bandeau_height * 5.3, y=self.bandeau_height * 0.8)
                 self.bouton_connection.bind('<Enter>', self.bouton_hover)
                 self.bouton_connection.bind('<Leave>', self.bouton_leave)
             if self.bouton_create_account is None:
