@@ -59,6 +59,8 @@ class HomePageApp:
 
         self.space_type_var = None
 
+        self.provenance = None
+
         self.create_header()
         self.create_buttons()
 
@@ -111,8 +113,10 @@ class HomePageApp:
         self.app = PlaneBooking.BookingApp(self.plane_booking_window)
 
     def redirect_to_home_page(self, event):
-        self.connection_window.destroy()
-        #self.create_account_window.destroy()
+        if self.provenance == 'Connection':
+            self.connection_window.destroy()
+        elif self.provenance == 'Create':
+            self.create_account_window.destroy()
 
     def redirect_to_employee_page(self, event):
         self.employeePage_window = tk.Toplevel(self.root)
@@ -134,6 +138,7 @@ class HomePageApp:
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.connection_window, image=self.image2)
         image_label2.place(x=self.header_height * 0.4, y=self.header_height * 0.3)
+        self.provenance = 'Connection'
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
         form_frame = tk.Frame(self.connection_window, bg="white")
@@ -221,7 +226,7 @@ class HomePageApp:
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.create_account_window, image=self.image2)
         image_label2.place(x=self.header_height * 0.4, y=self.header_height * 0.3)
-
+        self.provenance = 'Create'
         # Return to home page
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
