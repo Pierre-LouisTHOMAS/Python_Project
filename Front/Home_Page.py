@@ -71,16 +71,10 @@ class HomePageApp:
         image_path = "../Pictures/barre_recherche.png"
         self.image_button = tk.PhotoImage(file=image_path)
         image_button_label = tk.Label(self.root, image=self.image_button, cursor="hand2")
-        image_button_label.place(x=10, y=self.bandeau_height * 0.3)
+        image_button_label.place(x=10, y=self.window_height * 0.06)
         image_button_label.bind("<Button-1>", self.create_menu)
 
-        image_path2 = "../Pictures/Logo.png"
-        self.image2 = tk.PhotoImage(file=image_path2)
-        self.image2 = self.image2.subsample(5)
-        image_label2 = tk.Label(self.root, image=self.image2)
-        image_label2.place(x=self.bandeau_height * 0.7, y=self.bandeau_height * 0.1)
-
-        image_path3 = "../Pictures/bg1.png"
+        image_path3 = "../Pictures/Logo.png"
         self.image3 = tk.PhotoImage(file=image_path3)
         image_label3 = tk.Label(self.root, image=self.image3)
         image_label3.place(x=0, y=self.bandeau_height * 1.05, relwidth=1, relheight=0.75)
@@ -128,10 +122,12 @@ class HomePageApp:
         self.connection_window = tk.Toplevel(self.root)
         self.connection_window.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.connection_window.title("Connection")
+
         self.background_image = Image.open("../Pictures/bg2.png")
         self.background_photo = ImageTk.PhotoImage(self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
         background_label = tk.Label(self.connection_window, image=self.background_photo)
         background_label.place(relwidth=1, relheight=1)
+
         image_path2 = "../Pictures/Logo.png"
         self.image2 = tk.PhotoImage(file=image_path2)
         self.image2 = self.image2.subsample(5)
