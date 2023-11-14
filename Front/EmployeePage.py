@@ -51,11 +51,13 @@ class HomeEmployee:
             customer_menu = tk.Menu(self.menu, tearoff=0)
             sale_menu = tk.Menu(self.menu, tearoff=0)
 
+
             flight_menu.add_command(label="flight available", command=self.window_flight_available)
             flight_menu.add_command(label="flight discount offer", command=self.save)
             customer_menu.add_command(label="Customer file management", command=self.window_file_management)
             customer_menu.add_command(label="Customer reservation history", command=self.window_history_reservation)
             customer_menu.add_command(label="number of tickets purchased", command=self.window_history_reservation)
+            customer_menu.add_command(label="Account", command=self.window_account)
             sale_menu.add_command(label="Sales analysis", command=self.save)
             sale_menu.add_command(label="Amount of private flight sale", command=self.save)
             self.menu.add_cascade(label="Flight", menu=flight_menu)
@@ -109,6 +111,9 @@ class HomeEmployee:
 
     def window_flight_available(self):
         client_window = tk.Toplevel(self.root)
+        client_window.title("Flight available")
+        client_window.geometry("300x200")
+        client_window.configure(bg="white")
         self.main_frame = tk.Frame(client_window, relief="solid", borderwidth=2)
         self.main_frame.pack(padx=10, pady=10)
 
@@ -137,6 +142,30 @@ class HomeEmployee:
 
         submit_button = tk.Button(self.main_frame, text="Research", command=self.save)
         submit_button.grid(row=4, column=0, columnspan=2, pady=10)
+
+
+    def window_account(self):
+        client_window = tk.Toplevel(self.root)
+        client_window.title("Customer reservation history")
+        client_window.geometry("300x200")
+        client_window.configure(bg="white")
+
+        mail_label = tk.Label(client_window, text="Mail:")
+        mail_label.pack()
+
+        mail_entry = tk.Entry(client_window)
+        mail_entry.pack()
+
+        id_label = tk.Label(client_window, text="ID:")
+        id_label.pack()
+
+        id_entry = tk.Entry(client_window)
+        id_entry.pack()
+
+        submit_button = tk.Button(client_window, text="History", command=self.save)
+        submit_button.pack()
+        number_ticket = tk.Button(client_window, text="Number_ticket", command=self.save)
+        number_ticket.pack()
 
     def save(self):
         print("Vous avez enregistré")
