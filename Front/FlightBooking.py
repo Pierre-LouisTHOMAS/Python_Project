@@ -56,7 +56,28 @@ class FlightSelectionPage:
             port=8889
         )
         cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT Flight_ID, Departure_Date, Arrival_Date, Departure_Airport, Arrival_Airport, Price FROM Flight")
+
+        # Commencez par la requête de base
+        query = "SELECT Flight_ID, Departure_Date, Arrival_Date, Departure_Airport, Arrival_Airport, Price FROM Flight"
+
+        # Créez une liste pour les conditions WHERE et une autre pour les paramètres
+        where_conditions = []
+        params = []
+
+        # Ajoutez des conditions si des aéroports sont spécifiés
+        if config.departure_airport:
+            where_conditions.append("Departure_Airport = %s")
+            params.append(config.departure_airport)
+        if config.arrival_airport:
+            where_conditions.append("Arrival_Airport = %s")
+            params.append(config.arrival_airport)
+
+        # Si des conditions WHERE existent, ajoutez-les à la requête
+        if where_conditions:
+            query += " WHERE " + " AND ".join(where_conditions)
+
+        # Exécutez la requête avec les paramètres
+        cursor.execute(query, params)
 
         # import the database is flight_data
         flight_data = cursor.fetchall()
