@@ -8,3 +8,10 @@ flight_data = []
 #PlaneBooking
 departure_airport = None
 arrival_airport = None
+
+selected_flight_id = None
+selected_departure_date = None
+selected_arrival_date = None
+selected_departure_airport = None
+selected_arrival_airport = None
+selected_price = None

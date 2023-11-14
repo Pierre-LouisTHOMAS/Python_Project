@@ -4,6 +4,7 @@ import platform
 from tkinter import Toplevel, messagebox, ttk
 import pymysql
 import config
+import BookFlight
 
 class FlightSelectionPage:
     def __init__(self, root, departure_airport, arrival_airport):
@@ -13,7 +14,9 @@ class FlightSelectionPage:
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.root.title("AIR FLY: Flight Booking")
 
-        print("Aerport de depart", config.departure_airport)
+        self.header_height = root.winfo_screenheight() * 0.20
+        self.window_width = root.winfo_screenwidth()
+        self.window_height = root.winfo_screenheight()
 
         # Crée un canvas pour contenir la barre de défilement et un cadre intermédiaire
         canvas = tk.Canvas(root)
@@ -43,9 +46,22 @@ class FlightSelectionPage:
         content_frame.update_idletasks()
         canvas.config(scrollregion=canvas.bbox("all"))
 
+    def redirect_to_home_page(self, event):
+            self.root.destroy()
+
     def create_header(self, frame):
         header_label = tk.Label(frame, text="Select your flight", font=("Arial", 16, "bold"), bg="lightblue")
         header_label.pack(pady=20)
+
+        # logo picture
+        image_path2 = "../Pictures/AirFly.png"
+        self.image2 = tk.PhotoImage(file=image_path2)
+        self.image2 = self.image2.subsample(5)
+        image_label2 = tk.Label(self.root, image=self.image2)
+        image_label2.place(x=self.header_height * 0.7, y=self.header_height * 0.1)
+
+        # Return to home page
+        image_label2.bind("<Button-1>", self.redirect_to_home_page)
 
     def create_flight_list(self, frame):
         conn = pymysql.connect(
@@ -112,22 +128,27 @@ class FlightSelectionPage:
             image_label.image = image
             image_label.pack(side=tk.RIGHT, padx=10)
 
-            reserve_button = tk.Button(flight_frame, text="Book", command=self.redirect_to_book_flight, bg="lightblue")
+            reserve_button = tk.Button(flight_frame, text="Book", command=lambda f=flight: self.update_and_redirect(f), bg="lightblue")
             reserve_button.pack(pady=10)
 
         cursor.close()
         conn.close()
 
-    def redirect_to_book_flight(self):
-        try:
-            if platform.system() == 'Windows':
-                subprocess.Popen(["python", "BookFlight.py"], shell=True)
-            else:
-                subprocess.Popen(["python3", "BookFlight.py"])
-        except Exception as e:
-            messagebox.showerror("Error", f"Error on redirection {e}")
+    def update_and_redirect(self, flight):
+        config.selected_flight_id = flight['Flight_ID']
+        config.selected_departure_date = flight['Departure_Date']
+        config.selected_arrival_date = flight['Arrival_Date']
+        config.selected_departure_airport = flight['Departure_Airport']
+        config.selected_arrival_airport = flight['Arrival_Airport']
+        config.selected_price = flight['Price']
 
-        #for flight in flight_data:
+        self.redirect_to_book_flight()
+
+    def redirect_to_book_flight(self):
+        self.bookFlight_window = tk.Toplevel(self.root)
+        self.app = BookFlight.BookFlight(self.bookFlight_window)
+
+    #for flight in flight_data:
         #    flight_frame = tk.Frame(frame, borderwidth=2, relief=tk.GROOVE, bg="lightblue")
         #    flight_frame.pack(padx=20, pady=10, fill=tk.BOTH, expand=True)
         #
