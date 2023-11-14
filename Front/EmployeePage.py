@@ -159,9 +159,9 @@ class HomeEmployee:
     def redirect_to_open_account(self, event):
         try:
             if platform.system() == 'Windows':
-                subprocess.Popen(["python", "EmployeeAccount.py"], shell=True)
+                subprocess.Popen(["python", "AccountInformation.py"], shell=True)
             else:
-                subprocess.Popen(["python3", "EmployeeAccount.py"])
+                subprocess.Popen(["python3", "AccountInformation.py"])
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
 
