@@ -293,7 +293,7 @@ class HomePageApp:
         self.password_entry = tk.Entry(self.account_frame, font=entry_font, show="*")
         self.password_entry.pack(fill='x', padx=50)
         login_button = tk.Button(self.account_frame, text="Create an account", command=self.create_account, font=button_font, relief=tk.FLAT, bg='#4CAF50', fg='black')
-        login_button.pack(pady=20)
+        login_button.pack(pady=5)
 
         # Message d'erreur
         self.error_label = tk.Label(self.account_frame, text="", fg="red")
