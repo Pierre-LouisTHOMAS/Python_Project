@@ -27,7 +27,7 @@ class BookingApp:
         self.create_window()
 
     def redirect_to_home_page(self, event):
-        root.destroy()
+            self.root.destroy()
 
     def create_window(self):
         conn = pymysql.connect(

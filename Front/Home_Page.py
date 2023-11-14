@@ -7,6 +7,7 @@ import hashlib
 import pymysql
 
 import config #global variables
+import PlaneBooking
 
 # Home Page
 class HomePageApp:
@@ -112,13 +113,10 @@ class HomePageApp:
         print("Vous avez cliqué sur Enregistrer sous...")
 
     def redirect_to_plane_booking(self):
-        try:
-            if platform.system() == 'Windows':
-                subprocess.Popen(["python", "PlaneBooking.py"], shell=True)
-            else:
-                subprocess.Popen(["python3", "PlaneBooking.py"])
-        except Exception as e:
-            messagebox.showerror("Error", f"Error on redirection {e}")
+        self.plane_booking_window = tk.Toplevel(self.root)
+        self.plane_booking_window.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
+        self.plane_booking_window.title("Plane Booking")
+        self.app = PlaneBooking.BookingApp(self.plane_booking_window)
 
     def redirect_to_home_page(self, event):
         try:
