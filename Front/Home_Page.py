@@ -120,16 +120,6 @@ class HomePageApp:
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
 
-
-    def redirect_to_create(self):
-        try:
-            if platform.system() == 'Windows':
-                subprocess.Popen(["python", "Create_Account.py"], shell=True)
-            else:
-                subprocess.Popen(["python3", "Create_Account.py"])
-        except Exception as e:
-            messagebox.showerror("Error", f"Error on redirection {e}")
-
     def redirect_to_home_page(self, event):
         try:
             if platform.system() == 'Windows':

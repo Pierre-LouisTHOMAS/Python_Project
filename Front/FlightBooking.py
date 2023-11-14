@@ -2,6 +2,7 @@ import tkinter as tk
 import subprocess
 import platform
 from tkinter import Toplevel, messagebox, ttk
+import pymysql
 
 class FlightSelectionPage:
     def __init__(self, root):
@@ -43,28 +44,39 @@ class FlightSelectionPage:
         header_label.pack(pady=20)
 
     def create_flight_list(self, frame):
-        # Exemple de données de vol
-        flight_data = [
-            {"flight_number": "AE101", "departure": "New York", "arrival": "Los Angeles", "departure_time": "08:00 AM"},
-            {"flight_number": "AE202", "departure": "Chicago", "arrival": "San Francisco", "departure_time": "09:30 AM"},
-            {"flight_number": "AE303", "departure": "Miami", "arrival": "Houston", "departure_time": "11:15 AM"},
-            # Ajoutez plus de données de vol ici
-        ]
+        conn = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            db='AirlineDatabase',
+            port=8889
+        )
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT Flight_ID, Departure_Date, Arrival_Date, Departure_Airport, Arrival_Airport, Price FROM Flight")
+
+        # import the database is flight_data
+        flight_data = cursor.fetchall()
 
         for flight in flight_data:
             flight_frame = tk.Frame(frame, borderwidth=2, relief=tk.GROOVE, bg="lightblue")
             flight_frame.pack(padx=20, pady=10, fill=tk.BOTH, expand=True)
 
-            flight_label = tk.Label(flight_frame, text=f"Flight {flight['flight_number']}", font=("Arial", 14, "bold"), bg="lightblue")
+            flight_label = tk.Label(flight_frame, text=f"Flight number {flight['Flight_ID']}", font=("Arial", 14, "bold"), bg="lightblue")
             flight_label.pack()
 
-            departure_label = tk.Label(flight_frame, text=f"Departure: {flight['departure']}", font=("Arial", 12), bg="lightblue")
+            departure_label = tk.Label(flight_frame, text=f"Departure date: {flight['Departure_Date']}", font=("Arial", 12),bg="lightblue")
             departure_label.pack()
 
-            arrival_label = tk.Label(flight_frame, text=f"Arrival: {flight['arrival']}", font=("Arial", 12), bg="lightblue")
+            arrival_label = tk.Label(flight_frame, text=f"Arrival date: {flight['Arrival_Date']}", font=("Arial", 12), bg="lightblue")
             arrival_label.pack()
 
-            departure_time_label = tk.Label(flight_frame, text=f"Departure time: {flight['departure_time']}", font=("Arial", 12), bg="lightblue")
+            departure_label = tk.Label(flight_frame, text=f"Departure airport: {flight['Departure_Airport']}", font=("Arial", 12), bg="lightblue")
+            departure_label.pack()
+
+            arrival_label = tk.Label(flight_frame, text=f"Arrival airport: {flight['Arrival_Airport']}", font=("Arial", 12),bg="lightblue")
+            arrival_label.pack()
+
+            departure_time_label = tk.Label(flight_frame, text=f"Price: {flight['Price']}",font=("Arial", 12), bg="lightblue")
             departure_time_label.pack()
 
             image_path = "../Pictures/avionResa.png"
@@ -78,6 +90,9 @@ class FlightSelectionPage:
             reserve_button = tk.Button(flight_frame, text="Book", command=self.redirect_to_book_flight, bg="lightblue")
             reserve_button.pack(pady=10)
 
+        cursor.close()
+        conn.close()
+
     def redirect_to_book_flight(self):
         try:
             if platform.system() == 'Windows':
@@ -86,6 +101,34 @@ class FlightSelectionPage:
                 subprocess.Popen(["python3", "BookFlight.py"])
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
+
+        #for flight in flight_data:
+        #    flight_frame = tk.Frame(frame, borderwidth=2, relief=tk.GROOVE, bg="lightblue")
+        #    flight_frame.pack(padx=20, pady=10, fill=tk.BOTH, expand=True)
+        #
+        #    flight_label = tk.Label(flight_frame, text=f"Flight {flight['flight_number']}", font=("Arial", 14, "bold"), bg="lightblue")
+        #    flight_label.pack()
+        #
+        #    departure_label = tk.Label(flight_frame, text=f"Departure: {flight['departure']}", font=("Arial", 12), bg="lightblue")
+        #    departure_label.pack()
+        #
+        #    arrival_label = tk.Label(flight_frame, text=f"Arrival: {flight['arrival']}", font=("Arial", 12), bg="lightblue")
+        #    arrival_label.pack()
+        #
+        #    departure_time_label = tk.Label(flight_frame, text=f"Departure time: {flight['departure_time']}", font=("Arial", 12), bg="lightblue")
+        #    departure_time_label.pack()
+        #
+        #    image_path = "../Pictures/avionResa.png"
+        #    image = tk.PhotoImage(file=image_path)
+        #    image = image.subsample(3)
+        #
+        #    image_label = tk.Label(flight_frame, image=image, bg="lightblue")
+        #    image_label.image = image
+        #    image_label.pack(side=tk.RIGHT, padx=10)
+        #
+        #    reserve_button = tk.Button(flight_frame, text="Book", command=lambda f=flight: self.reserve_flight(f), bg="lightblue")
+        #    reserve_button.pack(pady=10)
+
     def reserve_flight(self, selected_flight):
         print(f"Selected Flight: Flight {selected_flight['flight_number']}, Departure: {selected_flight['departure']}, Arrival: {selected_flight['arrival']}")
 
