@@ -3,3 +3,8 @@ first_name_user = ""
 last_name_user = ""
 user_type = 0
 member_category = 0
+flight_data = []
+
+#PlaneBooking
+departure_airport = None
+arrival_airport = None

@@ -3,10 +3,13 @@ import subprocess
 import platform
 from tkinter import Toplevel, messagebox, ttk
 import pymysql
+import config
 
 class FlightSelectionPage:
-    def __init__(self, root):
+    def __init__(self, root, departure_airport, arrival_airport):
         self.root = root
+        self.departure_airport = departure_airport
+        self.arrival_airport = arrival_airport
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.root.title("AIR FLY: Flight Booking")
 
