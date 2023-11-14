@@ -1,4 +1,7 @@
 import tkinter as tk
+import subprocess
+import platform
+from tkinter import Toplevel, messagebox, ttk
 
 class FlightSelectionPage:
     def __init__(self, root):
@@ -72,9 +75,17 @@ class FlightSelectionPage:
             image_label.image = image
             image_label.pack(side=tk.RIGHT, padx=10)
 
-            reserve_button = tk.Button(flight_frame, text="Book", command=lambda f=flight: self.reserve_flight(f), bg="lightblue")
+            reserve_button = tk.Button(flight_frame, text="Book", command=self.redirect_to_book_flight, bg="lightblue")
             reserve_button.pack(pady=10)
 
+    def redirect_to_book_flight(self):
+        try:
+            if platform.system() == 'Windows':
+                subprocess.Popen(["python", "BookFlight.py"], shell=True)
+            else:
+                subprocess.Popen(["python3", "BookFlight.py"])
+        except Exception as e:
+            messagebox.showerror("Error", f"Error on redirection {e}")
     def reserve_flight(self, selected_flight):
         print(f"Selected Flight: Flight {selected_flight['flight_number']}, Departure: {selected_flight['departure']}, Arrival: {selected_flight['arrival']}")
 
