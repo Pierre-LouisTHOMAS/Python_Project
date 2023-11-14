@@ -8,6 +8,7 @@ import pymysql
 
 import config #global variables
 import PlaneBooking
+import EmployeePage
 
 # Home Page
 class HomePageApp:
@@ -114,27 +115,14 @@ class HomePageApp:
 
     def redirect_to_plane_booking(self):
         self.plane_booking_window = tk.Toplevel(self.root)
-        self.plane_booking_window.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
-        self.plane_booking_window.title("Plane Booking")
         self.app = PlaneBooking.BookingApp(self.plane_booking_window)
 
     def redirect_to_home_page(self, event):
-        try:
-            if platform.system() == 'Windows':
-                subprocess.Popen(["python", "Home_Page.py"], shell=True)
-            else:
-                subprocess.Popen(["python3", "Home_Page.py"])
-        except Exception as e:
-            messagebox.showerror("Error", f"Error on redirection {e}")
+        self.connection_window.destroy()
 
     def redirect_to_employee_page(self, event):
-        try:
-            if platform.system() == 'Windows':
-                subprocess.Popen(["python", "EmployeePage.py"], shell=True)
-            else:
-                subprocess.Popen(["python3", "EmployeePage.py"])
-        except Exception as e:
-            messagebox.showerror("Error", f"Error on redirection {e}")
+        self.employeePage_window = tk.Toplevel(self.root)
+        self.app = EmployeePage.HomeEmployee(self.employeePage_window)
 
     def open_connection_window(self):
         self.connection_window = tk.Toplevel(self.root)

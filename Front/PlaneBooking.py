@@ -13,7 +13,7 @@ class BookingApp:
     def __init__(self, root):
         self.root = root
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
-        self.root.title("AIR ENGLAND:flight booking")
+        self.root.title("AIR ENGLAND:Plane booking")
 
         self.header_height = root.winfo_screenheight() * 0.20
         self.window_width = root.winfo_screenwidth()
@@ -129,8 +129,8 @@ class BookingApp:
             config.departure_airport = self.departure_var.get()
             config.arrival_airport = self.arrival_var.get()
 
-            self.new_window = tk.Toplevel(self.root)
-            self.app = FlightBooking.FlightSelectionPage(self.new_window, config.departure_airport, config.arrival_airport)
+            self.flightBooking_window = tk.Toplevel(self.root)
+            self.app = FlightBooking.FlightSelectionPage(self.flightBooking_window, config.departure_airport, config.arrival_airport)
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
 

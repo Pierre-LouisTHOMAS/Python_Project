@@ -16,6 +16,9 @@ class HomeEmployee:
 
         self.create_header()
 
+    def redirect_to_home_page(self, event):
+        self.root.destroy()  # Ferme uniquement la fenêtre de connection
+
     def create_header(self):
         self.canvas = tk.Canvas(self.root, bg="white")
         self.canvas.place(x=0, y=0, relwidth=1, relheight=0.20)
@@ -34,6 +37,7 @@ class HomeEmployee:
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.root, image=self.image2, bg="white")
         image_label2.place(x=self.header_height * 2.5, y=self.header_height * 0.2)
+        image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
         image_path4 = "../Pictures/AccountPicture.png"
         self.image4 = tk.PhotoImage(file=image_path4)
