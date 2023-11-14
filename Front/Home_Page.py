@@ -139,6 +139,15 @@ class HomePageApp:
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
 
+    def redirect_to_employee_page(self, event):
+        try:
+            if platform.system() == 'Windows':
+                subprocess.Popen(["python", "EmployeePage.py"], shell=True)
+            else:
+                subprocess.Popen(["python3", "EmployeePage.py"])
+        except Exception as e:
+            messagebox.showerror("Error", f"Error on redirection {e}")
+
     def open_connection_window(self):
         self.connection_window = tk.Toplevel(self.root)
         self.connection_window.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
@@ -199,7 +208,8 @@ class HomePageApp:
             config.last_name_user = user_info['Last_Name']
             config.user_type = user_info['Type']
             config.member_category = user_info['Category']
-            self.connection_window.destroy()  # Ferme uniquement la fenêtre de connection
+            self.connection_window.destroy()
+            self.redirect_to_plane_booking()
             self.update_ui()
             self.periodic_update()
         else:
@@ -247,7 +257,6 @@ class HomePageApp:
             self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
         background_label = tk.Label(self.create_account_window, image=self.background_photo)
         background_label.place(relwidth=1, relheight=1)
-
 
         image_path2 = "../Pictures/AirFly.png"
         self.image2 = tk.PhotoImage(file=image_path2)
@@ -310,8 +319,7 @@ class HomePageApp:
         # Message d'erreur
         self.error_label = tk.Label(self.account_frame, text="", fg="red")
         self.error_label.pack(pady=20)
-
-    def toggle_category_code_fields(self, *args):
+    def toggle_category_code_fields(self):
         selected_type = self.type_var.get()
         if selected_type == "Employee":
             # Afficher Code, cacher Category
@@ -333,6 +341,7 @@ class HomePageApp:
             db='AirlineDatabase',
             port=8889
         )
+
         try:
             with conn.cursor() as cursor:
                 sql = "SELECT * FROM user WHERE Email = %s"
@@ -351,6 +360,7 @@ class HomePageApp:
             db='AirlineDatabase',
             port=8889
         )
+
         try:
             with conn.cursor() as cursor:
                 hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
@@ -381,7 +391,6 @@ class HomePageApp:
         if type == 'Employee' and code != '12':
             self.error_label.config(text="You are not a Employee")
             return
-
         self.insert_client(first_name, last_name, type, category, email, password)
         messagebox.showinfo("Success", "Account created successfully!")
         self.create_account_window.destroy()
@@ -390,48 +399,27 @@ class HomePageApp:
 #Update appication
     def update_ui(self):
         if hasattr(self, 'create_account_window'):
-            # Gérer l'affichage des champs "Code" et "Category"
+
             if self.type_var.get() == 'Employee':
-                # S'assurer que le champ "Code" est affiché
+
                 if not hasattr(self, 'code_entry'):
                     tk.Label(self.create_account_window, text="Code").pack(pady=10)
                     self.code_entry = tk.Entry(self.create_account_window, show="·")
                     self.code_entry.pack(fill='x', padx=50)
 
-                # Cacher le menu déroulant "Category" s'il existe
+
                 if hasattr(self, 'category_option_menu'):
                     self.category_option_menu.pack_forget()
 
             else:
-                # Cacher le champ "Code" s'il existe
                 if hasattr(self, 'code_entry'):
                     self.code_entry.pack_forget()
-
-                # Afficher le menu déroulant "Category"
                 if not hasattr(self, 'category_option_menu'):
                     tk.Label(self.create_account_window, text="Category").pack(pady=10)
                     self.category_option_menu = ttk.OptionMenu(self.create_account_window, self.category_var, "regular",  "regular", "senior", "child")
                     self.category_option_menu.pack(fill='x', padx=50)
 
         if config.is_user_logged_in:
-            if config.user_type == 'Member':
-                user_info_text = f"Member : {config.first_name_user} {config.last_name_user}\nType: {config.member_category}"
-            elif config.user_type == 'Employee':
-                user_info_text = f"Employee : {config.first_name_user} {config.last_name_user}"
-            else:
-                user_info_text = "You are a guest"
-
-            if not hasattr(self, 'user_info_frame'):
-                self.user_info_frame = tk.Frame(self.root, bg='white', borderwidth=2, relief='ridge')
-                self.user_info_label = tk.Label(self.user_info_frame, text=user_info_text, bg='white')
-                self.user_info_label.pack(padx=10, pady=10)
-                self.user_info_frame.place(relx=1, rely=0, relwidth=0.25, relheight=0.1, anchor='ne')
-            else:
-                self.user_info_label.config(text=user_info_text)
-
-            self.login_frame.place(relx=1, rely=0, relwidth=0.25, relheight=0.1, anchor='ne')
-            self.email_label.config(text=user_info_text)
-
             if self.bouton_connection is not None:
                 self.bouton_connection.destroy()
                 self.bouton_connection = None
@@ -454,6 +442,7 @@ class HomePageApp:
     def periodic_update(self):
         self.update_ui()
         self.root.after(500, self.periodic_update)
+
 
 
 if __name__ == "__main__":
