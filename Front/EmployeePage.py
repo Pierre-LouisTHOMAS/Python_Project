@@ -39,6 +39,7 @@ class HomeEmployee:
         image_label2.place(x=self.header_height * 2.5, y=self.header_height * 0.2)
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
+
         image_path4 = "../Pictures/AccountPicture.png"
         self.image4 = tk.PhotoImage(file=image_path4)
         self.image4 = self.image4.subsample(6)
