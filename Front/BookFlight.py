@@ -10,7 +10,7 @@ class BookFlight:
     def __init__(self, root):
         self.root = root
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
-        self.root.title("AIR ENGLAND: Book Page")
+        self.root.title("Sky Travellers: Book Page")
 
         self.header_height = root.winfo_screenheight() * 0.22
         self.window_width = root.winfo_screenwidth()

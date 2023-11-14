@@ -64,7 +64,6 @@ class HomePageApp:
 
         self.periodic_update()
 
-
     def create_header(self):
         self.canvas = tk.Canvas(self.root, bg="white")
         self.canvas.place(x=0, y=0, relwidth=1, relheight=0.20)

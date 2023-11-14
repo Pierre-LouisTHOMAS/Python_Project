@@ -12,7 +12,7 @@ class FlightSelectionPage:
         self.departure_airport = departure_airport
         self.arrival_airport = arrival_airport
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
-        self.root.title("AIR FLY: Flight Booking")
+        self.root.title("Sky Travellers: Flight Research Result")
 
         self.header_height = root.winfo_screenheight() * 0.20
         self.window_width = root.winfo_screenwidth()

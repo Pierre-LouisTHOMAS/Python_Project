@@ -13,7 +13,7 @@ class BookingApp:
     def __init__(self, root):
         self.root = root
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
-        self.root.title("AIR ENGLAND:Plane booking")
+        self.root.title("Sky Travellers: Flight Research")
 
         self.header_height = root.winfo_screenheight() * 0.20
         self.window_width = root.winfo_screenwidth()
