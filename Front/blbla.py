@@ -20,7 +20,9 @@ class FlightSelectionPage:
 
         # Crée un cadre à l'intérieur du canvas
         frame = tk.Frame(canvas, bg="lightblue")
-        canvas.create_window((0, 0), window=frame, anchor="nw")
+        #canvas.create_window((0, 0), window=frame, anchor="nw")
+        canvas.create_window((0, 0), window=frame, anchor="nw", width=root.winfo_screenwidth())
+
 
         # Crée un cadre pour le contenu de la page
         content_frame = tk.Frame(frame, bg="lightblue")
