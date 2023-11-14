@@ -24,8 +24,7 @@ class BookFlight:
         self.root.destroy()
     def create_window(self):
         self.background_image = Image.open("../Pictures/bg2.png")
-        self.background_photo = ImageTk.PhotoImage(
-            self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
+        self.background_photo = ImageTk.PhotoImage(self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
         background_label = tk.Label(self.root, image=self.background_photo)
         background_label.place(relwidth=1, relheight=1)
 
