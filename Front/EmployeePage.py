@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkcalendar import DateEntry
 from tkinter import Label, ttk
+from tkinter import Toplevel, messagebox, ttk
+import subprocess
+import platform
 
 class HomeEmployee:
     def __init__(self, root):
@@ -30,7 +33,14 @@ class HomeEmployee:
         self.image2 = tk.PhotoImage(file=image_path2)
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.root, image=self.image2, bg="white")
-        image_label2.place(x=self.header_height * 6.5, y=self.header_height * 0.1)
+        image_label2.place(x=self.header_height * 2.5, y=self.header_height * 0.2)
+
+        image_path4 = "../Pictures/AccountPicture.png"
+        self.image4 = tk.PhotoImage(file=image_path4)
+        self.image4 = self.image4.subsample(6)
+        image_label4 = tk.Label(self.root, image=self.image4, bg="white")
+        image_label4.place(x=self.header_height * 7.4, y=self.header_height * 0.3)
+        image_label4.bind("<Button-1>", self.redirect_to_open_account)
 
         image_path3 = "../Pictures/Boreale.png"
         self.image3 = tk.PhotoImage(file=image_path3)
@@ -57,7 +67,6 @@ class HomeEmployee:
             customer_menu.add_command(label="Customer file management", command=self.window_file_management)
             customer_menu.add_command(label="Customer reservation history", command=self.window_history_reservation)
             customer_menu.add_command(label="number of tickets purchased", command=self.window_history_reservation)
-            customer_menu.add_command(label="Account", command=self.window_account)
             sale_menu.add_command(label="Sales analysis", command=self.save)
             sale_menu.add_command(label="Amount of private flight sale", command=self.save)
             self.menu.add_cascade(label="Flight", menu=flight_menu)
@@ -143,29 +152,15 @@ class HomeEmployee:
         submit_button = tk.Button(self.main_frame, text="Research", command=self.save)
         submit_button.grid(row=4, column=0, columnspan=2, pady=10)
 
+    def redirect_to_open_account(self, event):
+        try:
+            if platform.system() == 'Windows':
+                subprocess.Popen(["python", "EmployeeAccount.py"], shell=True)
+            else:
+                subprocess.Popen(["python3", "EmployeeAccount.py"])
+        except Exception as e:
+            messagebox.showerror("Error", f"Error on redirection {e}")
 
-    def window_account(self):
-        client_window = tk.Toplevel(self.root)
-        client_window.title("Customer reservation history")
-        client_window.geometry("300x200")
-        client_window.configure(bg="white")
-
-        mail_label = tk.Label(client_window, text="Mail:")
-        mail_label.pack()
-
-        mail_entry = tk.Entry(client_window)
-        mail_entry.pack()
-
-        id_label = tk.Label(client_window, text="ID:")
-        id_label.pack()
-
-        id_entry = tk.Entry(client_window)
-        id_entry.pack()
-
-        submit_button = tk.Button(client_window, text="History", command=self.save)
-        submit_button.pack()
-        number_ticket = tk.Button(client_window, text="Number_ticket", command=self.save)
-        number_ticket.pack()
 
     def save(self):
         print("Vous avez enregistré")
