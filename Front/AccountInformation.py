@@ -1,6 +1,4 @@
 import tkinter as tk
-from tkcalendar import DateEntry
-from tkinter import Label, ttk, messagebox
 from PIL import Image, ImageTk
 
 import config
@@ -50,34 +48,20 @@ class EmployeeAccount:
         # Return to home page
         image_label2.bind("<Button-1>", self.redirect_to_home_page)
 
+
         title_label = tk.Label(self.main_frame, text="Employee Account", font=("Helvetica", 16))
         title_label.grid(row=0, column=0, columnspan=2, pady=10)
 
-        user_name_label = tk.Label(self.main_frame, text="Name:")
-        user_name_label.grid(row=3, column=0, pady=5)
-        user_name_entry = tk.Entry(self.main_frame)
-        user_name_entry.grid(row=3, column=1, pady=5)
+        user_info_label = tk.Label(self.main_frame, text="User information:")
+        user_info_label.grid(row=6, column=0, columnspan=2, pady=10)
 
-        user_surname_label = tk.Label(self.main_frame, text="Surname:")
-        user_surname_label.grid(row=4, column=0, pady=5)
-        user_surname_entry = tk.Entry(self.main_frame)
-        user_surname_entry.grid(row=4, column=1, pady=5)
+        if config.user_type != 'Employee':
+            user_info_text = f"First Name: {config.first_name_user}\nName: {config.last_name_user}\nType: {config.user_type}\nCategory: {config.member_category}"
+        else:
+            user_info_text = f"First Name: {config.first_name_user}\nName: {config.last_name_user}\nType: {config.user_type}"
 
-        user_email_label = tk.Label(self.main_frame, text="Email:")
-        user_email_label.grid(row=1, column=0, pady=5)
-        user_email_entry = tk.Entry(self.main_frame)
-        user_email_entry.grid(row=1, column=1, pady=5)
-
-        user_password_label = tk.Label(self.main_frame, text="Password:")
-        user_password_label.grid(row=2, column=0, pady=5)
-        user_password_entry = tk.Entry(self.main_frame, show="*")
-        user_password_entry.grid(row=2, column=1, pady=5)
-
-        image_path = "../Pictures/AccountPicture.png"
-        self.image = tk.PhotoImage(file=image_path)
-        self.image = self.image.subsample(4)
-        image_label = Label(self.main_frame, image=self.image)
-        image_label.grid(row=0, column=2, rowspan=7, padx=10)
+        user_info_display = tk.Label(self.main_frame, text=user_info_text)
+        user_info_display.grid(row=7, column=0, columnspan=2, pady=5)
 
 if __name__ == "__main__":
     root = tk.Tk()

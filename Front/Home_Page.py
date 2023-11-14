@@ -1,7 +1,5 @@
 import tkinter as tk
 from tkinter import Toplevel, messagebox, ttk
-import subprocess
-import platform
 from PIL import Image, ImageTk
 import hashlib
 import pymysql
@@ -9,6 +7,8 @@ import pymysql
 import config #global variables
 import PlaneBooking
 import EmployeePage
+import AccountInformation
+
 
 # Home Page
 class HomePageApp:
@@ -340,10 +340,22 @@ class HomePageApp:
         messagebox.showinfo("Success", "Account created successfully!")
         self.create_account_window.destroy()
 
+    def redirect_to_account_information(self, event):
+        self.accountPage_window = tk.Toplevel(self.root)
+        self.app = AccountInformation.EmployeeAccount(self.accountPage_window)
+
+
 #Update appication
     def update_ui(self):
         if config.is_user_logged_in:
             print("It's a guest")
+            image_path4 = "../Pictures/AccountPicture.png"
+            self.image4 = tk.PhotoImage(file=image_path4)
+            self.image4 = self.image4.subsample(6)
+            image_label4 = tk.Label(self.root, image=self.image4, bg="white")
+            image_label4.place(x=self.window_width * 0.93, y=self.window_height * 0.04)
+            image_label4.bind("<Button-1>", self.redirect_to_account_information)
+
             if self.bouton_connection is not None:
                 self.bouton_connection.destroy()
                 self.bouton_connection = None

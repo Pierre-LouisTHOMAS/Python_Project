@@ -4,6 +4,7 @@ from tkinter import Label, ttk
 from tkinter import Toplevel, messagebox, ttk
 import subprocess
 import platform
+import AccountInformation
 
 class HomeEmployee:
     def __init__(self, root):
@@ -48,7 +49,7 @@ class HomeEmployee:
         self.image4 = self.image4.subsample(6)
         image_label4 = tk.Label(self.root, image=self.image4, bg="white")
         image_label4.place(x=self.window_width * 0.93, y=self.window_height * 0.04)
-        image_label4.bind("<Button-1>", self.redirect_to_open_account)
+        image_label4.bind("<Button-1>", self.redirect_to_account_information)
 
         image_path3 = "../Pictures/bg4.png"
         self.image3 = tk.PhotoImage(file=image_path3)
@@ -160,15 +161,9 @@ class HomeEmployee:
         submit_button = tk.Button(self.main_frame, text="Research", command=self.save)
         submit_button.grid(row=4, column=0, columnspan=2, pady=10)
 
-    def redirect_to_open_account(self, event):
-        try:
-            if platform.system() == 'Windows':
-                subprocess.Popen(["python", "AccountInformation.py"], shell=True)
-            else:
-                subprocess.Popen(["python3", "AccountInformation.py"])
-        except Exception as e:
-            messagebox.showerror("Error", f"Error on redirection {e}")
-
+    def redirect_to_account_information(self, event):
+        self.accountPage_window = tk.Toplevel(self.root)
+        self.app = AccountInformation.EmployeeAccount(self.accountPage_window)
 
     def save(self):
         print("Vous avez enregistré")
