@@ -363,6 +363,7 @@ class HomePageApp:
 #Update appication
     def update_ui(self):
         if config.is_user_logged_in:
+            print("It's a guest")
             if self.bouton_connection is not None:
                 self.bouton_connection.destroy()
                 self.bouton_connection = None
