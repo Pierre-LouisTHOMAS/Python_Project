@@ -11,6 +11,9 @@ class HomeEmployee:
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.root.title("AIR ENGLAND: Home Page")
 
+        self.window_width = root.winfo_screenwidth()
+        self.window_height = root.winfo_screenheight()
+
         self.header_height = root.winfo_screenheight() * 0.22
         self.menu = None
 
@@ -44,7 +47,7 @@ class HomeEmployee:
         self.image4 = tk.PhotoImage(file=image_path4)
         self.image4 = self.image4.subsample(6)
         image_label4 = tk.Label(self.root, image=self.image4, bg="white")
-        image_label4.place(x=self.header_height * 4.4, y=self.header_height * 0.3)
+        image_label4.place(x=self.window_width * 0.9, y=self.header_height * 0.3)
         image_label4.bind("<Button-1>", self.redirect_to_open_account)
 
         image_path3 = "../Pictures/Boreale.png"
