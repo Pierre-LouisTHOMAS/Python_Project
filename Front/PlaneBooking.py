@@ -5,6 +5,7 @@ import subprocess
 import platform
 from PIL import Image, ImageTk
 
+import config
 
 class BookingApp:
     def __init__(self, root):
@@ -21,13 +22,7 @@ class BookingApp:
         self.create_window()
 
     def redirect_to_home_page(self, event):
-        try:
-            if platform.system() == 'Windows':
-                subprocess.Popen(["python", "Home_Page.py"], shell=True)
-            else:
-                subprocess.Popen(["python3", "Home_Page.py"])
-        except Exception as e:
-            messagebox.showerror("Error", f"Error on redirection {e}")
+        root.destroy()
 
 
 
