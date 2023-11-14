@@ -29,17 +29,14 @@ class BookFlight:
         image_label2 = tk.Label(self.root, image=self.image2, bg="white")
         image_label2.place(x=self.header_height * 6.5, y=self.header_height * 0.1)
 
-        # Create a white frame in the middle
         frame_width = 400
         frame_height = 250
         white_frame = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height)
         white_frame.place(relx=0.5, rely=0.5, anchor='center')
 
-        # Display flight information inside the white frame
         flight_info_label = tk.Label(white_frame, text="Flight Information", font=("Helvetica", 16), bg="white")
         flight_info_label.pack(pady=20)
 
-        # Example flight information
         departure_airport = "Londres"
         arrival_airport = "Paris"
         departure_time = "12:00 PM"
@@ -49,7 +46,7 @@ class BookFlight:
         labels_frame = tk.Frame(white_frame, bg="white")
         labels_frame.pack()
 
-        # Labels to distinguish information
+
         departure_label = tk.Label(labels_frame, text=f"Departure: {departure_airport}", bg="white", font=("Helvetica", 12))
         departure_label.pack(pady=5)
 
@@ -62,11 +59,9 @@ class BookFlight:
         arrival_time_label = tk.Label(labels_frame, text=f"Arrival Time: {arrival_time}", bg="white", font=("Helvetica", 12))
         arrival_time_label.pack(pady=5)
 
-        # Display the price in a larger font
         price_label = tk.Label(white_frame, text=f"Price: {price}", bg="white", font=("Helvetica", 14, "bold"))
         price_label.pack(pady=10)
 
-        # "Pay" button
         pay_button = tk.Button(white_frame, text="Pay", command=self.pay, font=("Helvetica", 12, "bold"), bg='#4CAF50',
                                fg='white')
         pay_button.pack(pady=10)
