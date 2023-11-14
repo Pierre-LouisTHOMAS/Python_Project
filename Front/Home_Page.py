@@ -48,7 +48,7 @@ class HomePageApp:
         self.password_label_create_account.place(relx=0.1, rely=8.5)
 
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
-        self.root.title("AIR ENGLAND: Home Page")
+        self.root.title("SkyTravellers: Home Page")
         self.bandeau_height = root.winfo_screenheight() * 0.22
         self.menu = None
 
@@ -75,13 +75,13 @@ class HomePageApp:
         image_button_label.place(x=10, y=self.bandeau_height * 0.3)
         image_button_label.bind("<Button-1>", self.create_menu)
 
-        image_path2 = "../Pictures/AirFly.png"
+        image_path2 = "../Pictures/Logo.png"
         self.image2 = tk.PhotoImage(file=image_path2)
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.root, image=self.image2)
         image_label2.place(x=self.bandeau_height * 0.7, y=self.bandeau_height * 0.1)
 
-        image_path3 = "../Pictures/Boreale.png"
+        image_path3 = "../Pictures/bg1.png"
         self.image3 = tk.PhotoImage(file=image_path3)
         image_label3 = tk.Label(self.root, image=self.image3)
         image_label3.place(x=0, y=self.bandeau_height * 1.05, relwidth=1, relheight=0.75)
@@ -119,6 +119,7 @@ class HomePageApp:
 
     def redirect_to_home_page(self, event):
         self.connection_window.destroy()
+        #self.create_account_window.destroy()
 
     def redirect_to_employee_page(self, event):
         self.employeePage_window = tk.Toplevel(self.root)
@@ -128,36 +129,29 @@ class HomePageApp:
         self.connection_window = tk.Toplevel(self.root)
         self.connection_window.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.connection_window.title("Connection")
-
-        self.background_image = Image.open("../Pictures/Boreale.png")
+        self.background_image = Image.open("../Pictures/bg2.png")
         self.background_photo = ImageTk.PhotoImage(self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
         background_label = tk.Label(self.connection_window, image=self.background_photo)
         background_label.place(relwidth=1, relheight=1)
-
-        image_path2 = "../Pictures/AirFly.png"
+        image_path2 = "../Pictures/Logo.png"
         self.image2 = tk.PhotoImage(file=image_path2)
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.connection_window, image=self.image2)
         image_label2.place(x=self.header_height * 0.4, y=self.header_height * 0.3)
-
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
         form_frame = tk.Frame(self.connection_window, bg="white")
         form_frame.place(relx=0.75, rely=0.5, anchor="center", relwidth=0.2, relheight=0.4)
-
         email_label = tk.Label(form_frame, text="Email")
         email_label.pack(pady=(10 , 2))
         self.email_entry = tk.Entry(form_frame)
         self.email_entry.pack(fill='x', padx=10, pady=2)
-
         password_label = tk.Label(form_frame, text="Password")
         password_label.pack(pady=(10, 2))
         self.password_entry = tk.Entry(form_frame, show="*")
         self.password_entry.pack(fill='x', padx=10, pady=2)
-
         login_button = tk.Button(form_frame, text="connection", command=self.login)
         login_button.pack(pady=10)
-
         create_account_button = tk.Button(form_frame, text="Create an account", command=self.open_create_account_window)
         create_account_button.pack()
 
@@ -167,9 +161,7 @@ class HomePageApp:
     def login(self):
         email = self.email_entry.get()
         password = self.password_entry.get()
-
         success, user_info = self.verify_login(email, password)
-
         if success:
             config.is_user_logged_in = True
             config.first_name_user = user_info['First_Name']
@@ -194,7 +186,6 @@ class HomePageApp:
         try:
             with conn.cursor() as cursor:
                 hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-
                 cursor.execute("SELECT First_Name, Last_Name, Type, Category FROM User WHERE email = %s AND password = %s", (email, hashed_password))
                 result = cursor.fetchone()
                 if result:
@@ -219,15 +210,12 @@ class HomePageApp:
         self.create_account_window = tk.Toplevel(self.root)
         self.create_account_window.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.create_account_window.title("Create an account")
-
-        self.background_image = Image.open("../Pictures/Boreale.png")
-        self.background_photo = ImageTk.PhotoImage(
-            self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
+        self.background_image = Image.open("../Pictures/bg3.png")
+        self.background_photo = ImageTk.PhotoImage(self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
         background_label = tk.Label(self.create_account_window, image=self.background_photo)
         background_label.place(relwidth=1, relheight=1)
 
-
-        image_path2 = "../Pictures/AirFly.png"
+        image_path2 = "../Pictures/Logo.png"
         self.image2 = tk.PhotoImage(file=image_path2)
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.create_account_window, image=self.image2)
@@ -284,7 +272,6 @@ class HomePageApp:
         # Message d'erreur
         self.error_label = tk.Label(self.account_frame, text="", fg="red")
         self.error_label.pack(pady=20)
-
     def toggle_category_code_fields(self, *args):
         selected_type = self.type_var.get()
         if selected_type == "Employee":
@@ -307,7 +294,6 @@ class HomePageApp:
             db='AirlineDatabase',
             port=8889
         )
-
         try:
             with conn.cursor() as cursor:
                 sql = "SELECT * FROM user WHERE Email = %s"
@@ -326,7 +312,6 @@ class HomePageApp:
             db='AirlineDatabase',
             port=8889
         )
-
         try:
             with conn.cursor() as cursor:
                 hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
@@ -346,6 +331,7 @@ class HomePageApp:
         category = self.category_var.get()
         email = self.email_entry.get()
         password = self.password_entry.get()
+
         if self.email_exists(email):
             self.error_label.config(text="Email already exists!")
             return
@@ -359,7 +345,6 @@ class HomePageApp:
         messagebox.showinfo("Success", "Account created successfully!")
         self.create_account_window.destroy()
 
-
 #Update appication
     def update_ui(self):
         if config.is_user_logged_in:
@@ -370,6 +355,7 @@ class HomePageApp:
             if self.bouton_create_account is not None:
                 self.bouton_create_account.destroy()
                 self.bouton_create_account = None
+
         else:
             if self.bouton_connection is None:
                 self.bouton_connection = tk.Button(self.root, text="Connection", width=15, command=self.open_connection_window)
@@ -383,6 +369,7 @@ class HomePageApp:
                 self.bouton_create_account.bind('<Leave>', self.bouton_leave)
 
     def periodic_update(self):
+
         self.update_ui()
         self.root.after(500, self.periodic_update)
 

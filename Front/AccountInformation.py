@@ -25,7 +25,7 @@ class EmployeeAccount:
 
 
     def create_window(self):
-        self.background_image = Image.open("../Pictures/Boreale.png")
+        self.background_image = Image.open("../Pictures/bg3.png")
         self.background_photo = ImageTk.PhotoImage(
             self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
         background_label = tk.Label(self.root, image=self.background_photo)
@@ -41,7 +41,7 @@ class EmployeeAccount:
         self.main_frame.grid(row=1, column=1, padx=150, pady=15, sticky="e")
 
         # logo picture
-        image_path2 = "../Pictures/AirFly.png"
+        image_path2 = "../Pictures/Logo.png"
         self.image2 = tk.PhotoImage(file=image_path2)
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.root, image=self.image2)

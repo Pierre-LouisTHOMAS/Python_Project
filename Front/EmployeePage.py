@@ -9,7 +9,7 @@ class HomeEmployee:
     def __init__(self, root):
         self.root = root
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
-        self.root.title("AIR ENGLAND: Home Page")
+        self.root.title("Sky Travellers: Employee Page")
 
         self.window_width = root.winfo_screenwidth()
         self.window_height = root.winfo_screenheight()
@@ -27,19 +27,19 @@ class HomeEmployee:
         self.canvas.place(x=0, y=0, relwidth=1, relheight=0.20)
 
         title_label = tk.Label(self.root, text="Employee home page",font=("Arial", 20, "bold italic"), bg="white")
-        title_label.place(x=self.header_height * 3.2, y=self.header_height * 0.4)
+        title_label.place(x=self.window_width * 0.43, y=self.window_height * 0.07)
 
         image_path = "../Pictures/barre_recherche.png"
         self.image_button = tk.PhotoImage(file=image_path)
         image_button_label = tk.Label(self.root, image=self.image_button, cursor="hand2", bg="white")
-        image_button_label.place(x=self.header_height * 0.2, y=self.header_height * 0.3)
+        image_button_label.place(x=self.window_width * 0.01, y=self.window_height * 0.06)
         image_button_label.bind("<Button-1>", self.create_menu)
 
-        image_path2 = "../Pictures/AirFly.png"
+        image_path2 = "../Pictures/Logo.png"
         self.image2 = tk.PhotoImage(file=image_path2)
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.root, image=self.image2, bg="white")
-        image_label2.place(x=self.header_height * 2.5, y=self.header_height * 0.2)
+        image_label2.place(x=self.window_width * 0.35, y=self.window_height * 0.03)
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
 
@@ -47,13 +47,13 @@ class HomeEmployee:
         self.image4 = tk.PhotoImage(file=image_path4)
         self.image4 = self.image4.subsample(6)
         image_label4 = tk.Label(self.root, image=self.image4, bg="white")
-        image_label4.place(x=self.window_width * 0.9, y=self.header_height * 0.3)
+        image_label4.place(x=self.window_width * 0.93, y=self.window_height * 0.04)
         image_label4.bind("<Button-1>", self.redirect_to_open_account)
 
-        image_path3 = "../Pictures/Boreale.png"
+        image_path3 = "../Pictures/bg4.png"
         self.image3 = tk.PhotoImage(file=image_path3)
         image_label3 = tk.Label(self.root, image=self.image3, bg="white")
-        image_label3.place(x=0, y=self.header_height * 1.05, relwidth=1, relheight=0.75)
+        image_label3.place(x=0, y=self.window_height * 0.2, relwidth=1)
 
     def create_menu(self, event):
         if self.menu is not None:

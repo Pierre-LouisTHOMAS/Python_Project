@@ -54,7 +54,7 @@ class FlightSelectionPage:
         header_label.pack(pady=20)
 
         # logo picture
-        image_path2 = "../Pictures/AirFly.png"
+        image_path2 = "../Pictures/Logo.png"
         self.image2 = tk.PhotoImage(file=image_path2)
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.root, image=self.image2)

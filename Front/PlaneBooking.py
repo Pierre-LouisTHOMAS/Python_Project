@@ -46,7 +46,7 @@ class BookingApp:
         arrival_airports = [airport['Arrival_Airport'] for airport in cursor.fetchall()]
 
         #background picture
-        self.background_image = Image.open("../Pictures/Boreale.png")
+        self.background_image = Image.open("../Pictures/bg4.png")
         self.background_photo = ImageTk.PhotoImage(self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
         background_label = tk.Label(self.root, image=self.background_photo)
         background_label.place(relwidth=1, relheight=1)
@@ -54,7 +54,7 @@ class BookingApp:
         self.main_frame.grid(row=1, column=0, padx=15, pady=15)
 
         # logo picture
-        image_path2 = "../Pictures/AirFly.png"
+        image_path2 = "../Pictures/Logo.png"
         self.image2 = tk.PhotoImage(file=image_path2)
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.root, image=self.image2)
