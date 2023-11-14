@@ -59,6 +59,8 @@ class HomePageApp:
 
         self.space_type_var = None
 
+        self.provenance = None
+
         self.create_header()
         self.create_buttons()
 
@@ -111,8 +113,10 @@ class HomePageApp:
         self.app = PlaneBooking.BookingApp(self.plane_booking_window)
 
     def redirect_to_home_page(self, event):
-        self.connection_window.destroy()
-        #self.create_account_window.destroy()
+        if self.provenance == 'Connection':
+            self.connection_window.destroy()
+        elif self.provenance == 'Create':
+            self.create_account_window.destroy()
 
     def redirect_to_employee_page(self, event):
         self.employeePage_window = tk.Toplevel(self.root)
@@ -124,7 +128,8 @@ class HomePageApp:
         self.connection_window.title("Connection")
 
         self.background_image = Image.open("../Pictures/bg2.png")
-        self.background_photo = ImageTk.PhotoImage(self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
+        self.background_photo = ImageTk.PhotoImage(
+            self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
         background_label = tk.Label(self.connection_window, image=self.background_photo)
         background_label.place(relwidth=1, relheight=1)
 
@@ -133,12 +138,13 @@ class HomePageApp:
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.connection_window, image=self.image2)
         image_label2.place(x=self.header_height * 0.4, y=self.header_height * 0.3)
+        self.provenance = 'Connection'
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
         form_frame = tk.Frame(self.connection_window, bg="white")
         form_frame.place(relx=0.75, rely=0.5, anchor="center", relwidth=0.2, relheight=0.4)
         email_label = tk.Label(form_frame, text="Email")
-        email_label.pack(pady=(10 , 2))
+        email_label.pack(pady=(10, 2))
         self.email_entry = tk.Entry(form_frame)
         self.email_entry.pack(fill='x', padx=10, pady=2)
         password_label = tk.Label(form_frame, text="Password")
@@ -147,7 +153,8 @@ class HomePageApp:
         self.password_entry.pack(fill='x', padx=10, pady=2)
         login_button = tk.Button(form_frame, text="connection", command=self.login)
         login_button.pack(pady=10)
-        create_account_button = tk.Button(form_frame, text="Create an account", command=self.open_create_account_window)
+        create_account_button = tk.Button(form_frame, text="Create an account",
+                                          command=self.open_create_account_window)
         create_account_button.pack()
 
         self.error_label = tk.Label(form_frame, text="", fg="red")
@@ -170,6 +177,7 @@ class HomePageApp:
                 self.redirect_to_employee_page(self)
         else:
             self.error_label.config(text="Email ou mot de passe incorrect!")
+
     def verify_login(self, email, password):
         conn = pymysql.connect(
             host='localhost',
@@ -181,7 +189,9 @@ class HomePageApp:
         try:
             with conn.cursor() as cursor:
                 hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-                cursor.execute("SELECT First_Name, Last_Name, Type, Category FROM User WHERE email = %s AND password = %s", (email, hashed_password))
+                cursor.execute(
+                    "SELECT First_Name, Last_Name, Type, Category FROM User WHERE email = %s AND password = %s",
+                    (email, hashed_password))
                 result = cursor.fetchone()
                 if result:
                     # Créer un dictionnaire avec les informations de l'utilisateur
@@ -200,13 +210,14 @@ class HomePageApp:
         finally:
             conn.close()
 
-# Create account
+    # Create account
     def open_create_account_window(self):
         self.create_account_window = tk.Toplevel(self.root)
         self.create_account_window.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.create_account_window.title("Create an account")
         self.background_image = Image.open("../Pictures/bg3.png")
-        self.background_photo = ImageTk.PhotoImage(self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
+        self.background_photo = ImageTk.PhotoImage(
+            self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
         background_label = tk.Label(self.create_account_window, image=self.background_photo)
         background_label.place(relwidth=1, relheight=1)
 
@@ -215,7 +226,7 @@ class HomePageApp:
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.create_account_window, image=self.image2)
         image_label2.place(x=self.header_height * 0.4, y=self.header_height * 0.3)
-
+        self.provenance = 'Create'
         # Return to home page
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
@@ -245,7 +256,8 @@ class HomePageApp:
 
         self.category_label = tk.Label(self.account_frame, text="Category", font=label_font, bg='white')
         self.category_var = tk.StringVar(value="regular")
-        self.category_option_menu = ttk.OptionMenu(self.account_frame, self.category_var, "regular", "regular","senior", "child")
+        self.category_option_menu = ttk.OptionMenu(self.account_frame, self.category_var, "regular", "regular",
+                                                   "senior", "child")
 
         self.code_label = tk.Label(self.account_frame, text="Code")
         self.code_entry = tk.Entry(self.account_frame, show="*")
@@ -261,12 +273,14 @@ class HomePageApp:
         tk.Label(self.account_frame, text="Password", font=label_font, bg='white').pack(pady=10)
         self.password_entry = tk.Entry(self.account_frame, font=entry_font, show="*")
         self.password_entry.pack(fill='x', padx=50)
-        login_button = tk.Button(self.account_frame, text="Create an account", command=self.create_account, font=button_font, relief=tk.FLAT, bg='#4CAF50', fg='black')
+        login_button = tk.Button(self.account_frame, text="Create an account", command=self.create_account,
+                                 font=button_font, relief=tk.FLAT, bg='#4CAF50', fg='black')
         login_button.pack(pady=5)
 
         # Message d'erreur
         self.error_label = tk.Label(self.account_frame, text="", fg="red")
         self.error_label.pack(pady=20)
+
     def toggle_category_code_fields(self, *args):
         selected_type = self.type_var.get()
         if selected_type == "Employee":
@@ -281,6 +295,7 @@ class HomePageApp:
             self.code_entry.pack_forget()
             self.category_label.pack(pady=10)
             self.category_option_menu.pack(fill='x', padx=50)
+
     def email_exists(self, email):
         conn = pymysql.connect(
             host='localhost',
@@ -299,6 +314,7 @@ class HomePageApp:
             return False
         finally:
             conn.close()
+
     def insert_client(self, first_name, last_name, type, category, email, password):
         conn = pymysql.connect(
             host='localhost',
@@ -311,13 +327,15 @@ class HomePageApp:
             with conn.cursor() as cursor:
                 hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
                 sql = "INSERT INTO User (First_Name, Last_Name, Type, Category, Email, Password) VALUES (%s, %s, %s, %s, %s, %s)"
-                cursor.execute(sql, (first_name, last_name, type, category, email, hashed_password)) # remplacer password par hashed_password
+                cursor.execute(sql, (first_name, last_name, type, category, email,
+                                     hashed_password))  # remplacer password par hashed_password
             conn.commit()
         except Exception as e:
             self.error_label.config(text=f"Database error: {e}")
             return
         finally:
             conn.close()
+
     def create_account(self):
         first_name = self.first_name_entry.get()
         last_name = self.last_name_entry.get()
