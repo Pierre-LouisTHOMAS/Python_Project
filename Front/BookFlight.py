@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkcalendar import DateEntry
-from tkinter import Label, ttk
+from tkinter import Label, ttk, simpledialog
 from PIL import Image, ImageTk
 
 import pymysql
@@ -19,9 +19,9 @@ class BookFlight:
 
         self.create_window()
 
-
     def redirect_to_flightBooking_page(self, event):
         self.root.destroy()
+
     def create_window(self):
         self.background_image = Image.open("../Pictures/bg2.png")
         self.background_photo = ImageTk.PhotoImage(self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
@@ -38,10 +38,11 @@ class BookFlight:
 
         frame_width = 400
         frame_height = 250
-        white_frame = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height)
-        white_frame.place(relx=0.5, rely=0.5, anchor='center')
 
-        flight_info_label = tk.Label(white_frame, text="Flight Information", font=("Helvetica", 16), bg="white")
+        self.white_frame = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height, bd=2, relief=tk.GROOVE)
+        self.white_frame.place(relx=0.5, rely=0.5, anchor='center')
+
+        flight_info_label = tk.Label(self.white_frame, text="Flight Information", font=("Helvetica", 16, "bold"), bg="white")
         flight_info_label.pack(pady=20)
 
         departure_airport = config.selected_departure_airport
@@ -50,9 +51,8 @@ class BookFlight:
         arrival_time = config.selected_arrival_date
         price = config.selected_price
 
-        labels_frame = tk.Frame(white_frame, bg="white")
+        labels_frame = tk.Frame(self.white_frame, bg="white")
         labels_frame.pack()
-
 
         departure_label = tk.Label(labels_frame, text=f"Departure: {departure_airport}", bg="white", font=("Helvetica", 12))
         departure_label.pack(pady=5)
@@ -66,15 +66,56 @@ class BookFlight:
         arrival_time_label = tk.Label(labels_frame, text=f"Arrival Time: {arrival_time}", bg="white", font=("Helvetica", 12))
         arrival_time_label.pack(pady=5)
 
-        price_label = tk.Label(white_frame, text=f"Price: {price}", bg="white", font=("Helvetica", 14, "bold"))
+        price_label = tk.Label(self.white_frame, text=f"Price: {price}", bg="white", font=("Helvetica", 14, "bold"))
         price_label.pack(pady=10)
 
-        pay_button = tk.Button(white_frame, text="Pay", command=self.pay, font=("Helvetica", 12, "bold"), bg='white', fg='black')
+        pay_button = tk.Button(self.white_frame, text="Pay", command=self.pay, font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
         pay_button.pack(pady=10)
 
+        self.frame_account = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height, bd=2, relief=tk.GROOVE)
+        self.frame_account.place(relx=0.7, rely=0.5, anchor='center')
+
     def pay(self):
-        # Add payment logic here
-        print("Payment button clicked")
+        if config.is_user_logged_in != True:
+            self.show_questionnaire()
+        else:
+            self.show_user_info()
+
+    def show_user_info(self):
+        user_info_text = f"First Name: {config.first_name_user}\nName: {config.last_name_user}\nType: {config.user_type}\nCategory: {config.member_category}"
+        user_info_display = tk.Label(self.frame_account, text=user_info_text)
+        user_info_display.pack(pady=5)
+
+    def show_questionnaire(self):
+        questionnaire_window = tk.Toplevel(self.root)
+        questionnaire_window.title("Questionnaire")
+
+        tk.Label(questionnaire_window, text="First Name:").pack(pady=5)
+        self.first_name_entry = tk.Entry(questionnaire_window)
+        self.first_name_entry.pack(pady=5)
+
+        tk.Label(questionnaire_window, text="Last Name:").pack(pady=5)
+        self.last_name_entry = tk.Entry(questionnaire_window)
+        self.last_name_entry.pack(pady=5)
+
+        tk.Label(questionnaire_window, text="Email:").pack(pady=5)
+        self.email_entry = tk.Entry(questionnaire_window)
+        self.email_entry.pack(pady=5)
+
+        def get_questionnaire_info():
+            first_name = self.first_name_entry.get()
+            last_name = self.last_name_entry.get()
+            email = self.email_entry.get()
+
+            user_info_text = f"First Name: {first_name}\nLast Name: {last_name}\nEmail: {email}"
+            user_info_display = tk.Label(self.frame_account, text=user_info_text)
+            user_info_display.pack(pady=5)
+
+            questionnaire_window.destroy()
+
+
+        submit_button = tk.Button(questionnaire_window, text="Submit", command=get_questionnaire_info, font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
+        submit_button.pack(pady=10)
 
 if __name__ == "__main__":
     root = tk.Tk()

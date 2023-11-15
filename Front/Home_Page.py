@@ -18,32 +18,24 @@ class HomePageApp:
         self.window_width = root.winfo_screenwidth()
         self.window_height = root.winfo_screenheight()
 
-        # Initialisation de login_frame
         self.login_frame = tk.Frame(root, bg='grey', bd=5)
         self.login_frame.place_forget()  # Cachez initialement le cadre
 
-        # Initialisation de email_label
         self.email_label = tk.Label(self.login_frame, font=('Helvetica', 12), bg='black')
         self.email_label.place(relx=0.1, rely=0.5)
 
-
-        # Initialisation of first_name_label_create_account
         self.first_name_label_create_account = tk.Label(self.login_frame, font=('Helvetica', 12), bg='black')
         self.first_name_label_create_account.place(relx=0.1, rely=0.5)
 
-        # Initialisation of last_name_label_create_account
         self.last_name_label_create_account = tk.Label(self.login_frame, font=('Helvetica', 12), bg='black')
         self.last_name_label_create_account.place(relx=0.1, rely=2.5)
 
-        # Initialisation of category_label_create_account
         self.category_label_create_account = tk.Label(self.login_frame, font=('Helvetica', 12), bg='black')
         self.category_label_create_account.place(relx=0.1, rely=4.5)
 
-        # Initialisation of email_label_create_account
         self.email_label_create_account = tk.Label(self.login_frame, font=('Helvetica', 12), bg='black')
         self.email_label_create_account.place(relx=0.1, rely=6.5)
 
-        # Initialisation of password_label_create_account
         self.password_label_create_account = tk.Label(self.login_frame, font=('Helvetica', 12), bg='black')
         self.password_label_create_account.place(relx=0.1, rely=8.5)
 
@@ -95,8 +87,8 @@ class HomePageApp:
         x, y = image_button_label.winfo_rootx(), image_button_label.winfo_rooty()
 
         menu = tk.Menu(self.root, tearoff=0)
-        menu.add_command(label="Historique", command=self.save)
-        menu.add_command(label="Facture", command=self.save)
+        menu.add_command(label="booking history", command=self.save)
+        menu.add_command(label="Your bills", command=self.save)
         menu.post(x, y)
 
     def bouton_hover(self, event):
@@ -141,23 +133,30 @@ class HomePageApp:
         self.provenance = 'Connection'
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
-        form_frame = tk.Frame(self.connection_window, bg="white")
+        form_frame = tk.Frame(self.connection_window, bg="white", padx=20, pady=20)
         form_frame.place(relx=0.75, rely=0.5, anchor="center", relwidth=0.2, relheight=0.4)
-        email_label = tk.Label(form_frame, text="Email")
+
+        email_label = tk.Label(form_frame, text="Email", font=("Arial", 12), anchor="w")
         email_label.pack(pady=(10, 2))
-        self.email_entry = tk.Entry(form_frame)
+
+        self.email_entry = tk.Entry(form_frame, font=("Arial", 12))
         self.email_entry.pack(fill='x', padx=10, pady=2)
-        password_label = tk.Label(form_frame, text="Password")
+
+        password_label = tk.Label(form_frame, text="Password", font=("Arial", 12), anchor="w")
         password_label.pack(pady=(10, 2))
-        self.password_entry = tk.Entry(form_frame, show="*")
+
+        self.password_entry = tk.Entry(form_frame, show="*", font=("Arial", 12))
         self.password_entry.pack(fill='x', padx=10, pady=2)
-        login_button = tk.Button(form_frame, text="connection", command=self.login)
+
+        login_button = tk.Button(form_frame, text="Connection", command=self.login, bg="#038ec3", fg="white",
+                                 font=("Arial", 12))
         login_button.pack(pady=10)
-        create_account_button = tk.Button(form_frame, text="Create an account",
-                                          command=self.open_create_account_window)
+
+        create_account_button = tk.Button(form_frame, text="Create an account", command=self.open_create_account_window,
+                                          bg="lightblue", fg="white", font=("Arial", 10), underline=True)
         create_account_button.pack()
 
-        self.error_label = tk.Label(form_frame, text="", fg="red")
+        self.error_label = tk.Label(form_frame, text="", fg="red", font=("Arial", 10))
         self.error_label.pack()
 
     def login(self):
@@ -229,31 +228,28 @@ class HomePageApp:
         # Return to home page
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
-        self.account_frame = tk.Frame(self.create_account_window, bg='gray', bd=5)
+        self.account_frame = tk.Frame(self.create_account_window, bg='#3498db', bd=5)
         self.account_frame.place(relx=0.5, rely=0.5, relwidth=0.4, relheight=0.75, anchor='center')
 
         label_font = ('Verdana', 14, 'bold')
         entry_font = ('Verdana', 12)
         button_font = ('Verdana', 12, 'bold')
 
-        # First name
-        tk.Label(self.account_frame, text="First name", font=label_font, bg='white').pack(pady=10)
+        tk.Label(self.account_frame, text="First name", font=label_font, bg='#3498db', fg='white').pack(pady=10)
         self.first_name_entry = tk.Entry(self.account_frame, font=entry_font)
         self.first_name_entry.pack(fill='x', padx=50)
 
-        # Last name
-        tk.Label(self.account_frame, text="Last name", font=label_font, bg='white').pack(pady=10)
+        tk.Label(self.account_frame, text="Last name", font=label_font, bg='#3498db', fg='white').pack(pady=10)
         self.last_name_entry = tk.Entry(self.account_frame, font=entry_font)
         self.last_name_entry.pack(fill='x', padx=50)
 
-        # Type
-        tk.Label(self.account_frame, text="Type", font=label_font, bg='white').pack(pady=10)
+        tk.Label(self.account_frame, text="Type", font=label_font, bg='#3498db', fg='white').pack(pady=10)
         self.type_var = tk.StringVar(value="Member")  # valeur par défaut
         self.type_option_menu = ttk.OptionMenu(self.account_frame, self.type_var, "Member", "Member",
                                                "Employee", command=self.toggle_category_code_fields)
         self.type_option_menu.pack(fill='x', padx=50)
 
-        self.category_label = tk.Label(self.account_frame, text="Category", font=label_font, bg='white')
+        self.category_label = tk.Label(self.account_frame, text="Category", font=label_font, bg='#3498db', fg='white')
         self.category_var = tk.StringVar(value="regular")
         self.category_option_menu = ttk.OptionMenu(self.account_frame, self.category_var, "regular", "regular",
                                                    "senior", "child")
@@ -263,21 +259,18 @@ class HomePageApp:
 
         self.toggle_category_code_fields("Member")
 
-        # Email
-        tk.Label(self.account_frame, text="Email", font=label_font, bg='white').pack(pady=10)
+        tk.Label(self.account_frame, text="Email", font=label_font, bg='#3498db', fg='white').pack(pady=10)
         self.email_entry = tk.Entry(self.account_frame, font=entry_font)
         self.email_entry.pack(fill='x', padx=50)
 
-        # Password
-        tk.Label(self.account_frame, text="Password", font=label_font, bg='white').pack(pady=10)
+        tk.Label(self.account_frame, text="Password", font=label_font, bg='#3498db', fg='white').pack(pady=10)
         self.password_entry = tk.Entry(self.account_frame, font=entry_font, show="*")
         self.password_entry.pack(fill='x', padx=50)
         login_button = tk.Button(self.account_frame, text="Create an account", command=self.create_account,
-                                 font=button_font, relief=tk.FLAT, bg='#4CAF50', fg='black')
+                                 font=button_font, relief=tk.FLAT, bg='#2980b9', fg='white')
         login_button.pack(pady=5)
 
-        # Message d'erreur
-        self.error_label = tk.Label(self.account_frame, text="", fg="red")
+        self.error_label = tk.Label(self.account_frame, text="", fg="red", bg='#3498db')
         self.error_label.pack(pady=20)
 
     def toggle_category_code_fields(self, *args):
@@ -286,12 +279,12 @@ class HomePageApp:
             self.category_label.pack_forget()
             self.category_option_menu.pack_forget()
             self.code_label.pack(pady=10)
-            self.code_entry.pack(fill='x', padx=50)
+            self.code_entry.pack(fill='x', padx=70)
         else:
             self.code_label.pack_forget()
             self.code_entry.pack_forget()
             self.category_label.pack(pady=10)
-            self.category_option_menu.pack(fill='x', padx=50)
+            self.category_option_menu.pack(fill='x', padx=70)
 
     def email_exists(self, email):
         conn = pymysql.connect(
