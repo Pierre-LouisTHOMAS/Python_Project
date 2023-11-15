@@ -72,7 +72,6 @@ class BookingApp:
         date_entry = DateEntry(self.main_frame, textvariable=self.date_var, date_pattern="dd/mm/yyyy")
         date_entry.grid(row=1, column=1, pady=5)
 
-        # Show only Departure Airport that exist in the database
         departure_label = tk.Label(self.main_frame, text="Departure airport")
         departure_label.grid(row=2, column=0, pady=5)
         self.departure_var = tk.StringVar()
@@ -81,7 +80,6 @@ class BookingApp:
         departure_combobox.bind('<<ComboboxSelected>>', self.check_airport_selection)
         departure_combobox.grid(row=2, column=1, pady=5)
 
-        # Show only Arrival Airport that exist in the database
         arrival_label = tk.Label(self.main_frame, text="Arrival airport")
         arrival_label.grid(row=3, column=0, pady=5)
         self.arrival_var = tk.StringVar()
@@ -90,7 +88,6 @@ class BookingApp:
         arrival_combobox.bind('<<ComboboxSelected>>', self.check_airport_selection)
         arrival_combobox.grid(row=3, column=1, pady=5)
 
-        # Étiquette pour afficher les messages d'erreur
         self.error_label = tk.Label(self.main_frame, text="", fg="red")
         self.error_label.grid(row=4, column=0, columnspan=2, pady=5)
 

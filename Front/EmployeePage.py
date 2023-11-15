@@ -22,7 +22,7 @@ class HomeEmployee:
         self.create_header()
 
     def redirect_to_home_page(self, event):
-        self.root.destroy()  # Ferme uniquement la fenêtre de connection
+        self.root.destroy()
 
     def create_header(self):
         self.canvas = tk.Canvas(self.root, bg="white")

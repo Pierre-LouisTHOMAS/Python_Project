@@ -18,31 +18,26 @@ class FlightSelectionPage:
         self.window_width = root.winfo_screenwidth()
         self.window_height = root.winfo_screenheight()
 
-        # Crée un canvas pour contenir la barre de défilement et un cadre intermédiaire
         canvas = tk.Canvas(root)
         canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        # Crée une barre de défilement
         scrollbar = tk.Scrollbar(root, command=canvas.yview)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        # Configure le canvas pour utiliser la barre de défilement
         canvas.configure(yscrollcommand=scrollbar.set)
 
-        # Crée un cadre à l'intérieur du canvas
         frame = tk.Frame(canvas, bg="lightblue")
         #canvas.create_window((0, 0), window=frame, anchor="nw")
         canvas.create_window((0, 0), window=frame, anchor="nw", width=root.winfo_screenwidth())
 
 
-        # Crée un cadre pour le contenu de la page
+
         content_frame = tk.Frame(frame, bg="lightblue")
         content_frame.pack(fill=tk.BOTH, expand=True)
 
         self.create_header(content_frame)
         self.create_flight_list(content_frame)
 
-        # Configure le canvas pour ajuster automatiquement sa taille en fonction du contenu
         content_frame.update_idletasks()
         canvas.config(scrollregion=canvas.bbox("all"))
 
@@ -50,13 +45,13 @@ class FlightSelectionPage:
             self.root.destroy()
 
     def create_header(self, frame):
-        header_label = tk.Label(frame, text="Select your flight", font=("Arial", 16, "bold"), bg="lightblue")
+        header_label = tk.Label(frame, text="Select your flight", font=("Arial", 18, "bold italic"), bg="lightblue")
         header_label.pack(pady=20)
 
         # logo picture
         image_path2 = "../Pictures/Logo.png"
         self.image2 = tk.PhotoImage(file=image_path2)
-        self.image2 = self.image2.subsample(5)
+        self.image2 = self.image2.subsample(8)
         image_label2 = tk.Label(self.root, image=self.image2)
         image_label2.place(x=self.header_height * 0.7, y=self.header_height * 0.1)
 
@@ -73,14 +68,12 @@ class FlightSelectionPage:
         )
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        # Commencez par la requête de base
+
         query = "SELECT Flight_ID, Departure_Date, Arrival_Date, Departure_Airport, Arrival_Airport, Price FROM Flight"
 
-        # Créez une liste pour les conditions WHERE et une autre pour les paramètres
         where_conditions = []
         params = []
 
-        # Ajoutez des conditions si des aéroports sont spécifiés
         if config.departure_airport:
             where_conditions.append("Departure_Airport = %s")
             params.append(config.departure_airport)
@@ -88,48 +81,70 @@ class FlightSelectionPage:
             where_conditions.append("Arrival_Airport = %s")
             params.append(config.arrival_airport)
 
-        # Si des conditions WHERE existent, ajoutez-les à la requête
         if where_conditions:
             query += " WHERE " + " AND ".join(where_conditions)
 
-        # Exécutez la requête avec les paramètres
         cursor.execute(query, params)
 
-        # import the database is flight_data
         flight_data = cursor.fetchall()
 
         for flight in flight_data:
+            # Create a white band between each flight frame
+            white_band = tk.Frame(frame, height=25, bg="white")
+            white_band.pack(fill=tk.X)
+
             flight_frame = tk.Frame(frame, borderwidth=2, relief=tk.GROOVE, bg="lightblue")
-            flight_frame.pack(padx=20, pady=10, fill=tk.BOTH, expand=True)
+            flight_frame.pack(padx=40, pady=20, fill=tk.BOTH, expand=True)
 
-            flight_label = tk.Label(flight_frame, text=f"Flight number {flight['Flight_ID']}", font=("Arial", 14, "bold"), bg="lightblue")
-            flight_label.pack()
+            departure_date_label = tk.Label(flight_frame, text=f"{flight['Departure_Date']}",
+                                            font=("Arial", 14, "bold"), bg="lightblue")
+            departure_date_label.grid(row=0, column=0, padx=(30, 40), pady=15, sticky="w")
 
-            departure_label = tk.Label(flight_frame, text=f"Departure date: {flight['Departure_Date']}", font=("Arial", 12),bg="lightblue")
-            departure_label.pack()
+            departure_airport_label = tk.Label(flight_frame, text=f"{flight['Departure_Airport']}",
+                                               font=("Arial", 11), bg="lightblue")
+            departure_airport_label.grid(row=1, column=0, padx=(60, 40), pady=10, sticky="w")
 
-            arrival_label = tk.Label(flight_frame, text=f"Arrival date: {flight['Arrival_Date']}", font=("Arial", 12), bg="lightblue")
-            arrival_label.pack()
+            arrow_canvas = tk.Canvas(flight_frame, width=20, height=40, bg="lightblue", highlightthickness=0)
+            arrow_canvas.grid(row=0, column=0, rowspan=2, padx=(10, 0), pady=5, sticky="e")
+            arrow_canvas.create_line(0, 30, 20, 30, arrow=tk.LAST)
 
-            departure_label = tk.Label(flight_frame, text=f"Departure airport: {flight['Departure_Airport']}", font=("Arial", 12), bg="lightblue")
-            departure_label.pack()
+            arrival_date_label = tk.Label(flight_frame, text=f"{flight['Arrival_Date']}",
+                                          font=("Arial", 14, "bold"), bg="lightblue")
+            arrival_date_label.grid(row=0, column=1, padx=(30, 40), pady=15, sticky="w")
 
-            arrival_label = tk.Label(flight_frame, text=f"Arrival airport: {flight['Arrival_Airport']}", font=("Arial", 12),bg="lightblue")
-            arrival_label.pack()
+            arrival_airport_label = tk.Label(flight_frame, text=f"{flight['Arrival_Airport']}",
+                                             font=("Arial", 11), bg="lightblue")
+            arrival_airport_label.grid(row=1, column=1, padx=(60, 40), pady=10, sticky="w")
 
-            departure_time_label = tk.Label(flight_frame, text=f"Price: {flight['Price']}",font=("Arial", 12), bg="lightblue")
-            departure_time_label.pack()
+            separator1 = ttk.Separator(flight_frame, orient="vertical")
+            separator1.grid(row=0, column=2, rowspan=2, padx=10, sticky="ns")
+
+            price_label1 = tk.Label(flight_frame, text=f"Price: {flight['Price']}", font=("Arial", 12), bg="lightblue")
+            price_label1.grid(row=0, column=3, padx=(40, 40), pady=15, sticky="w")
+
+            separator2 = ttk.Separator(flight_frame, orient="vertical")
+            separator2.grid(row=0, column=4, rowspan=2, padx=10, sticky="ns")
+
+            price_label2 = tk.Label(flight_frame, text=f"discount price: {flight['Price']}", font=("Arial", 12),
+                                    bg="lightblue")
+            price_label2.grid(row=0, column=5, padx=(20, 40), pady=15, sticky="w")
+
+
+            reserve_button1 = tk.Button(flight_frame, text="Book", command=lambda f=flight: self.update_and_redirect(f),
+                                        bg="lightblue")
+            reserve_button1.grid(row=1, column=3, padx=(30, 40), pady=10, sticky="n")
+
+            reserve_button2 = tk.Button(flight_frame, text="Book", command=lambda f=flight: self.update_and_redirect(f),
+                                        bg="lightblue")
+            reserve_button2.grid(row=1, column=5, padx=(30, 40), pady=10, sticky="n")
 
             image_path = "../Pictures/avionResa.png"
             image = tk.PhotoImage(file=image_path)
-            image = image.subsample(3)
+            image = image.subsample(4)
 
             image_label = tk.Label(flight_frame, image=image, bg="lightblue")
             image_label.image = image
-            image_label.pack(side=tk.RIGHT, padx=10)
-
-            reserve_button = tk.Button(flight_frame, text="Book", command=lambda f=flight: self.update_and_redirect(f), bg="lightblue")
-            reserve_button.pack(pady=10)
+            image_label.grid(row=0, column=7, rowspan=2, padx=(1, 40), pady=15, sticky="e")
 
         cursor.close()
         conn.close()

@@ -194,7 +194,6 @@ class HomePageApp:
                     (email, hashed_password))
                 result = cursor.fetchone()
                 if result:
-                    # Créer un dictionnaire avec les informations de l'utilisateur
                     user_info = {
                         'First_Name': result[0],
                         'Last_Name': result[1],
@@ -284,13 +283,11 @@ class HomePageApp:
     def toggle_category_code_fields(self, *args):
         selected_type = self.type_var.get()
         if selected_type == "Employee":
-            # Afficher Code, cacher Category
             self.category_label.pack_forget()
             self.category_option_menu.pack_forget()
             self.code_label.pack(pady=10)
             self.code_entry.pack(fill='x', padx=50)
         else:
-            # Afficher Category, cacher Code
             self.code_label.pack_forget()
             self.code_entry.pack_forget()
             self.category_label.pack(pady=10)
