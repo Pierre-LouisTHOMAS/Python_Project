@@ -39,9 +39,9 @@ class HomeEmployee:
 
         image_path2 = "../Pictures/Logo.png"
         self.image2 = tk.PhotoImage(file=image_path2)
-        self.image2 = self.image2.subsample(5)
+        self.image2 = self.image2.subsample(7)
         image_label2 = tk.Label(self.root, image=self.image2, bg="white")
-        image_label2.place(x=self.window_width * 0.35, y=self.window_height * 0.03)
+        image_label2.place(x=self.window_width * 0.3, y=self.window_height * 0.03)
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
 

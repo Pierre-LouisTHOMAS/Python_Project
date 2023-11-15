@@ -85,8 +85,8 @@ class HomePageApp:
         bouton_height = int(self.bandeau_height * 0.8)
 
 
-        bouton_vol = tk.Button(self.root, text="Achat Vol", width=15, command=self.redirect_to_plane_booking)
-        bouton_vol.place(x=self.window_width * 0.6, y=bouton_height)
+        bouton_vol = tk.Button(self.root, text="Buy Flight", width=15, command=self.redirect_to_plane_booking)
+        bouton_vol.place(x=self.window_width * 0.6, y=self.window_height*0.17)
         bouton_vol.bind('<Enter>', self.bouton_hover)
         bouton_vol.bind('<Leave>', self.bouton_leave)
 
@@ -381,12 +381,12 @@ class HomePageApp:
         else:
             if self.bouton_connection is None:
                 self.bouton_connection = tk.Button(self.root, text="Connection", width=15, command=self.open_connection_window)
-                self.bouton_connection.place(x=self.bandeau_height * 5.3, y=self.bandeau_height * 0.8)
+                self.bouton_connection.place(x=self.window_width * 0.7, y=self.window_height * 0.17)
                 self.bouton_connection.bind('<Enter>', self.bouton_hover)
                 self.bouton_connection.bind('<Leave>', self.bouton_leave)
             if self.bouton_create_account is None:
                 self.bouton_create_account = tk.Button(self.root, text="Create an account", width=15,command=self.open_create_account_window)
-                self.bouton_create_account.place(x=self.bandeau_height * 6.2, y=self.bandeau_height * 0.8)
+                self.bouton_create_account.place(x=self.window_width * 0.8, y=self.window_height * 0.17)
                 self.bouton_create_account.bind('<Enter>', self.bouton_hover)
                 self.bouton_create_account.bind('<Leave>', self.bouton_leave)
 
