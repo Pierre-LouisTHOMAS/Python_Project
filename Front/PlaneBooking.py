@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkcalendar import DateEntry
 from tkinter import Label, ttk, messagebox
-import subprocess
-import platform
 from PIL import Image, ImageTk
 
 import pymysql

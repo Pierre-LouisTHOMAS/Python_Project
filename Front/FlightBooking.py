@@ -1,6 +1,4 @@
 import tkinter as tk
-import subprocess
-import platform
 from tkinter import Toplevel, messagebox, ttk
 import pymysql
 import config
@@ -119,13 +117,13 @@ class FlightSelectionPage:
             separator1 = ttk.Separator(flight_frame, orient="vertical")
             separator1.grid(row=0, column=2, rowspan=2, padx=10, sticky="ns")
 
-            price_label1 = tk.Label(flight_frame, text=f"Price: {flight['Price']}", font=("Arial", 12), bg="lightblue")
+            price_label1 = tk.Label(flight_frame, text=f"Economy ticket: {flight['Price']}", font=("Arial", 12), bg="lightblue")
             price_label1.grid(row=0, column=3, padx=(40, 40), pady=15, sticky="w")
 
             separator2 = ttk.Separator(flight_frame, orient="vertical")
             separator2.grid(row=0, column=4, rowspan=2, padx=10, sticky="ns")
 
-            price_label2 = tk.Label(flight_frame, text=f"discount price: {flight['Price']}", font=("Arial", 12),
+            price_label2 = tk.Label(flight_frame, text=f"Business Ticket: {flight['Price'] + 120}", font=("Arial", 12),
                                     bg="lightblue")
             price_label2.grid(row=0, column=5, padx=(20, 40), pady=15, sticky="w")
 

@@ -19,7 +19,7 @@ class HomePageApp:
         self.window_height = root.winfo_screenheight()
 
         self.login_frame = tk.Frame(root, bg='grey', bd=5)
-        self.login_frame.place_forget()  # Cachez initialement le cadre
+        self.login_frame.place_forget()
 
         self.email_label = tk.Label(self.login_frame, font=('Helvetica', 12), bg='black')
         self.email_label.place(relx=0.1, rely=0.5)
@@ -47,7 +47,7 @@ class HomePageApp:
         # For update_ui()
         self.bouton_connection = None
         self.bouton_create_account = None
-        self.type_var = tk.StringVar(value="Member")  # Déplacez cette ligne dans __init__
+        self.type_var = tk.StringVar(value="Member")
 
         self.space_type_var = None
 
@@ -61,6 +61,9 @@ class HomePageApp:
     def create_header(self):
         self.canvas = tk.Canvas(self.root, bg="white")
         self.canvas.place(x=0, y=0, relwidth=1, relheight=0.20)
+
+        title_label = tk.Label(self.root, text="Sky Travellers", font=("Arial", 26, "bold italic"), bg="white")
+        title_label.place(x=self.window_width * 0.43, y=self.window_height * 0.07)
 
         image_path = "../Pictures/barre_recherche.png"
         self.image_button = tk.PhotoImage(file=image_path)

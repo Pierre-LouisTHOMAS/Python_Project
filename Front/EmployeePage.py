@@ -1,9 +1,6 @@
 import tkinter as tk
 from tkcalendar import DateEntry
-from tkinter import Label, ttk
-from tkinter import Toplevel, messagebox, ttk
-import subprocess
-import platform
+from tkinter import ttk
 import AccountInformation
 
 

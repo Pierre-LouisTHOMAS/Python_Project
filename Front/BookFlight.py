@@ -1,6 +1,4 @@
 import tkinter as tk
-from tkcalendar import DateEntry
-from tkinter import Label, ttk, simpledialog
 from PIL import Image, ImageTk
 
 import pymysql
@@ -16,6 +14,8 @@ class BookFlight:
         self.window_width = root.winfo_screenwidth()
         self.window_height = root.winfo_screenheight()
         self.menu = None
+        self.pay_button = None
+        self.information_button=None
 
         self.create_window()
 
@@ -38,11 +38,12 @@ class BookFlight:
 
         frame_width = 400
         frame_height = 250
+        self.frame_account = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height, bd=2,
+                                      relief=tk.GROOVE)
+        self.frame_account.place(relx=0.7, rely=0.5, anchor='center')
 
-        self.white_frame = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height, bd=2, relief=tk.GROOVE)
-        self.white_frame.place(relx=0.5, rely=0.5, anchor='center')
 
-        flight_info_label = tk.Label(self.white_frame, text="Flight Information", font=("Helvetica", 16, "bold"), bg="white")
+        flight_info_label = tk.Label(self.frame_account, text="Flight Information", font=("Helvetica", 16, "bold"), bg="white")
         flight_info_label.pack(pady=20)
 
         departure_airport = config.selected_departure_airport
@@ -51,7 +52,7 @@ class BookFlight:
         arrival_time = config.selected_arrival_date
         price = config.selected_price
 
-        labels_frame = tk.Frame(self.white_frame, bg="white")
+        labels_frame = tk.Frame(self.frame_account, bg="white")
         labels_frame.pack()
 
         departure_label = tk.Label(labels_frame, text=f"Departure: {departure_airport}", bg="white", font=("Helvetica", 12))
@@ -66,20 +67,23 @@ class BookFlight:
         arrival_time_label = tk.Label(labels_frame, text=f"Arrival Time: {arrival_time}", bg="white", font=("Helvetica", 12))
         arrival_time_label.pack(pady=5)
 
-        price_label = tk.Label(self.white_frame, text=f"Price: {price}", bg="white", font=("Helvetica", 14, "bold"))
+        price_label = tk.Label(self.frame_account, text=f"Price: {price}", bg="white", font=("Helvetica", 14, "bold"))
         price_label.pack(pady=10)
 
-        pay_button = tk.Button(self.white_frame, text="Pay", command=self.pay, font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
-        pay_button.pack(pady=10)
-
-        self.frame_account = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height, bd=2, relief=tk.GROOVE)
-        self.frame_account.place(relx=0.7, rely=0.5, anchor='center')
+        self.pay_button = tk.Button(self.frame_account, text="Information", command=self.pay, font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
+        self.pay_button.pack(pady=10)
 
     def pay(self):
         if config.is_user_logged_in != True:
             self.show_questionnaire()
+            self.pay_button.configure(state=tk.DISABLED)
         else:
             self.show_user_info()
+            self.pay_button.configure(state=tk.DISABLED)
+
+        self.information_button = tk.Button(self.frame_account, text="Pay", command=self.pay,
+                                            font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
+        self.information_button.pack(pady=10)
 
     def show_user_info(self):
         user_info_text = f"First Name: {config.first_name_user}\nName: {config.last_name_user}\nType: {config.user_type}\nCategory: {config.member_category}"
@@ -88,7 +92,9 @@ class BookFlight:
 
     def show_questionnaire(self):
         questionnaire_window = tk.Toplevel(self.root)
+        questionnaire_window.geometry("400x300")
         questionnaire_window.title("Questionnaire")
+        questionnaire_window.configure(bg="white")
 
         tk.Label(questionnaire_window, text="First Name:").pack(pady=5)
         self.first_name_entry = tk.Entry(questionnaire_window)
@@ -102,6 +108,8 @@ class BookFlight:
         self.email_entry = tk.Entry(questionnaire_window)
         self.email_entry.pack(pady=5)
 
+
+
         def get_questionnaire_info():
             first_name = self.first_name_entry.get()
             last_name = self.last_name_entry.get()
@@ -112,7 +120,6 @@ class BookFlight:
             user_info_display.pack(pady=5)
 
             questionnaire_window.destroy()
-
 
         submit_button = tk.Button(questionnaire_window, text="Submit", command=get_questionnaire_info, font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
         submit_button.pack(pady=10)
