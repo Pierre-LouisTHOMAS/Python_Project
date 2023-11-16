@@ -320,8 +320,10 @@ class HomePageApp:
             with conn.cursor() as cursor:
                 hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
                 sql = "INSERT INTO User (First_Name, Last_Name, Type, Category, Email, Password) VALUES (%s, %s, %s, %s, %s, %s)"
-                cursor.execute(sql, (first_name, last_name, type, category, email,
-                                     hashed_password))  # remplacer password par hashed_password
+                if type == 'Employee':
+                    category = 'NULL'
+
+                cursor.execute(sql, (first_name, last_name, type, category, email, hashed_password))
             conn.commit()
         except Exception as e:
             self.error_label.config(text=f"Database error: {e}")
@@ -359,7 +361,6 @@ class HomePageApp:
 #Update appication
     def update_ui(self):
         if config.is_user_logged_in:
-            print("It's a guest")
             image_path4 = "../Pictures/AccountPicture.png"
             self.image4 = tk.PhotoImage(file=image_path4)
             self.image4 = self.image4.subsample(6)

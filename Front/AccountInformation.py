@@ -21,7 +21,7 @@ class EmployeeAccount:
         self.create_window()
 
     def redirect_to_home_page(self, event):
-        root.destroy()
+        self.root.destroy()
 
     def create_window(self):
         # Set up background image
@@ -46,6 +46,7 @@ class EmployeeAccount:
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.root, image=self.image2)
         image_label2.place(x=self.header_height * 0.7, y=self.header_height * 0.1)
+        image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
         # Return to home page
         image_label2.bind("<Button-1>", self.redirect_to_home_page)
