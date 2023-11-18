@@ -2,6 +2,8 @@ import tkinter as tk
 from tkcalendar import DateEntry
 from tkinter import ttk
 import AccountInformation
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 class HomeEmployee:
@@ -68,18 +70,21 @@ class HomeEmployee:
             customer_menu = tk.Menu(self.menu, tearoff=0)
             sale_menu = tk.Menu(self.menu, tearoff=0)
 
-
+            #under Menu name
             flight_menu.add_command(label="flight available", command=self.window_flight_available)
             flight_menu.add_command(label="flight discount offer", command=self.save)
             customer_menu.add_command(label="Customer file management", command=self.window_file_management)
             customer_menu.add_command(label="Customer reservation history", command=self.window_history_reservation)
             customer_menu.add_command(label="number of tickets purchased", command=self.window_history_reservation)
-            sale_menu.add_command(label="Sales analysis", command=self.save)
+            sale_menu.add_command(label="Sales analysis", command=self.sales_analysis)
             sale_menu.add_command(label="Amount of private flight sale", command=self.save)
+
+            #Menu name
             self.menu.add_cascade(label="Flight", menu=flight_menu)
             self.menu.add_cascade(label="Customer", menu=customer_menu)
             self.menu.add_cascade(label="Sale", menu=sale_menu)
             self.menu.post(x, y)
+
 
     def window_file_management(self):
         client_window = tk.Toplevel(self.root)
@@ -158,6 +163,23 @@ class HomeEmployee:
 
         submit_button = tk.Button(self.main_frame, text="Research", command=self.save)
         submit_button.grid(row=4, column=0, columnspan=2, pady=10)
+
+    def sales_analysis(self):
+        # Remplacer Label et Value par les valeurs de la BDD
+        labels = ['London', 'Paris', 'Mexico', 'Berlin', 'Tokyo']
+        values = [25, 40, 35, 5, 10]
+
+        plt.bar(labels, values)
+        plt.xlabel("City")
+        plt.ylabel("Number of flights")
+        plt.title("Flight analysis")
+        graph_window = tk.Toplevel(self.root)
+        graph_window.title("Flight analysis Graph")
+
+        canvas = FigureCanvasTkAgg(plt.gcf(), master=graph_window)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        graph_window.mainloop()
 
     def redirect_to_account_information(self, event):
         self.accountPage_window = tk.Toplevel(self.root)

@@ -67,7 +67,13 @@ class HomePageApp:
         title_label = tk.Label(self.root, text="Sky Travellers", font=("Arial", 26, "bold italic"), bg="white")
         title_label.place(x=self.window_width * 0.43, y=self.window_height * 0.07)
 
-        image_path3 = "../Pictures/Logo.png"
+        image_path1 = "../Pictures/Logo.png"
+        self.image1 = tk.PhotoImage(file=image_path1)
+        self.image1 = self.image1.subsample(6)
+        image_label1 = tk.Label(self.root, image=self.image1)
+        image_label1.place(x=self.header_height * 0.4, y=self.header_height * 0.08)
+
+        image_path3 = "../Pictures/bg1.png"
         self.image3 = tk.PhotoImage(file=image_path3)
         image_label3 = tk.Label(self.root, image=self.image3)
         image_label3.place(x=0, y=self.bandeau_height * 1.05, relwidth=1, relheight=0.75)
@@ -373,6 +379,13 @@ class HomePageApp:
             image_label4.place(x=self.window_width * 0.93, y=self.window_height * 0.04)
             image_label4.bind("<Button-1>", self.redirect_to_account_information)
 
+            image_path1 = "../Pictures/Logo.png"
+            self.image1 = tk.PhotoImage(file=image_path1)
+            self.image1 = self.image1.subsample(6)
+            image_label1 = tk.Label(self.root, image=self.image1)
+            image_label1.place(x=self.header_height * 0.7, y=self.header_height * 0.08)
+            image_label1.bind("<Button-2>", self.redirect_to_home_page)
+
             if self.bouton_connection is not None:
                 self.bouton_connection.destroy()
                 self.bouton_connection = None
@@ -390,6 +403,7 @@ class HomePageApp:
                 self.menu = tk.Menu(self.root, tearoff=0)
                 self.menu.add_command(label="Booking history", command=self.redirect_to_history_flight)
                 self.menu.add_command(label="Your bills", command=self.save)
+
 
         else:
             if self.bouton_connection is None:

@@ -38,7 +38,6 @@ class PaymentWindow:
         expiration_date = self.expiration_date_entry.get()
         cvv = self.cvv_entry.get()
 
-        # Ajoutez votre logique de traitement de paiement ici
 
         messagebox.showinfo("Payment Successful", "Payment processed successfully!")
 
