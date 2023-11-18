@@ -8,6 +8,7 @@ import config #global variables
 import PlaneBooking
 import EmployeePage
 import AccountInformation
+import HistoryFlight
 
 
 # Home Page
@@ -65,12 +66,6 @@ class HomePageApp:
         title_label = tk.Label(self.root, text="Sky Travellers", font=("Arial", 26, "bold italic"), bg="white")
         title_label.place(x=self.window_width * 0.43, y=self.window_height * 0.07)
 
-        image_path = "../Pictures/barre_recherche.png"
-        self.image_button = tk.PhotoImage(file=image_path)
-        image_button_label = tk.Label(self.root, image=self.image_button, cursor="hand2")
-        image_button_label.place(x=10, y=self.window_height * 0.06)
-        image_button_label.bind("<Button-1>", self.create_menu)
-
         image_path3 = "../Pictures/Logo.png"
         self.image3 = tk.PhotoImage(file=image_path3)
         image_label3 = tk.Label(self.root, image=self.image3)
@@ -85,14 +80,6 @@ class HomePageApp:
         bouton_vol.bind('<Enter>', self.bouton_hover)
         bouton_vol.bind('<Leave>', self.bouton_leave)
 
-    def create_menu(self, event):
-        image_button_label = event.widget
-        x, y = image_button_label.winfo_rootx(), image_button_label.winfo_rooty()
-
-        menu = tk.Menu(self.root, tearoff=0)
-        menu.add_command(label="booking history", command=self.save)
-        menu.add_command(label="Your bills", command=self.save)
-        menu.post(x, y)
 
     def bouton_hover(self, event):
         event.widget.config(bg="lightblue")
@@ -106,6 +93,11 @@ class HomePageApp:
     def redirect_to_plane_booking(self):
         self.plane_booking_window = tk.Toplevel(self.root)
         self.app = PlaneBooking.BookingApp(self.plane_booking_window)
+
+    def redirect_to_history_flight(self):
+        print("Redirection vers l'historique des vols")
+        self.history_flight = tk.Toplevel(self.root)
+        self.app = HistoryFlight.ReservationHistory(self.history_flight)
 
     def redirect_to_home_page(self, event):
         if self.provenance == 'Connection':
@@ -357,10 +349,19 @@ class HomePageApp:
         self.accountPage_window = tk.Toplevel(self.root)
         self.app = AccountInformation.EmployeeAccount(self.accountPage_window)
 
+    def create_menu(self, event):
+        image_button_label = event.widget
+        x, y = image_button_label.winfo_rootx(), image_button_label.winfo_rooty()
+
+        menu = tk.Menu(self.root, tearoff=0)
+        menu.add_command(label="booking history", command=self.redirect_to_history_flight)
+        menu.add_command(label="Your bills", command=self.save)
+        menu.post(x, y)
 
 #Update appication
     def update_ui(self):
         if config.is_user_logged_in:
+
             image_path4 = "../Pictures/AccountPicture.png"
             self.image4 = tk.PhotoImage(file=image_path4)
             self.image4 = self.image4.subsample(6)
@@ -374,6 +375,17 @@ class HomePageApp:
             if self.bouton_create_account is not None:
                 self.bouton_create_account.destroy()
                 self.bouton_create_account = None
+
+            if self.menu is None:
+                image_path = "../Pictures/barre_recherche.png"
+                self.image_button = tk.PhotoImage(file=image_path)
+                image_button_label = tk.Label(self.root, image=self.image_button, cursor="hand2")
+                image_button_label.place(x=10, y=self.window_height * 0.06)
+                image_button_label.bind("<Button-1>", self.create_menu)
+
+                self.menu = tk.Menu(self.root, tearoff=0)
+                self.menu.add_command(label="Booking history", command=self.redirect_to_history_flight)
+                self.menu.add_command(label="Your bills", command=self.save)
 
         else:
             if self.bouton_connection is None:

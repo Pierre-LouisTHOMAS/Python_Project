@@ -1,8 +1,48 @@
 import tkinter as tk
+from tkinter import ttk
 from PIL import Image, ImageTk
+from tkinter import Toplevel, Label, Entry, Button, messagebox
 
 import pymysql
 import config
+
+class PaymentWindow:
+    def __init__(self, parent):
+        self.parent = parent
+        self.payment_window = Toplevel(parent)
+        self.payment_window.geometry("400x300")
+        self.payment_window.title("Payment Information")
+        self.payment_window.configure(bg="#f0f0f0")  # Couleur de fond gris clair
+
+        vcmd = (self.payment_window.register(self.validate_input), "%P")
+
+        tk.Label(self.payment_window, text="Card Number:", font=("Helvetica", 12), bg="#f0f0f0").pack(pady=5)
+        self.card_number_entry = Entry(self.payment_window, validate="key", validatecommand=vcmd, font=("Helvetica", 12))
+        self.card_number_entry.pack(pady=5)
+
+        tk.Label(self.payment_window, text="Expiration Date:", font=("Helvetica", 12), bg="#f0f0f0").pack(pady=5)
+        self.expiration_date_entry = Entry(self.payment_window, validate="key", validatecommand=vcmd, font=("Helvetica", 12))
+        self.expiration_date_entry.pack(pady=5)
+
+        tk.Label(self.payment_window, text="CVV:", font=("Helvetica", 12), bg="#f0f0f0").pack(pady=5)
+        self.cvv_entry = Entry(self.payment_window, validate="key", validatecommand=vcmd, font=("Helvetica", 12), show="*")
+        self.cvv_entry.pack(pady=5)
+
+        tk.Button(self.payment_window, text="Submit Payment", command=self.process_payment, font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white').pack(pady=10)
+
+    def validate_input(self, value):
+        return value.isdigit() or value == ""
+
+    def process_payment(self):
+        card_number = self.card_number_entry.get()
+        expiration_date = self.expiration_date_entry.get()
+        cvv = self.cvv_entry.get()
+
+        # Ajoutez votre logique de traitement de paiement ici
+
+        messagebox.showinfo("Payment Successful", "Payment processed successfully!")
+
+        self.payment_window.destroy()
 
 class BookFlight:
     def __init__(self, root):
@@ -19,7 +59,7 @@ class BookFlight:
 
         self.create_window()
 
-    def redirect_to_flightBooking_page(self, event):
+    def redirect_to_flight_booking_page(self, event):
         self.root.destroy()
 
     def create_window(self):
@@ -33,15 +73,14 @@ class BookFlight:
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.root, image=self.image2, bg="white")
         image_label2.place(x=self.header_height * 6.5, y=self.header_height * 0.1)
-        # Return to FlightBooking.py page
-        image_label2.bind("<Button-1>", lambda event: self.redirect_to_flightBooking_page(event))
+        # Retourner à la page FlightBooking.py
+        image_label2.bind("<Button-1>", lambda event: self.redirect_to_flight_booking_page(event))
 
         frame_width = 400
         frame_height = 250
         self.frame_account = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height, bd=2,
                                       relief=tk.GROOVE)
         self.frame_account.place(relx=0.7, rely=0.5, anchor='center')
-
 
         flight_info_label = tk.Label(self.frame_account, text="Flight Information", font=("Helvetica", 16, "bold"), bg="white")
         flight_info_label.pack(pady=20)
@@ -70,45 +109,42 @@ class BookFlight:
         price_label = tk.Label(self.frame_account, text=f"Price: {price}", bg="white", font=("Helvetica", 14, "bold"))
         price_label.pack(pady=10)
 
-        self.pay_button = tk.Button(self.frame_account, text="Information", command=self.pay, font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
-        self.pay_button.pack(pady=10)
-
-    def pay(self):
-        if config.is_user_logged_in != True:
-            self.show_questionnaire()
-            self.pay_button.configure(state=tk.DISABLED)
+        if not config.is_user_logged_in:
+            self.information_button = tk.Button(self.frame_account, text="Information", command=self.show_questionnaire,
+                                                font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
+            self.information_button.pack(pady=10)
         else:
             self.show_user_info()
-            self.pay_button.configure(state=tk.DISABLED)
 
-        self.information_button = tk.Button(self.frame_account, text="Pay", command=self.pay,
-                                            font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
-        self.information_button.pack(pady=10)
+        self.pay_button = tk.Button(self.frame_account, text="Pay", command=self.open_payment_window,
+                                    font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
+        self.pay_button.pack(pady=10)
+
+    def open_payment_window(self):
+        PaymentWindow(self.root)
 
     def show_user_info(self):
         user_info_text = f"First Name: {config.first_name_user}\nName: {config.last_name_user}\nType: {config.user_type}\nCategory: {config.member_category}"
-        user_info_display = tk.Label(self.frame_account, text=user_info_text)
+        user_info_display = tk.Label(self.frame_account, text=user_info_text, font=("Helvetica", 12), bg="white")
         user_info_display.pack(pady=5)
 
     def show_questionnaire(self):
         questionnaire_window = tk.Toplevel(self.root)
         questionnaire_window.geometry("400x300")
         questionnaire_window.title("Questionnaire")
-        questionnaire_window.configure(bg="white")
+        questionnaire_window.configure(bg="#f0f0f0")  # Couleur de fond gris clair
 
-        tk.Label(questionnaire_window, text="First Name:").pack(pady=5)
-        self.first_name_entry = tk.Entry(questionnaire_window)
+        tk.Label(questionnaire_window, text="First Name:", font=("Helvetica", 12), bg="#f0f0f0").pack(pady=5)
+        self.first_name_entry = Entry(questionnaire_window, font=("Helvetica", 12))
         self.first_name_entry.pack(pady=5)
 
-        tk.Label(questionnaire_window, text="Last Name:").pack(pady=5)
-        self.last_name_entry = tk.Entry(questionnaire_window)
+        tk.Label(questionnaire_window, text="Last Name:", font=("Helvetica", 12), bg="#f0f0f0").pack(pady=5)
+        self.last_name_entry = Entry(questionnaire_window, font=("Helvetica", 12))
         self.last_name_entry.pack(pady=5)
 
-        tk.Label(questionnaire_window, text="Email:").pack(pady=5)
-        self.email_entry = tk.Entry(questionnaire_window)
+        tk.Label(questionnaire_window, text="Email:", font=("Helvetica", 12), bg="#f0f0f0").pack(pady=5)
+        self.email_entry = Entry(questionnaire_window, font=("Helvetica", 12))
         self.email_entry.pack(pady=5)
-
-
 
         def get_questionnaire_info():
             first_name = self.first_name_entry.get()
@@ -116,12 +152,15 @@ class BookFlight:
             email = self.email_entry.get()
 
             user_info_text = f"First Name: {first_name}\nLast Name: {last_name}\nEmail: {email}"
-            user_info_display = tk.Label(self.frame_account, text=user_info_text)
+            user_info_display = tk.Label(self.frame_account, text=user_info_text, font=("Helvetica", 12), bg="white")
             user_info_display.pack(pady=5)
+
+            self.information_button.configure(state=tk.DISABLED)
 
             questionnaire_window.destroy()
 
-        submit_button = tk.Button(questionnaire_window, text="Submit", command=get_questionnaire_info, font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
+        submit_button = tk.Button(questionnaire_window, text="Submit", command=get_questionnaire_info,
+                                 font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
         submit_button.pack(pady=10)
 
 if __name__ == "__main__":
