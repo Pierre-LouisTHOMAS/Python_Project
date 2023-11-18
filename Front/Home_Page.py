@@ -9,6 +9,7 @@ import PlaneBooking
 import EmployeePage
 import AccountInformation
 import HistoryFlight
+import BillsCustomer
 
 
 # Home Page
@@ -73,8 +74,6 @@ class HomePageApp:
 
     def create_buttons(self):
         bouton_height = int(self.bandeau_height * 0.8)
-
-
         bouton_vol = tk.Button(self.root, text="Buy Flight", width=15, command=self.redirect_to_plane_booking)
         bouton_vol.place(x=self.window_width * 0.6, y=self.window_height*0.17)
         bouton_vol.bind('<Enter>', self.bouton_hover)
@@ -93,6 +92,11 @@ class HomePageApp:
     def redirect_to_plane_booking(self):
         self.plane_booking_window = tk.Toplevel(self.root)
         self.app = PlaneBooking.BookingApp(self.plane_booking_window)
+
+    def redirect_to_bills_flight(self):
+        print("Redirection vers les factures des vols")
+        self.bills_flight = tk.Toplevel(self.root)
+        self.app = BillsCustomer.BillsHistory(self.bills_flight)
 
     def redirect_to_history_flight(self):
         print("Redirection vers l'historique des vols")
@@ -355,7 +359,7 @@ class HomePageApp:
 
         menu = tk.Menu(self.root, tearoff=0)
         menu.add_command(label="booking history", command=self.redirect_to_history_flight)
-        menu.add_command(label="Your bills", command=self.save)
+        menu.add_command(label="Your bills", command=self.redirect_to_bills_flight)
         menu.post(x, y)
 
 #Update appication
