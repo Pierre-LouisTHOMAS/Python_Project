@@ -1,9 +1,6 @@
 import tkinter as tk
-from tkinter import ttk
 from PIL import Image, ImageTk
-from tkinter import Toplevel, Label, Entry, Button, messagebox
-
-import pymysql
+from tkinter import Toplevel, Entry, messagebox
 import config
 
 class PaymentWindow:
@@ -12,7 +9,7 @@ class PaymentWindow:
         self.payment_window = Toplevel(parent)
         self.payment_window.geometry("400x300")
         self.payment_window.title("Payment Information")
-        self.payment_window.configure(bg="#f0f0f0")  # Couleur de fond gris clair
+        self.payment_window.configure(bg="#f0f0f0")
 
         vcmd = (self.payment_window.register(self.validate_input), "%P")
 
@@ -72,7 +69,6 @@ class BookFlight:
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.root, image=self.image2, bg="white")
         image_label2.place(x=self.header_height * 6.5, y=self.header_height * 0.1)
-        # Retourner à la page FlightBooking.py
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_flight_booking_page(event))
 
         frame_width = 400
@@ -131,7 +127,7 @@ class BookFlight:
         questionnaire_window = tk.Toplevel(self.root)
         questionnaire_window.geometry("400x300")
         questionnaire_window.title("Questionnaire")
-        questionnaire_window.configure(bg="#f0f0f0")  # Couleur de fond gris clair
+        questionnaire_window.configure(bg="#f0f0f0")
 
         tk.Label(questionnaire_window, text="First Name:", font=("Helvetica", 12), bg="#f0f0f0").pack(pady=5)
         self.first_name_entry = Entry(questionnaire_window, font=("Helvetica", 12))
