@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import FlightBooking
+import UserInfo
 import pymysql
 import config
 
@@ -91,25 +92,39 @@ class HomeEmployee:
 
 
     def window_file_management(self):
-        client_window = tk.Toplevel(self.root)
-        client_window.title("Customer file management")
-        client_window.geometry("300x200")
-        client_window.configure(bg="white")
+        user_info_window = tk.Toplevel(self.root)
+        user_info_window.title("User Information")
+        user_info_window.geometry("300x200")
+        user_info_window.configure(bg="white")
+        self.main_frame = tk.Frame(user_info_window, relief="solid", borderwidth=2)
+        self.main_frame.pack(padx=10, pady=10)
 
-        mail_label = tk.Label(client_window, text="Mail:")
-        mail_label.pack()
 
-        mail_entry = tk.Entry(client_window)
-        mail_entry.pack()
+        conn = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            db='AirlineDatabase',
+            port=8889
+        )
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT DISTINCT Email FROM User WHERE Type='Member'")
+        email_info = [info['Email'] for info in cursor.fetchall()]
 
-        id_label = tk.Label(client_window, text="ID:")
-        id_label.pack()
+        email_label = tk.Label(self.main_frame, text="Email")
+        email_label.grid(row=2, column=0, pady=5)
+        self.email_var = tk.StringVar()
+        email_combobox = ttk.Combobox(self.main_frame, textvariable=self.email_var)
+        email_combobox['values'] = email_info
+        email_combobox.bind('<<ComboboxSelected>>')
+        email_combobox.grid(row=2, column=1, pady=5)
 
-        id_entry = tk.Entry(client_window)
-        id_entry.pack()
+        self.submit_button = tk.Button(self.main_frame, text="Research", command=self.redirect_to_user_info)
+        self.submit_button.grid(row=4, column=0, columnspan=2, pady=10)
 
-        submit_button = tk.Button(client_window, text="Submit", command=self.save)
-        submit_button.pack()
+        cursor.close()
+        conn.close()
+
 
     def window_history_reservation(self):
         client_window = tk.Toplevel(self.root)
@@ -122,6 +137,8 @@ class HomeEmployee:
 
         mail_entry = tk.Entry(client_window)
         mail_entry.pack()
+
+
 
         id_label = tk.Label(client_window, text="ID:")
         id_label.pack()
@@ -232,6 +249,17 @@ class HomeEmployee:
 
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
+
+
+    def redirect_to_user_info(self):
+        try:
+            config.email_info = self.email_var.get()
+
+            self.user_info_window = tk.Toplevel(self.root)
+            self.app = UserInfo.UserInfoPage(self.user_info_window,config.email_info)
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Error on redirection bbb{e}")
 
     def save(self):
         print("Vous avez enregistré")
