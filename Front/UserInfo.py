@@ -57,7 +57,7 @@ class UserInfoPage:
         )
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        query = "SELECT User_ID, First_Name, Last_Name, Type, Category, Email, Password FROM User"
+        query = "SELECT User_ID, First_Name, Last_Name, Type, Category, Email FROM User WHERE Type = 'Member'"
 
         where_conditions = []
         params = []
@@ -81,32 +81,28 @@ class UserInfoPage:
             user_frame.pack(padx=40, pady=20, fill=tk.BOTH, expand=True)
 
             user_ID_label = tk.Label(user_frame, text=f"User ID: {user['User_ID']}",
-                                     font=("Arial", 14, "bold"), bg="lightblue")
+                                     font=("Arial", 14), bg="lightblue")
             user_ID_label.grid(row=0, column=0, padx=(30, 40), pady=15, sticky="w")
 
             first_name_label = tk.Label(user_frame, text=f"First Name: {user['First_Name']}",
                                         font=("Arial", 11), bg="lightblue")
-            first_name_label.grid(row=1, column=0, padx=(60, 40), pady=10, sticky="w")
+            first_name_label.grid(row=0, column=1, padx=(60, 40), pady=10, sticky="w")
 
             last_name_label = tk.Label(user_frame, text=f"Last Name: {user['Last_Name']}",
-                                       font=("Arial", 14, "bold"), bg="lightblue")
-            last_name_label.grid(row=0, column=1, padx=(30, 40), pady=15, sticky="w")
+                                       font=("Arial", 11), bg="lightblue")
+            last_name_label.grid(row=0, column=2, padx=(30, 40), pady=15, sticky="w")
 
             type_label = tk.Label(user_frame, text=f"Type: {user['Type']}",
                                   font=("Arial", 11), bg="lightblue")
-            type_label.grid(row=1, column=1, padx=(60, 40), pady=10, sticky="w")
+            type_label.grid(row=0, column=3, padx=(60, 40), pady=10, sticky="w")
 
             category_label = tk.Label(user_frame, text=f"Category: {user['Category']}",
                                       font=("Arial", 11), bg="lightblue")
-            category_label.grid(row=1, column=1, padx=(60, 40), pady=10, sticky="w")
+            category_label.grid(row=0, column=4, padx=(60, 40), pady=10, sticky="w")
 
             email_label = tk.Label(user_frame, text=f"Email: {user['Email']}",
                                    font=("Arial", 11), bg="lightblue")
-            email_label.grid(row=2, column=0, padx=(60, 40), pady=10, sticky="w")
-
-            password_label = tk.Label(user_frame, text=f"Password: {user['Password']}",
-                                      font=("Arial", 11), bg="lightblue")
-            password_label.grid(row=2, column=1, padx=(60, 40), pady=10, sticky="w")
+            email_label.grid(row=0, column=5, padx=(60, 40), pady=10, sticky="w")
 
         cursor.close()
         conn.close()

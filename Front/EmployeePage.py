@@ -78,9 +78,10 @@ class HomeEmployee:
             #under Menu name
             flight_menu.add_command(label="flight available", command=self.window_flight_available)
             flight_menu.add_command(label="flight discount offer", command=self.save)
+            flight_menu.add_command(label="add new flight", command=self.save)
+            flight_menu.add_command(label="number of tickets purchased", command=self.window_flight_available)
             customer_menu.add_command(label="Customer file management", command=self.window_file_management)
             customer_menu.add_command(label="Customer reservation history", command=self.window_history_reservation)
-            customer_menu.add_command(label="number of tickets purchased", command=self.window_history_reservation)
             sale_menu.add_command(label="Sales analysis", command=self.sales_analysis)
             sale_menu.add_command(label="Amount of private flight sale", command=self.save)
 
@@ -148,8 +149,6 @@ class HomeEmployee:
 
         submit_button = tk.Button(client_window, text="History", command=self.save)
         submit_button.pack()
-        number_ticket = tk.Button(client_window, text="Number_ticket", command=self.save)
-        number_ticket.pack()
 
     def window_flight_available(self):
         client_window = tk.Toplevel(self.root)
