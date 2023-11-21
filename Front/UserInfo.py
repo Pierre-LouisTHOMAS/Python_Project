@@ -57,7 +57,7 @@ class UserInfoPage:
         )
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
-        query = "SELECT User_ID, First_Name, Last_Name, Type, Category, Email FROM User WHERE Type = 'Member'"
+        query = "SELECT User_ID, First_Name, Last_Name, Type, Category, Email FROM User"
 
         where_conditions = []
         params = []
@@ -103,6 +103,7 @@ class UserInfoPage:
             email_label = tk.Label(user_frame, text=f"Email: {user['Email']}",
                                    font=("Arial", 11), bg="lightblue")
             email_label.grid(row=0, column=5, padx=(60, 40), pady=10, sticky="w")
+
 
         cursor.close()
         conn.close()
