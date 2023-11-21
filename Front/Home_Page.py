@@ -102,7 +102,6 @@ class HomePageApp:
         self.app = BillsCustomer.BillsHistory(self.bills_flight)
 
     def redirect_to_history_flight(self):
-        print("Redirection vers l'historique des vols")
         self.history_flight = tk.Toplevel(self.root)
         self.app = HistoryFlight.ReservationHistory(self.history_flight)
 
@@ -404,7 +403,7 @@ class HomePageApp:
 
                 self.menu = tk.Menu(self.root, tearoff=0)
                 self.menu.add_command(label="Booking history", command=self.redirect_to_history_flight)
-                self.menu.add_command(label="Your bills", command=self.save)
+                self.menu.add_command(label="Your bills", command=self.redirect_to_bills_flight)
 
 
         else:

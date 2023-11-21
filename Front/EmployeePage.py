@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkcalendar import DateEntry
-from tkinter import Toplevel, messagebox, ttk
+from tkinter import messagebox, ttk
 import AccountInformation
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -125,29 +125,39 @@ class HomeEmployee:
         cursor.close()
         conn.close()
 
-
     def window_history_reservation(self):
-        client_window = tk.Toplevel(self.root)
-        client_window.title("Customer reservation history")
-        client_window.geometry("300x200")
-        client_window.configure(bg="white")
+        history_reservation_window = tk.Toplevel(self.root)
+        history_reservation_window.title("Customer reservation history")
+        history_reservation_window.geometry("300x200")
+        history_reservation_window.configure(bg="white")
+        self.main_frame = tk.Frame(history_reservation_window, relief="solid", borderwidth=2)
+        self.main_frame.pack(padx=10, pady=10)
 
-        mail_label = tk.Label(client_window, text="Mail:")
-        mail_label.pack()
+        conn = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            db='AirlineDatabase',
+            port=8889
+        )
 
-        mail_entry = tk.Entry(client_window)
-        mail_entry.pack()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT DISTINCT Email FROM User WHERE Type='Member'")
+        email_info = [info['Email'] for info in cursor.fetchall()]
 
+        email_label = tk.Label(self.main_frame, text="Email")
+        email_label.grid(row=2, column=0, pady=5)
+        self.email_var = tk.StringVar()
+        email_combobox = ttk.Combobox(self.main_frame, textvariable=self.email_var)
+        email_combobox['values'] = email_info
+        email_combobox.bind('<<ComboboxSelected>>')
+        email_combobox.grid(row=2, column=1, pady=5)
 
+        self.submit_button = tk.Button(self.main_frame, text="Research", command=self.redirect_to_user_flight_history)
+        self.submit_button.grid(row=4, column=0, columnspan=2, pady=10)
 
-        id_label = tk.Label(client_window, text="ID:")
-        id_label.pack()
-
-        id_entry = tk.Entry(client_window)
-        id_entry.pack()
-
-        submit_button = tk.Button(client_window, text="History", command=self.save)
-        submit_button.pack()
+        cursor.close()
+        conn.close()
 
     def window_flight_available(self):
         client_window = tk.Toplevel(self.root)
@@ -217,21 +227,48 @@ class HomeEmployee:
             self.submit_button['state'] = 'normal'
 
     def sales_analysis(self):
-        # Remplacer Label et Value par les valeurs de la BDD
-        labels = ['London', 'Paris', 'Mexico', 'Berlin', 'Tokyo']
-        values = [25, 40, 35, 5, 10]
+        try:
+            conn = pymysql.connect(
+                host='localhost',
+                user='root',
+                password='root',
+                db='AirlineDatabase',
+                port=8889
+            )
 
-        plt.bar(labels, values)
-        plt.xlabel("City")
-        plt.ylabel("Number of flights")
-        plt.title("Flight analysis")
-        graph_window = tk.Toplevel(self.root)
-        graph_window.title("Flight analysis Graph")
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            cursor.execute("SELECT DISTINCT Departure_Airport FROM Flight")
+            arrival_airports = [airport['Departure_Airport'] for airport in cursor.fetchall()]
 
-        canvas = FigureCanvasTkAgg(plt.gcf(), master=graph_window)
-        canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-        graph_window.mainloop()
+            labels = []
+            values = []
+
+            for airport in arrival_airports:
+                cursor.execute("SELECT COUNT(*) as count FROM Flight WHERE Departure_Airport=%s", (airport,))
+                result = cursor.fetchone()
+                count = result['count'] if result else 0
+                labels.append(airport)
+                values.append(count)
+
+            plt.figure(figsize=(12, 8))
+            plt.bar(labels, values)
+            plt.xlabel("City")
+            plt.ylabel("Number of flights")
+            plt.title("Flight analysis")
+            graph_window = tk.Toplevel(self.root)
+            graph_window.title("Flight analysis Graph")
+
+            canvas = FigureCanvasTkAgg(plt.gcf(), master=graph_window)
+            canvas.draw()
+            canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+            graph_window.mainloop()
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Error in sales analysis: {e}")
+
+        finally:
+            cursor.close()
+            conn.close()
 
     def redirect_to_account_information(self, event):
         self.accountPage_window = tk.Toplevel(self.root)
@@ -239,11 +276,12 @@ class HomeEmployee:
 
     def redirect_to_edit_flight(self):
         try:
+            config.departure_date = self.date_var.get()
             config.departure_airport = self.departure_var.get()
             config.arrival_airport = self.arrival_var.get()
 
             self.editFlight_window = tk.Toplevel(self.root)
-            self.app = FlightBooking.FlightSelectionPage(self.editFlight_window,config.departure_airport, config.arrival_airport)
+            self.app = FlightBooking.FlightSelectionPage(self.editFlight_window,config.departure_date, config.departure_airport, config.arrival_airport)
 
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
@@ -257,7 +295,79 @@ class HomeEmployee:
             self.app = UserInfo.UserInfoPage(self.user_info_window,config.email_info)
 
         except Exception as e:
-            messagebox.showerror("Error", f"Error on redirection bbb{e}")
+            messagebox.showerror("Error", f"Error on redirection {e}")
+
+    def redirect_to_user_flight_history(self):
+        try:
+            user_email = self.email_var.get()
+
+            if not user_email:
+                messagebox.showwarning("Warning", "Please select a user's email.")
+                return
+
+            history_flight_window = tk.Toplevel(self.root)
+            history_flight_window.title("Customer reservation history")
+            history_flight_window.geometry("650x300")
+            history_flight_window.configure(bg="white")
+
+            self.main_frame = tk.Frame(history_flight_window, relief="solid", borderwidth=2)
+            self.main_frame.pack(padx=10, pady=10)
+
+            conn = pymysql.connect(
+                host='localhost',
+                user='root',
+                password='root',
+                db='AirlineDatabase',
+                port=8889
+            )
+
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            cursor.execute("SELECT User_ID FROM User WHERE Email=%s", (user_email,))
+            user_id = cursor.fetchone()
+
+            if user_id:
+                cursor.execute("SELECT * FROM Reservation WHERE User_ID=%s", (user_id['User_ID'],))
+                reservations = cursor.fetchall()
+
+                if reservations:
+                    reservation_list = ttk.Treeview(self.main_frame, columns=(
+                    "Flight_ID", "Departure_Date", "Departure_Airport", "Arrival_Airport", "Price"), show="headings",
+                                                    selectmode="browse")
+
+                    reservation_list.heading("Flight_ID", text="Flight ID")
+                    reservation_list.column("Flight_ID", width=80)
+
+                    reservation_list.heading("Departure_Date", text="Departure Date")
+                    reservation_list.column("Departure_Date", width=150)
+
+                    reservation_list.heading("Departure_Airport", text="Departure Airport")
+                    reservation_list.column("Departure_Airport", width=150)
+
+                    reservation_list.heading("Arrival_Airport", text="Arrival Airport")
+                    reservation_list.column("Arrival_Airport", width=150)
+
+                    reservation_list.heading("Price", text="Price")
+                    reservation_list.column("Price", width=80)
+
+                    reservation_list.pack(pady=20)
+
+                    for reservation in reservations:
+                        cursor.execute("SELECT * FROM Flight WHERE Flight_ID=%s", (reservation['Flight_ID'],))
+                        flight_info = cursor.fetchone()
+                        if flight_info:
+                            reservation_list.insert("", "end", values=(
+                            flight_info['Flight_ID'], flight_info['Departure_Date'], flight_info['Departure_Airport'],
+                            flight_info['Arrival_Airport'], flight_info['Price']))
+
+                else:
+                    tk.Label(self.main_frame, text="No reservations found for this user.", font=("Helvetica", 12)).pack(
+                        pady=20)
+
+            cursor.close()
+            conn.close()
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Error on redirection {e}")
 
     def save(self):
         print("Vous avez enregistré")

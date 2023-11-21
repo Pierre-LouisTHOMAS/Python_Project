@@ -3,7 +3,6 @@ from PIL import Image, ImageTk
 from tkinter import Toplevel, Entry, messagebox
 import config
 
-import hashlib
 import pymysql
 
 class PaymentWindow:
@@ -59,11 +58,9 @@ class PaymentWindow:
         number_of_tickets = 1
         total_payment = config.selected_price
 
-        # Préparer la requête SQL pour insérer dans la table Reservation
         query = "INSERT INTO Reservation (User_ID, Flight_ID, Number_of_Tickets, Total_Payment) VALUES (%s, %s, %s, %s)"
         cursor.execute(query, (user_id, flight_id, number_of_tickets, total_payment))
 
-        # Engager (commit) la transaction
         conn.commit()
 
         messagebox.showinfo("Payment Successful", "Payment processed and reservation made successfully!")
@@ -134,17 +131,34 @@ class BookFlight:
         price_label = tk.Label(self.frame_account, text=f"Price: {price}", bg="white", font=("Helvetica", 14, "bold"))
         price_label.pack(pady=10)
 
+        self.warning_label = tk.Label(self.frame_account, text="", font=("Helvetica", 12), bg="white", fg="red")
+        self.warning_label.pack(pady=5)
+
         if not config.is_user_logged_in:
             self.information_button = tk.Button(self.frame_account, text="Information", command=self.show_questionnaire,
                                                 font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
             self.information_button.pack(pady=10)
+
+            self.pay_button = tk.Button(self.frame_account, text="Pay", command=self.open_payment_window,
+                                        font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white', state=tk.DISABLED)
+            self.pay_button.pack(pady=10)
         else:
             self.show_user_info()
+            self.pay_button = tk.Button(self.frame_account, text="Pay", command=self.open_payment_window,
+                                        font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
+            self.pay_button.pack(pady=10)
 
-        self.pay_button = tk.Button(self.frame_account, text="Pay", command=self.open_payment_window,
-                                    font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
-        self.pay_button.pack(pady=10)
+    def validate_questionnaire(self):
+        first_name = self.first_name_entry.get()
+        last_name = self.last_name_entry.get()
+        email = self.email_entry.get()
 
+        if not all([first_name, last_name, email]):
+            self.warning_label.config(text="Please fill in all fields in the questionnaire.", fg="red")
+            return False
+        else:
+            self.warning_label.config(text="")
+            return True
     def open_payment_window(self):
         PaymentWindow(self.root)
 
@@ -173,6 +187,9 @@ class BookFlight:
 
         def get_questionnaire_info():
             try:
+                if not self.validate_questionnaire():
+                    return
+
                 first_name = self.first_name_entry.get()
                 last_name = self.last_name_entry.get()
                 email = self.email_entry.get()
@@ -197,6 +214,10 @@ class BookFlight:
                 user_info_display.pack(pady=5)
 
                 self.information_button.configure(state=tk.DISABLED)
+
+                # Activer le bouton "Pay" après avoir soumis le questionnaire
+                self.pay_button.configure(state=tk.NORMAL)
+
                 questionnaire_window.destroy()
 
             except Exception as e:
