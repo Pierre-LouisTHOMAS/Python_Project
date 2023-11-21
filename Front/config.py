@@ -1,11 +1,14 @@
 is_user_logged_in = False
-first_name_user = ""
-last_name_user = ""
+user_email = None
+user_id = None
+first_name_user = None
+last_name_user = None
 user_type = 0
 member_category = 0
 flight_data = []
 
 #PlaneBooking
+departure_date = None
 departure_airport = None
 arrival_airport = None
 

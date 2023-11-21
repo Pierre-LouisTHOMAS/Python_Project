@@ -3,11 +3,13 @@ from tkinter import Toplevel, messagebox, ttk
 import pymysql
 import config
 import BookFlight
+from datetime import datetime
 import random
 
 class FlightSelectionPage:
-    def __init__(self, root, departure_airport, arrival_airport):
+    def __init__(self, root, departure_date, departure_airport, arrival_airport):
         self.root = root
+        self.date_flight = departure_date
         self.departure_airport = departure_airport
         self.arrival_airport = arrival_airport
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
@@ -28,8 +30,6 @@ class FlightSelectionPage:
         frame = tk.Frame(canvas, bg="lightblue")
         #canvas.create_window((0, 0), window=frame, anchor="nw")
         canvas.create_window((0, 0), window=frame, anchor="nw", width=root.winfo_screenwidth())
-
-
 
         content_frame = tk.Frame(frame, bg="lightblue")
         content_frame.pack(fill=tk.BOTH, expand=True)
@@ -73,6 +73,10 @@ class FlightSelectionPage:
         where_conditions = []
         params = []
 
+        if config.departure_date:
+            config.departure_date = datetime.strptime(config.departure_date, '%d/%m/%Y').strftime('%Y-%m-%d')
+            where_conditions.append("DATE(Departure_Date) = %s")
+            params.append(config.departure_date)
         if config.departure_airport:
             where_conditions.append("Departure_Airport = %s")
             params.append(config.departure_airport)

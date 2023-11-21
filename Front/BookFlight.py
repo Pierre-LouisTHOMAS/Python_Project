@@ -3,6 +3,9 @@ from PIL import Image, ImageTk
 from tkinter import Toplevel, Entry, messagebox
 import config
 
+import hashlib
+import pymysql
+
 class PaymentWindow:
     def __init__(self, parent):
         self.parent = parent
@@ -25,6 +28,8 @@ class PaymentWindow:
         self.cvv_entry = Entry(self.payment_window, validate="key", validatecommand=vcmd, font=("Helvetica", 12), show="*")
         self.cvv_entry.pack(pady=5)
 
+
+
         tk.Button(self.payment_window, text="Submit Payment", command=self.process_payment, font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white').pack(pady=10)
 
     def validate_input(self, value):
@@ -35,8 +40,33 @@ class PaymentWindow:
         expiration_date = self.expiration_date_entry.get()
         cvv = self.cvv_entry.get()
 
+        if not all([card_number, expiration_date, cvv]):
+            messagebox.showwarning("Warning", "Please fill in all payment details.")
+            return
 
-        messagebox.showinfo("Payment Successful", "Payment processed successfully!")
+        # Connexion à la base de données
+        conn = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            db='AirlineDatabase',
+            port=8889
+        )
+        cursor = conn.cursor()
+
+        user_id = config.user_id
+        flight_id = config.selected_flight_id
+        number_of_tickets = 1
+        total_payment = config.selected_price
+
+        # Préparer la requête SQL pour insérer dans la table Reservation
+        query = "INSERT INTO Reservation (User_ID, Flight_ID, Number_of_Tickets, Total_Payment) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query, (user_id, flight_id, number_of_tickets, total_payment))
+
+        # Engager (commit) la transaction
+        conn.commit()
+
+        messagebox.showinfo("Payment Successful", "Payment processed and reservation made successfully!")
 
         self.payment_window.destroy()
 
@@ -142,17 +172,38 @@ class BookFlight:
         self.email_entry.pack(pady=5)
 
         def get_questionnaire_info():
-            first_name = self.first_name_entry.get()
-            last_name = self.last_name_entry.get()
-            email = self.email_entry.get()
+            try:
+                first_name = self.first_name_entry.get()
+                last_name = self.last_name_entry.get()
+                email = self.email_entry.get()
 
-            user_info_text = f"First Name: {first_name}\nLast Name: {last_name}\nEmail: {email}"
-            user_info_display = tk.Label(self.frame_account, text=user_info_text, font=("Helvetica", 12), bg="white")
-            user_info_display.pack(pady=5)
+                conn = pymysql.connect(
+                    host='localhost',
+                    user='root',
+                    password='root',
+                    db='AirlineDatabase',
+                    port=8889
+                )
+                cursor = conn.cursor()
 
-            self.information_button.configure(state=tk.DISABLED)
+                query = "INSERT INTO User (First_Name, Last_Name, Type, Category, Email) VALUES (%s, %s, %s, %s, %s)"
 
-            questionnaire_window.destroy()
+                cursor.execute(query, (first_name, last_name, 'Guest', 'NULL', email))
+                conn.commit()
+
+                user_info_text = f"First Name: {first_name}\nLast Name: {last_name}\nEmail: {email}"
+                user_info_display = tk.Label(self.frame_account, text=user_info_text, font=("Helvetica", 12),
+                                             bg="white")
+                user_info_display.pack(pady=5)
+
+                self.information_button.configure(state=tk.DISABLED)
+                questionnaire_window.destroy()
+
+            except Exception as e:
+                messagebox.showerror("Database Error", f"An error occurred: {e}")
+            finally:
+                cursor.close()
+                conn.close()
 
         submit_button = tk.Button(questionnaire_window, text="Submit", command=get_questionnaire_info,
                                  font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')

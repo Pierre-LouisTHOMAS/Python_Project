@@ -100,7 +100,6 @@ class HomeEmployee:
         self.main_frame = tk.Frame(user_info_window, relief="solid", borderwidth=2)
         self.main_frame.pack(padx=10, pady=10)
 
-
         conn = pymysql.connect(
             host='localhost',
             user='root',

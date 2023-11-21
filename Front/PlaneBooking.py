@@ -121,11 +121,12 @@ class BookingApp:
 
     def redirect_to_Flight_booking(self):
         try:
+            config.departure_date = self.date_var.get()
             config.departure_airport = self.departure_var.get()
             config.arrival_airport = self.arrival_var.get()
 
             self.flightBooking_window = tk.Toplevel(self.root)
-            self.app = FlightBooking.FlightSelectionPage(self.flightBooking_window, config.departure_airport, config.arrival_airport)
+            self.app = FlightBooking.FlightSelectionPage(self.flightBooking_window, config.departure_date, config.departure_airport, config.arrival_airport)
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
 

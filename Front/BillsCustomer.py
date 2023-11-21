@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
+import pymysql
+import config
 
 class BillsHistory:
     def __init__(self, root):
@@ -17,10 +19,10 @@ class BillsHistory:
         invoice_list.heading("Date", text="Date")
         invoice_list.column("Date", width=100)
 
-        invoice_list.heading("Flight", text="Flight")
+        invoice_list.heading("Flight", text="Departure Airport")
         invoice_list.column("Flight", width=150)
 
-        invoice_list.heading("Amount Paid", text="Amount Paid")
+        invoice_list.heading("Amount Paid", text="Price")
         invoice_list.column("Amount Paid", width=100)
 
         self.add_dummy_data(invoice_list)
@@ -29,14 +31,32 @@ class BillsHistory:
         invoice_list.bind("<ButtonRelease-1>", lambda event: self.show_invoice_details(invoice_list))
 
     def add_dummy_data(self, treeview):
-        data = [
-            ("2023-01-01", "Flight 123", "$500"),
-            ("2023-02-15", "Flight 456", "$750"),
-            ("2023-03-20", "Flight 789", "$1000"),
-        ]
+        user_id = config.user_id
 
-        for row in data:
-            treeview.insert("", "end", values=row)
+        try:
+            conn = pymysql.connect(
+                host='localhost',
+                user='root',
+                password='root',
+                db='AirlineDatabase',
+                port=8889
+            )
+            cursor = conn.cursor()
+
+            query = "SELECT f.Departure_Date, f.Departure_Airport, f.Price FROM Reservation r JOIN Flight f ON r.Flight_ID = f.Flight_ID WHERE r.User_ID = %s"
+            cursor.execute(query, (user_id,))
+
+            reservations = cursor.fetchall()
+
+            for reservation in reservations:
+                treeview.insert("", "end", values=reservation)
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+        finally:
+            cursor.close()
+            conn.close()
 
     def show_invoice_details(self, treeview):
         selected_item = treeview.selection()

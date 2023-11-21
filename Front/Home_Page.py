@@ -77,15 +77,12 @@ class HomePageApp:
         self.image3 = tk.PhotoImage(file=image_path3)
         image_label3 = tk.Label(self.root, image=self.image3)
         image_label3.place(x=0, y=self.bandeau_height * 1.05, relwidth=1, relheight=0.75)
-
     def create_buttons(self):
         bouton_height = int(self.bandeau_height * 0.8)
         bouton_vol = tk.Button(self.root, text="Buy Flight", width=15, command=self.redirect_to_plane_booking)
         bouton_vol.place(x=self.window_width * 0.6, y=self.window_height*0.17)
         bouton_vol.bind('<Enter>', self.bouton_hover)
         bouton_vol.bind('<Leave>', self.bouton_leave)
-
-
     def bouton_hover(self, event):
         event.widget.config(bg="lightblue")
 
@@ -170,15 +167,18 @@ class HomePageApp:
         success, user_info = self.verify_login(email, password)
         if success:
             config.is_user_logged_in = True
+            config.user_email = email
+            config.user_id = user_info['User_ID']
             config.first_name_user = user_info['First_Name']
             config.last_name_user = user_info['Last_Name']
             config.user_type = user_info['Type']
             config.member_category = user_info['Category']
-            self.connection_window.destroy()  # Ferme uniquement la fenêtre de connection
+            self.connection_window.destroy()
             self.update_ui()
             self.periodic_update()
             if config.user_type == 'Employee':
                 self.redirect_to_employee_page(self)
+
         else:
             self.error_label.config(text="Email ou mot de passe incorrect!")
 
@@ -194,15 +194,16 @@ class HomePageApp:
             with conn.cursor() as cursor:
                 hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
                 cursor.execute(
-                    "SELECT First_Name, Last_Name, Type, Category FROM User WHERE email = %s AND password = %s",
+                    "SELECT User_ID, First_Name, Last_Name, Type, Category FROM User WHERE email = %s AND password = %s",
                     (email, hashed_password))
                 result = cursor.fetchone()
                 if result:
                     user_info = {
-                        'First_Name': result[0],
-                        'Last_Name': result[1],
-                        'Type': result[2],
-                        'Category': result[3]
+                        'User_ID': result[0],
+                        'First_Name': result[1],
+                        'Last_Name': result[2],
+                        'Type': result[3],
+                        'Category': result[4]
                     }
                     return True, user_info
                 else:
@@ -210,6 +211,7 @@ class HomePageApp:
         except Exception as e:
             messagebox.showerror("Erreur", f"Database error: {e}")
             return False, None
+
         finally:
             conn.close()
 

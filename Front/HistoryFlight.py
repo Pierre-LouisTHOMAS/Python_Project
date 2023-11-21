@@ -1,5 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
+import pymysql
+
+import config
 
 class ReservationHistory:
     def __init__(self, root):
@@ -13,16 +16,16 @@ class ReservationHistory:
         title_label = tk.Label(self.root, text="Reservation History", font=("Helvetica", 16), pady=10)
         title_label.pack()
 
-        reservation_list = ttk.Treeview(self.root, columns=("Date", "Flight", "Status"), show="headings", selectmode="browse")
+        reservation_list = ttk.Treeview(self.root, columns=("Date", "Departure_Airport", "Arrival_Airport"), show="headings", selectmode="browse")
 
         reservation_list.heading("Date", text="Date")
         reservation_list.column("Date", width=100)
 
-        reservation_list.heading("Flight", text="Flight")
-        reservation_list.column("Flight", width=150)
+        reservation_list.heading("Departure_Airport", text="Departure Airport")
+        reservation_list.column("Departure_Airport", width=150)
 
-        reservation_list.heading("Status", text="Status")
-        reservation_list.column("Status", width=100)
+        reservation_list.heading("Arrival_Airport", text="Arrival Airport")
+        reservation_list.column("Arrival_Airport", width=100)
 
         self.add_dummy_data(reservation_list)
 
@@ -31,14 +34,38 @@ class ReservationHistory:
         reservation_list.bind("<ButtonRelease-1>", lambda event: self.show_reservation_details(reservation_list))
 
     def add_dummy_data(self, treeview):
-        data = [
-            ("2023-01-01", "Flight 123", "Confirmed"),
-            ("2023-02-15", "Flight 456", "Cancelled"),
-            ("2023-03-20", "Flight 789", "Pending"),
-        ]
+        user_id = config.user_id
 
-        for row in data:
-            treeview.insert("", "end", values=row)
+        try:
+            conn = pymysql.connect(
+                host='localhost',
+                user='root',
+                password='root',
+                db='AirlineDatabase',
+                port=8889
+            )
+            cursor = conn.cursor()
+
+            query = """
+                    SELECT f.Departure_Date, f.Departure_Airport, f.Arrival_Airport, u.First_Name, u.Email 
+                    FROM Reservation r 
+                    JOIN Flight f ON r.Flight_ID = f.Flight_ID 
+                    JOIN User u ON r.User_ID = u.User_ID 
+                    WHERE r.User_ID = %s
+                    """
+            cursor.execute(query, (user_id,))
+
+            reservations = cursor.fetchall()
+
+            for reservation in reservations:
+                treeview.insert("", "end", values=reservation)
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+        finally:
+            cursor.close()
+            conn.close()
 
     def show_reservation_details(self, treeview):
 
@@ -52,19 +79,22 @@ class ReservationHistory:
         details_window = tk.Toplevel(self.root)
         details_window.title("Reservation Details")
 
-        flight_label = tk.Label(details_window, text=f"Flight: {reservation_info[1]}", font=("Helvetica", 12))
-        flight_label.pack()
-
+        # Assurez-vous que l'indexation correspond à l'ordre des données dans le treeview
         date_label = tk.Label(details_window, text=f"Date: {reservation_info[0]}", font=("Helvetica", 12))
         date_label.pack()
 
-        status_label = tk.Label(details_window, text=f"Status: {reservation_info[2]}", font=("Helvetica", 12))
-        status_label.pack()
+        departure_airport_label = tk.Label(details_window, text=f"Departure Airport: {reservation_info[1]}",
+                                           font=("Helvetica", 12))
+        departure_airport_label.pack()
 
-        customer_name_label = tk.Label(details_window, text="Customer: John Doe", font=("Helvetica", 12))
+        arrival_airport_label = tk.Label(details_window, text=f"Arrival Airport: {reservation_info[2]}",
+                                         font=("Helvetica", 12))
+        arrival_airport_label.pack()
+
+        customer_name_label = tk.Label(details_window, text=f"Customer: {reservation_info[3]}", font=("Helvetica", 12))
         customer_name_label.pack()
 
-        customer_email_label = tk.Label(details_window, text="Email: john.doe@example.com", font=("Helvetica", 12))
+        customer_email_label = tk.Label(details_window, text=f"Email: {reservation_info[4]}", font=("Helvetica", 12))
         customer_email_label.pack()
 
 if __name__ == "__main__":
