@@ -111,6 +111,8 @@ class HomePageApp:
         elif self.provenance == 'Create':
             self.create_account_window.destroy()
 
+        self.hide_additional_ui_elements()
+
     def redirect_to_employee_page(self, event):
         self.employeePage_window = tk.Toplevel(self.root)
         self.app = EmployeePage.HomeEmployee(self.employeePage_window)
@@ -371,8 +373,7 @@ class HomePageApp:
 
 #Update appication
     def update_ui(self):
-        if config.is_user_logged_in:
-
+        if config.is_user_logged_in == True:
             image_path4 = "../Pictures/AccountPicture.png"
             self.image4 = tk.PhotoImage(file=image_path4)
             self.image4 = self.image4.subsample(6)
