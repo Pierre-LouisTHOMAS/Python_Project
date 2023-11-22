@@ -4,6 +4,7 @@ from tkinter import messagebox, ttk
 import AccountInformation
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from datetime import datetime
 
 import FlightBooking
 import UserInfo
@@ -22,6 +23,8 @@ class HomeEmployee:
 
         self.header_height = root.winfo_screenheight() * 0.22
         self.menu = None
+
+
 
         self.create_header()
 
@@ -78,7 +81,7 @@ class HomeEmployee:
             #under Menu name
             flight_menu.add_command(label="flight available", command=self.window_flight_available)
             flight_menu.add_command(label="flight discount offer", command=self.save)
-            flight_menu.add_command(label="add new flight", command=self.save)
+            flight_menu.add_command(label="add new flight", command=self.add_new_flight)
             flight_menu.add_command(label="number of tickets purchased", command=self.window_flight_available)
             customer_menu.add_command(label="Customer file management", command=self.window_file_management)
             customer_menu.add_command(label="Customer reservation history", command=self.window_history_reservation)
@@ -217,6 +220,107 @@ class HomeEmployee:
 
         cursor.close()
         conn.close()
+
+    def add_new_flight(self):
+        new_flight_window = tk.Toplevel(self.root)
+        new_flight_window.title("Add New Flight")
+        new_flight_window.geometry("350x300")
+        new_flight_window.configure(bg="white")
+        self.main_frame = tk.Frame(new_flight_window, relief="solid", borderwidth=2)
+        self.main_frame.pack(padx=10, pady=10)
+
+        title_label = tk.Label(self.main_frame, text="Add New Flight", font=("Helvetica", 16))
+        title_label.grid(row=0, column=0, columnspan=2, pady=10)
+
+        departure_label = tk.Label(self.main_frame, text="Departure Date")
+        departure_label.grid(row=1, column=0, pady=5)
+        self.departure_date_var = tk.StringVar()
+        departure_date_entry = DateEntry(self.main_frame, textvariable=self.departure_date_var,
+                                         date_pattern="dd/mm/yyyy")
+        departure_date_entry.grid(row=1, column=1, pady=5)
+
+        arrival_label = tk.Label(self.main_frame, text="Arrival Date")
+        arrival_label.grid(row=2, column=0, pady=5)
+        self.arrival_date_var = tk.StringVar()
+        arrival_date_entry = DateEntry(self.main_frame, textvariable=self.arrival_date_var, date_pattern="dd/mm/yyyy")
+        arrival_date_entry.grid(row=2, column=1, pady=5)
+
+        departure_airports, arrival_airports = self.get_distinct_values()
+
+        departure_airport_label = tk.Label(self.main_frame, text="Departure Airport")
+        departure_airport_label.grid(row=3, column=0, pady=5)
+        self.departure_var = tk.StringVar()
+        departure_combobox = ttk.Combobox(self.main_frame, textvariable=self.departure_var, values=departure_airports)
+        departure_combobox.grid(row=3, column=1, pady=5)
+
+        arrival_airport_label = tk.Label(self.main_frame, text="Arrival Airport")
+        arrival_airport_label.grid(row=4, column=0, pady=5)
+        self.arrival_var = tk.StringVar()
+        arrival_combobox = ttk.Combobox(self.main_frame, textvariable=self.arrival_var, values=arrival_airports)
+        arrival_combobox.grid(row=4, column=1, pady=5)
+
+        price_label = tk.Label(self.main_frame, text="Price")
+        price_label.grid(row=5, column=0, pady=5)
+        self.price_var = tk.DoubleVar()
+        price_entry = ttk.Entry(self.main_frame, textvariable=self.price_var)
+        price_entry.grid(row=5, column=1, pady=5)
+
+        self.save_button = tk.Button(self.main_frame, text="Save", command=self.save_new_flight)
+        self.save_button.grid(row=6, column=0, columnspan=2, pady=10)
+
+    def get_distinct_values(self):
+        try:
+            conn = pymysql.connect(
+                host='localhost',
+                user='root',
+                password='root',
+                db='AirlineDatabase',
+                port=8889
+            )
+
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+            cursor.execute("SELECT DISTINCT Departure_Airport FROM Flight")
+            departure_airports = [airport['Departure_Airport'] for airport in cursor.fetchall()]
+
+            cursor.execute("SELECT DISTINCT Arrival_Airport FROM Flight")
+            arrival_airports = [airport['Arrival_Airport'] for airport in cursor.fetchall()]
+
+            return departure_airports, arrival_airports
+
+        finally:
+            cursor.close()
+            conn.close()
+
+    def save_new_flight(self):
+        try:
+            config.departure_date = datetime.strptime(self.departure_date_var.get(), '%d/%m/%Y').strftime('%Y-%m-%d')
+            config.arrival_date = datetime.strptime(self.arrival_date_var.get(), '%d/%m/%Y').strftime('%Y-%m-%d')
+
+            conn = pymysql.connect(
+                host='localhost',
+                user='root',
+                password='root',
+                db='AirlineDatabase',
+                port=8889
+            )
+
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            cursor.execute(
+                "INSERT INTO Flight (Departure_Date, Arrival_Date, Departure_Airport, Arrival_Airport, Price) VALUES (%s, %s, %s, %s, %s)",
+                (config.departure_date, config.arrival_date, self.departure_var.get(), self.arrival_var.get(),
+                 self.price_var.get()))
+            conn.commit()
+            messagebox.showinfo("Success", "New flight added successfully!")
+
+
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Error adding new flight: {e}")
+
+        finally:
+            cursor.close()
+            conn.close()
 
     def check_airport_selection(self, event):
         if self.departure_var.get() == self.arrival_var.get():

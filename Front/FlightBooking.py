@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Toplevel, messagebox, ttk
+from tkinter import ttk
 import pymysql
 import config
 import BookFlight
@@ -7,11 +7,12 @@ from datetime import datetime
 import random
 
 class FlightSelectionPage:
-    def __init__(self, root, departure_date, departure_airport, arrival_airport):
+    def __init__(self, root, departure_date, departure_airport, arrival_airport, num_tickets):
         self.root = root
         self.date_flight = departure_date
         self.departure_airport = departure_airport
         self.arrival_airport = arrival_airport
+        self.num_tickets = num_tickets
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.root.title("Sky Travellers: Flight Research Result")
 
@@ -131,8 +132,9 @@ class FlightSelectionPage:
             separator2 = ttk.Separator(flight_frame, orient="vertical")
             separator2.grid(row=0, column=4, rowspan=2, padx=10, sticky="ns")
 
-            price_label2 = tk.Label(flight_frame, text=f"Economy Ticket: {flight['Price']}", font=("Arial", 12),
-                                    bg="lightblue")
+            total_price = flight['Price'] * self.num_tickets
+
+            price_label2 = tk.Label(flight_frame, text=f"Economy ticket : {total_price}",font=("Arial", 12),bg="lightblue")
             price_label2.grid(row=0, column=5, padx=(20, 40), pady=15, sticky="w")
 
 

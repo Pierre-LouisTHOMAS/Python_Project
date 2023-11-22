@@ -1,17 +1,11 @@
-import random
+cursor = conn.cursor(pymysql.cursors.DictCursor)
+cursor.execute("SELECT DISTINCT Email FROM User WHERE Type='Member'")
+email_info = [info['Email'] for info in cursor.fetchall()]
 
-def monte_carlo_pi(estimations):
-    points_dans_cercle = 0
-
-    for _ in range(estimations):
-        x, y = random.uniform(-1, 1), random.uniform(-1, 1)
-        distance = x**2 + y**2
-
-        if distance <= 1:
-            points_dans_cercle += 1
-
-    return (points_dans_cercle / estimations) * 4
-
-# Exemple d'utilisation avec 1 million d'estimations
-resultat_pi = monte_carlo_pi(1000000)
-print("Estimation de π:", resultat_pi)
+email_label = tk.Label(self.main_frame, text="Email")
+email_label.grid(row=2, column=0, pady=5)
+self.email_var = tk.StringVar()
+email_combobox = ttk.Combobox(self.main_frame, textvariable=self.email_var)
+email_combobox['values'] = email_info
+email_combobox.bind('<<ComboboxSelected>>')
+email_combobox.grid(row=2, column=1, pady=5)

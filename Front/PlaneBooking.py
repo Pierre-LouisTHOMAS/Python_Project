@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkcalendar import DateEntry
-from tkinter import Label, ttk, messagebox
+from tkinter import ttk, Label, Spinbox, messagebox
 from PIL import Image, ImageTk
 
 import pymysql
@@ -21,6 +21,7 @@ class BookingApp:
 
         self.departure_var = tk.StringVar()
         self.arrival_var = tk.StringVar()
+        self.num_tickets_var = tk.StringVar()
 
         self.create_window()
 
@@ -86,6 +87,12 @@ class BookingApp:
         arrival_combobox.bind('<<ComboboxSelected>>', self.check_airport_selection)
         arrival_combobox.grid(row=3, column=1, pady=5)
 
+        self.num_tickets_label = tk.Label(self.main_frame, text="Number of Tickets")
+        self.num_tickets_label.grid(row=5, column=0, pady=5)
+
+        self.num_tickets_spinbox = Spinbox(self.main_frame, from_=1, to=4, textvariable=self.num_tickets_var)
+        self.num_tickets_spinbox.grid(row=5, column=1, pady=5)
+
         self.error_label = tk.Label(self.main_frame, text="", fg="red")
         self.error_label.grid(row=4, column=0, columnspan=2, pady=5)
 
@@ -117,16 +124,17 @@ class BookingApp:
         departure = self.departure_var.get()
         arrival = self.arrival_var.get()
         person_type = self.person_type_var.get()
-        print(f"Date: {date}, Départ: {departure}, Arrivée: {arrival}, Type de Personne: {person_type}")
+        print(f"Date: {date}, Departure: {departure}, Arrival: {arrival}, Type of Person: {person_type}")
 
     def redirect_to_Flight_booking(self):
         try:
             config.departure_date = self.date_var.get()
             config.departure_airport = self.departure_var.get()
             config.arrival_airport = self.arrival_var.get()
+            config.num_tickets = int(self.num_tickets_var.get())
 
             self.flightBooking_window = tk.Toplevel(self.root)
-            self.app = FlightBooking.FlightSelectionPage(self.flightBooking_window, config.departure_date, config.departure_airport, config.arrival_airport)
+            self.app = FlightBooking.FlightSelectionPage(self.flightBooking_window, config.departure_date, config.departure_airport, config.arrival_airport, config.num_tickets)
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
 
