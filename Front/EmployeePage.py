@@ -5,7 +5,6 @@ from PIL import Image, ImageTk
 import AccountInformation
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from datetime import datetime
 
 import FlightBooking
 import UserInfo
@@ -24,8 +23,6 @@ class HomeEmployee:
 
         self.header_height = root.winfo_screenheight() * 0.22
         self.menu = None
-
-
 
         self.create_header()
 

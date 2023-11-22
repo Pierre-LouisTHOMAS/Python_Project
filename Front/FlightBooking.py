@@ -28,6 +28,7 @@ class FlightSelectionPage:
 
         canvas.configure(yscrollcommand=scrollbar.set)
 
+
         frame = tk.Frame(canvas, bg="lightblue")
         #canvas.create_window((0, 0), window=frame, anchor="nw")
         canvas.create_window((0, 0), window=frame, anchor="nw", width=root.winfo_screenwidth())
