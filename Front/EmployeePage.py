@@ -5,6 +5,8 @@ from PIL import Image, ImageTk
 import AccountInformation
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import random
+from datetime import datetime, timedelta
 
 import FlightBooking
 import UserInfo
@@ -317,6 +319,7 @@ class HomeEmployee:
             price_entry.get()
         ))
         add_button.grid(row=5, column=0, columnspan=2, pady=10)
+
     def ajouter_vol(self, departure_airport, arrival_airport, departure_date, arrival_date, price):
         try:
             conn = pymysql.connect(
@@ -327,8 +330,13 @@ class HomeEmployee:
                 port=8889
             )
             with conn.cursor() as cursor:
+                # Ajouter une heure aléatoire à la date de départ
+                departure_datetime = self.add_random_time(departure_date)
+                # Ajouter une heure aléatoire (et différente) à la date d'arrivée
+                arrival_datetime = self.add_random_time(arrival_date)
+
                 sql = "INSERT INTO Flight (Departure_Airport, Arrival_Airport, Departure_Date, Arrival_Date, Price) VALUES (%s, %s, %s, %s, %s)"
-                cursor.execute(sql, (departure_airport, arrival_airport, departure_date, arrival_date, price))
+                cursor.execute(sql, (departure_airport, arrival_airport, departure_datetime, arrival_datetime, price))
             conn.commit()
             messagebox.showinfo("Success", "Flight added with success!")
         except Exception as e:
@@ -336,6 +344,14 @@ class HomeEmployee:
         finally:
             if conn:
                 conn.close()
+
+    def add_random_time(self, date_str):
+        # Convertir la date en objet datetime
+        date = datetime.strptime(date_str, '%Y-%m-%d')
+        # Générer une heure, minute et seconde aléatoire
+        hours, minutes, seconds = random.randint(0, 23), random.randint(0, 59), random.randint(0, 59)
+        # Ajouter l'heure aléatoire à la date
+        return date + timedelta(hours=hours, minutes=minutes, seconds=seconds)
 
     def modify_discount_window(self):
         modify_window = tk.Toplevel(self.root)
