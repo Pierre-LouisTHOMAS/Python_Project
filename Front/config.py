@@ -4,6 +4,7 @@ user_id = None
 first_name_user = None
 last_name_user = None
 user_type = 0
+user_discount = None
 member_category = 0
 flight_data = []
 

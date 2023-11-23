@@ -9,9 +9,13 @@ CREATE TABLE User (
     Last_Name VARCHAR(255) NOT NULL,
     Type ENUM('Guest', 'Member', 'Employee') NOT NULL,
     Category ENUM('regular', 'senior', 'child', 'NULL') DEFAULT 'NULL',
+    Discount DECIMAL(5,2),
     Email VARCHAR(255) NOT NULL,
     Password VARCHAR(255)
 );
+UPDATE User SET Discount = 40.00 WHERE Category = 'child';
+UPDATE User SET Discount = 30.00 WHERE Category = 'senior';
+UPDATE User SET Discount = 15.00 WHERE Category = 'regular';
 
 -- Creating the Flight table
 CREATE TABLE Flight (

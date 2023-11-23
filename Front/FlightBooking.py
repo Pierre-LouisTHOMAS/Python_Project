@@ -133,9 +133,9 @@ class FlightSelectionPage:
             separator2 = ttk.Separator(flight_frame, orient="vertical")
             separator2.grid(row=0, column=4, rowspan=2, padx=10, sticky="ns")
 
-            total_price = flight['Price'] * self.num_tickets
+            total_price = flight['Price'] * self.num_tickets * (1-(config.user_discount/100))
 
-            price_label2 = tk.Label(flight_frame, text=f"Economy ticket : {total_price}",font=("Arial", 12),bg="lightblue")
+            price_label2 = tk.Label(flight_frame, text=f"Economy ticket : {total_price:.2f}", font=("Arial", 12), bg="lightblue")
             price_label2.grid(row=0, column=5, padx=(20, 40), pady=15, sticky="w")
 
 

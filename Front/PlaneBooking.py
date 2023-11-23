@@ -90,7 +90,6 @@ class BookingApp:
 
         self.num_tickets_label = tk.Label(self.main_frame, text="Number of Tickets")
         self.num_tickets_label.grid(row=5, column=0, pady=5)
-
         self.num_tickets_spinbox = Spinbox(self.main_frame, from_=1, to=4, textvariable=self.num_tickets_var)
         self.num_tickets_spinbox.grid(row=5, column=1, pady=5)
 

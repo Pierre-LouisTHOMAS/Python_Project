@@ -174,6 +174,7 @@ class HomePageApp:
             config.last_name_user = user_info['Last_Name']
             config.user_type = user_info['Type']
             config.member_category = user_info['Category']
+            config.user_discount = user_info['Discount']
             self.connection_window.destroy()
             self.update_ui()
             self.periodic_update()
@@ -195,7 +196,7 @@ class HomePageApp:
             with conn.cursor() as cursor:
                 hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
                 cursor.execute(
-                    "SELECT User_ID, First_Name, Last_Name, Type, Category FROM User WHERE email = %s AND password = %s",
+                    "SELECT User_ID, First_Name, Last_Name, Type, Category, Discount FROM User WHERE email = %s AND password = %s",
                     (email, hashed_password))
                 result = cursor.fetchone()
                 if result:
@@ -204,7 +205,8 @@ class HomePageApp:
                         'First_Name': result[1],
                         'Last_Name': result[2],
                         'Type': result[3],
-                        'Category': result[4]
+                        'Category': result[4],
+                        'Discount': result[5]
                     }
                     return True, user_info
                 else:

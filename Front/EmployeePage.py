@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkcalendar import DateEntry
-from tkinter import Toplevel, messagebox, ttk, Label
+from tkinter import Toplevel, messagebox, ttk, Label, Spinbox
 from PIL import Image, ImageTk
 import AccountInformation
 import matplotlib.pyplot as plt
@@ -23,6 +23,8 @@ class HomeEmployee:
 
         self.header_height = root.winfo_screenheight() * 0.22
         self.menu = None
+
+        self.num_tickets_var = tk.StringVar()
 
         self.create_header()
 
@@ -185,7 +187,6 @@ class HomeEmployee:
         self.main_frame = tk.Frame(client_window, relief="solid", borderwidth=2)
         self.main_frame.pack(padx=10, pady=10)
 
-
         conn = pymysql.connect(
             host='localhost',
             user='root',
@@ -226,6 +227,11 @@ class HomeEmployee:
         arrival_combobox.bind('<<ComboboxSelected>>', self.check_airport_selection)
         arrival_combobox.grid(row=3, column=1, pady=5)
 
+        self.num_tickets_label = tk.Label(self.main_frame, text="Number of Tickets")
+        self.num_tickets_label.grid(row=5, column=0, pady=5)
+        self.num_tickets_spinbox = Spinbox(self.main_frame, from_=1, to=4, textvariable=self.num_tickets_var)
+        self.num_tickets_spinbox.grid(row=5, column=1, pady=5)
+
         self.error_label = tk.Label(self.main_frame, text="", fg="red")
         self.error_label.grid(row=4, column=0, columnspan=2, pady=5)
 
@@ -262,9 +268,10 @@ class HomeEmployee:
             config.departure_date = self.date_var.get()
             config.departure_airport = self.departure_var.get()
             config.arrival_airport = self.arrival_var.get()
+            config.num_tickets = int(self.num_tickets_var.get())
 
             self.flightBooking_window = tk.Toplevel(self.root)
-            self.app = FlightBooking.FlightSelectionPage(self.flightBooking_window, config.departure_date, config.departure_airport, config.arrival_airport)
+            self.app = FlightBooking.FlightSelectionPage(self.flightBooking_window, config.departure_date, config.departure_airport, config.arrival_airport, config.num_tickets)
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
 
