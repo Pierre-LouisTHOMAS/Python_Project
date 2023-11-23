@@ -337,6 +337,49 @@ class HomeEmployee:
             if conn:
                 conn.close()
 
+    def flight_discount_window(self):
+        add_flight_window = tk.Toplevel(self.root)
+        add_flight_window.title("Flight discount window")
+        add_flight_window.geometry("600x300")
+        add_flight_window.configure(bg="white")
+        main_frame = tk.Frame(add_flight_window, relief="solid", borderwidth=2)
+        main_frame.pack(padx=10, pady=10)
+
+        # Widgets pour la saisie des informations
+        departure_label = tk.Label(main_frame, text="Departure airport")
+        departure_label.grid(row=0, column=0, pady=5)
+        departure_entry = tk.Entry(main_frame)
+        departure_entry.grid(row=0, column=1, pady=5)
+
+        arrival_label = tk.Label(main_frame, text="Arrival airport")
+        arrival_label.grid(row=1, column=0, pady=5)
+        arrival_entry = tk.Entry(main_frame)
+        arrival_entry.grid(row=1, column=1, pady=5)
+
+        departure_date_label = tk.Label(main_frame, text="Departure date")
+        departure_date_label.grid(row=2, column=0, pady=5)
+        departure_date_entry = DateEntry(main_frame, date_pattern="yyyy-mm-dd")
+        departure_date_entry.grid(row=2, column=1, pady=5)
+
+        arrival_date_label = tk.Label(main_frame, text="Arrival date")
+        arrival_date_label.grid(row=3, column=0, pady=5)
+        arrival_date_entry = DateEntry(main_frame, date_pattern="yyyy-mm-dd")
+        arrival_date_entry.grid(row=3, column=1, pady=5)
+
+        price_label = tk.Label(main_frame, text="Price")
+        price_label.grid(row=4, column=0, pady=5)
+        price_entry = tk.Entry(main_frame)
+        price_entry.grid(row=4, column=1, pady=5)
+
+        add_button = tk.Button(main_frame, text="Add a new flight", command=lambda: self.ajouter_vol(
+            departure_entry.get(),
+            arrival_entry.get(),
+            departure_date_entry.get(),
+            arrival_date_entry.get(),
+            price_entry.get()
+        ))
+        add_button.grid(row=5, column=0, columnspan=2, pady=10)
+
     def sales_analysis(self):
         try:
             conn = pymysql.connect(

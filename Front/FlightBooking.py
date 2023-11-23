@@ -5,6 +5,9 @@ import config
 import BookFlight
 from datetime import datetime
 import random
+from decimal import Decimal
+
+
 
 class FlightSelectionPage:
     def __init__(self, root, departure_date, departure_airport, arrival_airport, num_tickets):
@@ -133,11 +136,15 @@ class FlightSelectionPage:
             separator2 = ttk.Separator(flight_frame, orient="vertical")
             separator2.grid(row=0, column=4, rowspan=2, padx=10, sticky="ns")
 
-            total_price = flight['Price'] * self.num_tickets * (1-(config.user_discount/100))
+
+            if config.user_discount is None:
+                config.user_discount = Decimal(0)
+            else:
+                discount_factor = Decimal(config.user_discount) / Decimal(100)
+                total_price = flight['Price'] * Decimal(self.num_tickets) * (Decimal(1) - discount_factor)
 
             price_label2 = tk.Label(flight_frame, text=f"Economy ticket : {total_price:.2f}", font=("Arial", 12), bg="lightblue")
             price_label2.grid(row=0, column=5, padx=(20, 40), pady=15, sticky="w")
-
 
 
             reserve_button2 = tk.Button(flight_frame, text="Book", command=lambda f=flight: self.update_and_redirect(f),
