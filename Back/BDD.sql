@@ -16,6 +16,7 @@ CREATE TABLE User (
 UPDATE User SET Discount = 40.00 WHERE Category = 'child';
 UPDATE User SET Discount = 30.00 WHERE Category = 'senior';
 UPDATE User SET Discount = 15.00 WHERE Category = 'regular';
+UPDATE User SET Discount = 90.00 WHERE Type = 'Employee';
 
 -- Creating the Flight table
 CREATE TABLE Flight (
