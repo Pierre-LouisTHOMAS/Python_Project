@@ -97,7 +97,7 @@ class HomeEmployee:
 
             #under Menu name
             flight_menu.add_command(label="flight available", command=self.window_flight_available)
-            flight_menu.add_command(label="flight discount offer", command=self.save)
+            flight_menu.add_command(label="flight discount offer", command=self.modify_discount_window)
             flight_menu.add_command(label="add new flight", command=self.add_flight_window)
             flight_menu.add_command(label="number of tickets purchased", command=self.window_flight_available)
             customer_menu.add_command(label="Customer file management", command=self.window_file_management)
@@ -337,48 +337,56 @@ class HomeEmployee:
             if conn:
                 conn.close()
 
-    def flight_discount_window(self):
-        add_flight_window = tk.Toplevel(self.root)
-        add_flight_window.title("Flight discount window")
-        add_flight_window.geometry("600x300")
-        add_flight_window.configure(bg="white")
-        main_frame = tk.Frame(add_flight_window, relief="solid", borderwidth=2)
+    def modify_discount_window(self):
+        modify_window = tk.Toplevel(self.root)
+        modify_window.title("Modify Discounts")
+        modify_window.geometry("400x300")
+        modify_window.configure(bg="white")
+        main_frame = tk.Frame(modify_window, relief="solid", borderwidth=2)
         main_frame.pack(padx=10, pady=10)
 
-        # Widgets pour la saisie des informations
-        departure_label = tk.Label(main_frame, text="Departure airport")
-        departure_label.grid(row=0, column=0, pady=5)
-        departure_entry = tk.Entry(main_frame)
-        departure_entry.grid(row=0, column=1, pady=5)
+        # Widgets pour la saisie des informations de réduction
+        self.senior_discount_entry = self.create_discount_row(main_frame, "Senior Discount", 0)
+        self.regular_discount_entry = self.create_discount_row(main_frame, "Regular Discount", 1)
+        self.child_discount_entry = self.create_discount_row(main_frame, "Child Discount", 2)
 
-        arrival_label = tk.Label(main_frame, text="Arrival airport")
-        arrival_label.grid(row=1, column=0, pady=5)
-        arrival_entry = tk.Entry(main_frame)
-        arrival_entry.grid(row=1, column=1, pady=5)
+        confirm_button = tk.Button(main_frame, text="Confirm Changes", command=self.update_discounts)
+        confirm_button.grid(row=3, column=0, columnspan=2, pady=10)
 
-        departure_date_label = tk.Label(main_frame, text="Departure date")
-        departure_date_label.grid(row=2, column=0, pady=5)
-        departure_date_entry = DateEntry(main_frame, date_pattern="yyyy-mm-dd")
-        departure_date_entry.grid(row=2, column=1, pady=5)
+    def create_discount_row(self, frame, label, row):
+        discount_label = tk.Label(frame, text=label)
+        discount_label.grid(row=row, column=0, pady=5)
+        discount_entry = tk.Entry(frame)
+        discount_entry.grid(row=row, column=1, pady=5)
+        return discount_entry
 
-        arrival_date_label = tk.Label(main_frame, text="Arrival date")
-        arrival_date_label.grid(row=3, column=0, pady=5)
-        arrival_date_entry = DateEntry(main_frame, date_pattern="yyyy-mm-dd")
-        arrival_date_entry.grid(row=3, column=1, pady=5)
+    def update_discounts(self):
+        try:
+            conn = pymysql.connect(
+                host='localhost',
+                user='root',
+                password='root',
+                db='AirlineDatabase',
+                port=8889
+            )
+            with conn.cursor() as cursor:
+                sql = "UPDATE User SET Discount = %s WHERE Category = %s"
 
-        price_label = tk.Label(main_frame, text="Price")
-        price_label.grid(row=4, column=0, pady=5)
-        price_entry = tk.Entry(main_frame)
-        price_entry.grid(row=4, column=1, pady=5)
+                # Vérifier chaque champ et mettre à jour si nécessaire
+                for category, entry in [("senior", self.senior_discount_entry),
+                                        ("regular", self.regular_discount_entry),
+                                        ("child", self.child_discount_entry)]:
+                    discount_value = entry.get().strip()
+                    if discount_value:  # Mise à jour seulement si la valeur n'est pas vide
+                        cursor.execute(sql, (discount_value, category))
 
-        add_button = tk.Button(main_frame, text="Add a new flight", command=lambda: self.ajouter_vol(
-            departure_entry.get(),
-            arrival_entry.get(),
-            departure_date_entry.get(),
-            arrival_date_entry.get(),
-            price_entry.get()
-        ))
-        add_button.grid(row=5, column=0, columnspan=2, pady=10)
+            conn.commit()
+            messagebox.showinfo("Success", "Discounts updated successfully!")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
+        finally:
+            if conn:
+                conn.close()
 
     def sales_analysis(self):
         try:
