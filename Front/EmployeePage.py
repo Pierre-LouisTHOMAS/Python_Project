@@ -104,7 +104,8 @@ class HomeEmployee:
             flight_menu.add_command(label="number of tickets purchased", command=self.window_flight_available)
             customer_menu.add_command(label="Customer file management", command=self.window_file_management)
             customer_menu.add_command(label="Customer reservation history", command=self.window_history_reservation)
-            sale_menu.add_command(label="Sales analysis", command=self.sales_analysis)
+            sale_menu.add_command(label="Departure flight analysis", command=self.sales_analysis_departure)
+            sale_menu.add_command(label="Arrival flight analysis", command=self.sales_analysis_arrival)
 
             #Menu name
             self.menu.add_cascade(label="Flight", menu=flight_menu)
@@ -397,62 +398,14 @@ class HomeEmployee:
             if conn:
                 conn.close()
 
-    def create_graph_page(self, airports, labels, values, title):
-        try:
-            graph_window = tk.Toplevel(self.root)
-            graph_window.title(title)
 
-            # Création de la liste déroulante
-            selected_airport_type = tk.StringVar()
-            airport_combobox = ttk.Combobox(graph_window, textvariable=selected_airport_type,
-                                            values=["Departure", "Arrival"])
-            airport_combobox.set("Select Airport Type")  # Texte initial par défaut
-            airport_combobox.pack(pady=10)
+    def sales_analysis_departure(self):
+        self.sales_analysis("Departure_Airport", "Flight Analysis - Departure Airports")
 
-            plt.figure(figsize=(12, 8))
-            plt.bar(labels, values)
-            plt.xlabel("City")
-            plt.ylabel("Number of flights")
-            plt.title(title)
+    def sales_analysis_arrival(self):
+        self.sales_analysis("Arrival_Airport", "Flight Analysis - Arrival Airports")
 
-            def update_graph(cursor):  # Ajouter le curseur comme argument
-                airport_type = selected_airport_type.get()
-                selected_value = airport_combobox.get()
-
-                if airport_type == "Departure":
-                    query = "SELECT COUNT(*) as count FROM Flight WHERE Departure_Airport=%s"
-                    label_text = "Departure_Airport"
-                elif airport_type == "Arrival":
-                    query = "SELECT COUNT(*) as count FROM Flight WHERE Arrival_Airport=%s"
-                    label_text = "Arrival_Airport"
-                else:
-                    messagebox.showwarning("Warning", "Please select Airport Type.")
-                    return
-
-                cursor.execute(query, (selected_value,))
-                result = cursor.fetchone()
-                count = result['count'] if result else 0
-
-                plt.clf()  # Effacer le graphe précédent
-                plt.bar([label_text], [count])
-                plt.xlabel("City")
-                plt.ylabel("Number of flights")
-                plt.title(title)
-                canvas.draw()
-
-            # Bouton pour mettre à jour le graphe
-            update_button = tk.Button(graph_window, text="Update Graph", command=lambda: update_graph(
-                cursor))  # Utiliser une lambda pour passer le curseur
-            update_button.pack(pady=10)
-
-            canvas = FigureCanvasTkAgg(plt.gcf(), master=graph_window)
-            canvas.draw()
-            canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-
-        except Exception as e:
-            messagebox.showerror("Error", f"Error creating graph page: {e}")
-
-    def sales_analysis(self):
+    def sales_analysis(self, airport_type, title):
         try:
             conn = pymysql.connect(
                 host='localhost',
@@ -463,21 +416,20 @@ class HomeEmployee:
             )
 
             cursor = conn.cursor(pymysql.cursors.DictCursor)
-            cursor.execute("SELECT DISTINCT Departure_Airport FROM Flight")
-            departure_airports = [airport['Departure_Airport'] for airport in cursor.fetchall()]
+            cursor.execute(f"SELECT DISTINCT {airport_type} FROM Flight")
+            airports = [airport[airport_type] for airport in cursor.fetchall()]
 
             labels = []
             values = []
 
-            for airport in departure_airports:
-                cursor.execute("SELECT COUNT(*) as count FROM Flight WHERE Departure_Airport=%s", (airport,))
+            for airport in airports:
+                cursor.execute(f"SELECT COUNT(*) as count FROM Flight WHERE {airport_type}=%s", (airport,))
                 result = cursor.fetchone()
                 count = result['count'] if result else 0
                 labels.append(airport)
                 values.append(count)
 
-            # Appel de la fonction pour créer la page du graphe
-            self.create_graph_page(departure_airports, labels, values, "Flight Analysis - Departure Airports")
+            self.create_graph_page(labels, values, title)  # Pass labels and values to the modified function
 
         except Exception as e:
             messagebox.showerror("Error", f"Error in sales analysis: {e}")
@@ -486,6 +438,23 @@ class HomeEmployee:
             cursor.close()
             conn.close()
 
+    def create_graph_page(self, labels, values, title):
+        try:
+            graph_window = tk.Toplevel(self.root)
+            graph_window.title(title)
+
+            plt.figure(figsize=(12, 8))
+            plt.bar(labels, values)
+            plt.xlabel("Airport")
+            plt.ylabel("Number of flights")
+            plt.title(title)
+
+            canvas = FigureCanvasTkAgg(plt.gcf(), master=graph_window)
+            canvas.draw()
+            canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Error creating graph page: {e}")
     def redirect_to_account_information(self, event):
         self.accountPage_window = tk.Toplevel(self.root)
         self.app = AccountInformation.EmployeeAccount(self.accountPage_window)
