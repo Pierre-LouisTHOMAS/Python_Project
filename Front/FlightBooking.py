@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import Toplevel, messagebox, ttk
 import pymysql
 import config
 import BookFlight
@@ -145,7 +145,7 @@ class FlightSelectionPage:
 
             price_label2 = tk.Label(flight_frame, text=f"Economy ticket : {total_price:.2f}", font=("Arial", 12), bg="lightblue")
             price_label2.grid(row=0, column=5, padx=(20, 40), pady=15, sticky="w")
-
+            config.selected_price = total_price
 
             reserve_button2 = tk.Button(flight_frame, text="Book", command=lambda f=flight: self.update_and_redirect(f),
                                         bg="lightblue")
@@ -168,14 +168,62 @@ class FlightSelectionPage:
         conn.close()
 
     def modify_flight(self, flight):
-        print(f"Modify Flight: {flight}")
+        modify_window = tk.Toplevel(self.root)
+        modify_window.title(f"Modify Flight {flight['Flight_ID']}")
+        modify_window.geometry("400x300")
+
+        # Exemple de champs modifiables : Prix, Dates de départ et d'arrivée
+        price_label = tk.Label(modify_window, text="Price")
+        price_label.pack()
+        price_entry = tk.Entry(modify_window)
+        price_entry.pack()
+        price_entry.insert(0, flight['Price'])
+
+        departure_date_label = tk.Label(modify_window, text="Departure Date (YYYY-MM-DD HH:MM)")
+        departure_date_label.pack()
+        departure_date_entry = tk.Entry(modify_window)
+        departure_date_entry.pack()
+        departure_date_entry.insert(0, flight['Departure_Date'])
+
+        arrival_date_label = tk.Label(modify_window, text="Arrival Date (YYYY-MM-DD HH:MM)")
+        arrival_date_label.pack()
+        arrival_date_entry = tk.Entry(modify_window)
+        arrival_date_entry.pack()
+        arrival_date_entry.insert(0, flight['Arrival_Date'])
+
+        #confirm_button = tk.Button(modify_window, text="Confirm", command=lambda: self.update_flight(flight['Flight_ID'], price_entry.get(),departure_date_entry.get(),arrival_date_entry.get()))
+        confirm_button = tk.Button(modify_window, text="Confirm", command=lambda: self.update_flight(flight['Flight_ID'],price_entry.get(),departure_date_entry.get(),arrival_date_entry.get(), flight['Departure_Airport'], flight['Arrival_Airport']))
+
+        confirm_button.pack()
+
+    def update_flight(self, flight_id, new_price, new_departure_date, new_arrival_date, new_departure_airport, new_arrival_airport):
+        try:
+            conn = pymysql.connect(
+                host='localhost',
+                user='root',
+                password='root',
+                db='AirlineDatabase',
+                port=8889
+            )
+            with conn.cursor() as cursor:
+                sql = "UPDATE Flight SET Price = %s, Departure_Date = %s, Arrival_Date = %s, Departure_Airport = %s, Arrival_Airport = %s WHERE Flight_ID = %s"
+                cursor.execute(sql, (
+                new_price, new_departure_date, new_arrival_date, new_departure_airport, new_arrival_airport, flight_id))
+            conn.commit()
+            messagebox.showinfo("Success", "Flight updated successfully!")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
+        finally:
+            if conn:
+                conn.close()
+
     def update_and_redirect(self, flight):
         config.selected_flight_id = flight['Flight_ID']
         config.selected_departure_date = flight['Departure_Date']
         config.selected_arrival_date = flight['Arrival_Date']
         config.selected_departure_airport = flight['Departure_Airport']
         config.selected_arrival_airport = flight['Arrival_Airport']
-        config.selected_price = flight['Price']
+        #config.selected_price = flight['Price']
 
         self.redirect_to_book_flight()
 
