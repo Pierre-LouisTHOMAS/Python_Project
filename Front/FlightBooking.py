@@ -141,11 +141,10 @@ class FlightSelectionPage:
                 config.user_discount = Decimal(0)
             else:
                 discount_factor = Decimal(config.user_discount) / Decimal(100)
-                total_price = flight['Price'] * Decimal(self.num_tickets) * (Decimal(1) - discount_factor)
+                config.total_price = flight['Price'] * Decimal(self.num_tickets) * (Decimal(1) - discount_factor)
 
-            price_label2 = tk.Label(flight_frame, text=f"Economy ticket : {total_price:.2f}", font=("Arial", 12), bg="lightblue")
+            price_label2 = tk.Label(flight_frame, text=f"Economy ticket : {config.total_price:.2f}", font=("Arial", 12), bg="lightblue")
             price_label2.grid(row=0, column=5, padx=(20, 40), pady=15, sticky="w")
-            config.selected_price = total_price
 
             reserve_button2 = tk.Button(flight_frame, text="Book", command=lambda f=flight: self.update_and_redirect(f),
                                         bg="lightblue")
@@ -224,6 +223,7 @@ class FlightSelectionPage:
         config.selected_departure_airport = flight['Departure_Airport']
         config.selected_arrival_airport = flight['Arrival_Airport']
         #config.selected_price = flight['Price']
+        config.selected_price = config.total_price
 
         self.redirect_to_book_flight()
 

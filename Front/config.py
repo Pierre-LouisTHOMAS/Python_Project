@@ -8,6 +8,8 @@ user_discount = 0.0
 member_category = 0
 flight_data = []
 
+total_price = 0
+
 #PlaneBooking
 departure_date = None
 departure_airport = None

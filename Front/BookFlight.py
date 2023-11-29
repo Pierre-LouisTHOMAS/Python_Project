@@ -55,7 +55,7 @@ class PaymentWindow:
         user_id = config.user_id
         flight_id = config.selected_flight_id
         number_of_tickets = 1
-        total_payment = config.selected_price
+        total_payment = config.total_price
 
         query = "INSERT INTO Reservation (User_ID, Flight_ID, Number_of_Tickets, Total_Payment) VALUES (%s, %s, %s, %s)"
         cursor.execute(query, (user_id, flight_id, number_of_tickets, total_payment))
@@ -110,7 +110,7 @@ class BookFlight:
         arrival_airport = config.selected_arrival_airport
         departure_time = config.selected_departure_date
         arrival_time = config.selected_arrival_date
-        price = config.selected_price
+        price = config.total_price
 
         labels_frame = tk.Frame(self.frame_account, bg="white")
         labels_frame.pack()
