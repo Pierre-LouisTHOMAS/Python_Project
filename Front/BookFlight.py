@@ -43,7 +43,6 @@ class PaymentWindow:
             messagebox.showwarning("Warning", "Please fill in all payment details.")
             return
 
-        # Connexion à la base de données
         conn = pymysql.connect(
             host='localhost',
             user='root',
@@ -215,7 +214,6 @@ class BookFlight:
 
                 self.information_button.configure(state=tk.DISABLED)
 
-                # Activer le bouton "Pay" après avoir soumis le questionnaire
                 self.pay_button.configure(state=tk.NORMAL)
 
                 questionnaire_window.destroy()

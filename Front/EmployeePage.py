@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkcalendar import DateEntry
-from tkinter import Toplevel, messagebox, ttk, Label, Spinbox
-from PIL import Image, ImageTk
+from tkinter import messagebox, ttk, Label, Spinbox
 import AccountInformation
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -324,9 +323,7 @@ class HomeEmployee:
                 port=8889
             )
             with conn.cursor() as cursor:
-                # Ajouter une heure aléatoire à la date de départ
                 departure_datetime = self.add_random_time(departure_date)
-                # Ajouter une heure aléatoire (et différente) à la date d'arrivée
                 arrival_datetime = self.add_random_time(arrival_date)
 
                 sql = "INSERT INTO Flight (Departure_Airport, Arrival_Airport, Departure_Date, Arrival_Date, Price) VALUES (%s, %s, %s, %s, %s)"
@@ -340,11 +337,9 @@ class HomeEmployee:
                 conn.close()
 
     def add_random_time(self, date_str):
-        # Convertir la date en objet datetime
+
         date = datetime.strptime(date_str, '%Y-%m-%d')
-        # Générer une heure, minute et seconde aléatoire
         hours, minutes, seconds = random.randint(0, 23), random.randint(0, 59), random.randint(0, 59)
-        # Ajouter l'heure aléatoire à la date
         return date + timedelta(hours=hours, minutes=minutes, seconds=seconds)
 
     def modify_discount_window(self):
@@ -355,7 +350,6 @@ class HomeEmployee:
         main_frame = tk.Frame(modify_window, relief="solid", borderwidth=2)
         main_frame.pack(padx=10, pady=10)
 
-        # Widgets pour la saisie des informations de réduction
         self.senior_discount_entry = self.create_discount_row(main_frame, "Senior Discount", 0)
         self.regular_discount_entry = self.create_discount_row(main_frame, "Regular Discount", 1)
         self.child_discount_entry = self.create_discount_row(main_frame, "Child Discount", 2)
@@ -382,12 +376,11 @@ class HomeEmployee:
             with conn.cursor() as cursor:
                 sql = "UPDATE User SET Discount = %s WHERE Category = %s"
 
-                # Vérifier chaque champ et mettre à jour si nécessaire
                 for category, entry in [("senior", self.senior_discount_entry),
                                         ("regular", self.regular_discount_entry),
                                         ("child", self.child_discount_entry)]:
                     discount_value = entry.get().strip()
-                    if discount_value:  # Mise à jour seulement si la valeur n'est pas vide
+                    if discount_value:
                         cursor.execute(sql, (discount_value, category))
 
             conn.commit()

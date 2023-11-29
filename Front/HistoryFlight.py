@@ -79,7 +79,6 @@ class ReservationHistory:
         details_window = tk.Toplevel(self.root)
         details_window.title("Reservation Details")
 
-        # Assurez-vous que l'indexation correspond à l'ordre des données dans le treeview
         date_label = tk.Label(details_window, text=f"Date: {reservation_info[0]}", font=("Helvetica", 12))
         date_label.pack()
 
