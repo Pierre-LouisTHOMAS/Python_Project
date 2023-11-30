@@ -75,3 +75,8 @@ VALUES (1, 1, 2, 546.7),
        (8, 8, 4, 859.64),
        (9, 9, 2, 230.26),
        (10, 10, 1, 180.88);
+
+UPDATE Reservation
+INNER JOIN User ON Reservation.User_ID = User.User_ID
+SET Total_Payment = Total_Payment - (Total_Payment * User.Discount / 100)
+
