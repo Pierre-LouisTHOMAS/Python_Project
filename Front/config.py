@@ -21,3 +21,8 @@ selected_arrival_date = None
 selected_departure_airport = None
 selected_arrival_airport = None
 selected_price = None
+
+cart = {
+    'outbound_flight': {},
+    'return_flight': {},
+}

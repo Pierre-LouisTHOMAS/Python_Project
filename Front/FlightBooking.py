@@ -23,6 +23,8 @@ class FlightSelectionPage:
         self.window_width = root.winfo_screenwidth()
         self.window_height = root.winfo_screenheight()
 
+        self.booking_type = "One Way"
+
         canvas = tk.Canvas(root)
         canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
@@ -95,76 +97,79 @@ class FlightSelectionPage:
         cursor.execute(query, params)
 
         flight_data = cursor.fetchall()
+        if not flight_data:
+            no_flight_label = tk.Label(frame, text="No flights available", font=("Arial", 14, "italic"), bg="red")
+            no_flight_label.pack(pady=20)
+        else:
+             for flight in flight_data:
+                 white_band = tk.Frame(frame, height=25, bg="white")
+                 white_band.pack(fill=tk.X)
 
-        for flight in flight_data:
-            white_band = tk.Frame(frame, height=25, bg="white")
-            white_band.pack(fill=tk.X)
+                 flight_frame = tk.Frame(frame, borderwidth=2, relief=tk.GROOVE, bg="lightblue")
+                 flight_frame.pack(padx=40, pady=20, fill=tk.BOTH, expand=True)
 
-            flight_frame = tk.Frame(frame, borderwidth=2, relief=tk.GROOVE, bg="lightblue")
-            flight_frame.pack(padx=40, pady=20, fill=tk.BOTH, expand=True)
-
-            departure_date_label = tk.Label(flight_frame, text=f"{flight['Departure_Date']}",
+                 departure_date_label = tk.Label(flight_frame, text=f"{flight['Departure_Date']}",
                                             font=("Arial", 14, "bold"), bg="lightblue")
-            departure_date_label.grid(row=0, column=0, padx=(30, 40), pady=15, sticky="w")
+                 departure_date_label.grid(row=0, column=0, padx=(30, 40), pady=15, sticky="w")
 
-            departure_airport_label = tk.Label(flight_frame, text=f"{flight['Departure_Airport']}",
+                 departure_airport_label = tk.Label(flight_frame, text=f"{flight['Departure_Airport']}",
                                                font=("Arial", 11), bg="lightblue")
-            departure_airport_label.grid(row=1, column=0, padx=(60, 40), pady=10, sticky="w")
+                 departure_airport_label.grid(row=1, column=0, padx=(60, 40), pady=10, sticky="w")
 
-            arrow_canvas = tk.Canvas(flight_frame, width=20, height=40, bg="lightblue", highlightthickness=0)
-            arrow_canvas.grid(row=0, column=0, rowspan=2, padx=(10, 0), pady=5, sticky="e")
-            arrow_canvas.create_line(0, 30, 20, 30, arrow=tk.LAST)
+                 arrow_canvas = tk.Canvas(flight_frame, width=20, height=40, bg="lightblue", highlightthickness=0)
+                 arrow_canvas.grid(row=0, column=0, rowspan=2, padx=(10, 0), pady=5, sticky="e")
+                 arrow_canvas.create_line(0, 30, 20, 30, arrow=tk.LAST)
 
-            arrival_date_label = tk.Label(flight_frame, text=f"{flight['Arrival_Date']}",
+                 arrival_date_label = tk.Label(flight_frame, text=f"{flight['Arrival_Date']}",
                                           font=("Arial", 14, "bold"), bg="lightblue")
-            arrival_date_label.grid(row=0, column=1, padx=(30, 40), pady=15, sticky="w")
+                 arrival_date_label.grid(row=0, column=1, padx=(30, 40), pady=15, sticky="w")
 
-            arrival_airport_label = tk.Label(flight_frame, text=f"{flight['Arrival_Airport']}",
+                 arrival_airport_label = tk.Label(flight_frame, text=f"{flight['Arrival_Airport']}",
                                              font=("Arial", 11), bg="lightblue")
-            arrival_airport_label.grid(row=1, column=1, padx=(60, 40), pady=10, sticky="w")
+                 arrival_airport_label.grid(row=1, column=1, padx=(60, 40), pady=10, sticky="w")
 
-            separator1 = ttk.Separator(flight_frame, orient="vertical")
-            separator1.grid(row=0, column=2, rowspan=2, padx=10, sticky="ns")
+                 separator1 = ttk.Separator(flight_frame, orient="vertical")
+                 separator1.grid(row=0, column=2, rowspan=2, padx=10, sticky="ns")
 
-            random_number_of_tickets = random.randint(1, 300)
+                 random_number_of_tickets = random.randint(1, 300)
 
-            number_ticket = tk.Label(flight_frame, text=f"Number of Tickets: {random_number_of_tickets}",
+                 number_ticket = tk.Label(flight_frame, text=f"Number of Tickets: {random_number_of_tickets}",
                                      font=("Arial", 11), bg="lightblue")
-            number_ticket.grid(row=0, column=3, padx=(60, 40), pady=10, sticky="w")
+                 number_ticket.grid(row=0, column=3, padx=(60, 40), pady=10, sticky="w")
 
-            separator2 = ttk.Separator(flight_frame, orient="vertical")
-            separator2.grid(row=0, column=4, rowspan=2, padx=10, sticky="ns")
+                 separator2 = ttk.Separator(flight_frame, orient="vertical")
+                 separator2.grid(row=0, column=4, rowspan=2, padx=10, sticky="ns")
 
-            if config.user_discount is None:
-                config.user_discount = Decimal(0)
-            else:
-                discount_factor = Decimal(config.user_discount) / Decimal(100)
-                config.total_price = flight['Price'] * Decimal(self.num_tickets) * (Decimal(1) - discount_factor)
+                 if config.user_discount is None:
+                      config.user_discount = Decimal(0)
+                 else:
+                      discount_factor = Decimal(config.user_discount) / Decimal(100)
+                      config.total_price = flight['Price'] * Decimal(self.num_tickets) * (Decimal(1) - discount_factor)
 
-            price_label2 = tk.Label(flight_frame, text=f"Economy ticket : {config.total_price:.2f}", font=("Arial", 12), bg="lightblue")
-            price_label2.grid(row=0, column=5, padx=(20, 40), pady=15, sticky="w")
+                 price_label2 = tk.Label(flight_frame, text=f"Economy ticket : {config.total_price:.2f}", font=("Arial", 12), bg="lightblue")
+                 price_label2.grid(row=0, column=5, padx=(20, 40), pady=15, sticky="w")
 
-            reserve_button2 = tk.Button(flight_frame, text="Book", command=lambda f=flight: self.update_and_redirect(f), bg="lightblue")
-            reserve_button2.grid(row=1, column=5, padx=(30, 40), pady=10, sticky="n")
+                 reserve_button2 = tk.Button(flight_frame, text="Book", command=lambda f=flight: self.update_and_redirect(f), bg="lightblue")
+                 reserve_button2.grid(row=1, column=5, padx=(30, 40), pady=10, sticky="n")
 
-            if config.user_type == 'Employee':
-                modify_button = tk.Button(flight_frame, text="Modify", command=lambda f=flight: self.modify_flight(f),
+                 if config.user_type == 'Employee':
+                      modify_button = tk.Button(flight_frame, text="Modify", command=lambda f=flight: self.modify_flight(f),
                                           bg="red")
-                modify_button.grid(row=1, column=6, padx=(10, 10), pady=10, sticky="n")
-                delete_button = tk.Button(flight_frame, text="Delete", command=lambda f=flight: self.delete_flight(f),
+                      modify_button.grid(row=1, column=6, padx=(10, 10), pady=10, sticky="n")
+                      delete_button = tk.Button(flight_frame, text="Delete", command=lambda f=flight: self.delete_flight(f),
                                           bg="red")
-                delete_button.grid(row=1, column=7, padx=(10, 10), pady=10, sticky="n")
-            else:
-                image_path = "../Pictures/avionResa.png"
-                image = tk.PhotoImage(file=image_path)
-                image = image.subsample(4)
+                      delete_button.grid(row=1, column=7, padx=(10, 10), pady=10, sticky="n")
+                 else:
+                      image_path = "../Pictures/avionResa.png"
+                      image = tk.PhotoImage(file=image_path)
+                      image = image.subsample(4)
 
-                image_label = tk.Label(flight_frame, image=image, bg="lightblue")
-                image_label.image = image
-                image_label.grid(row=0, column=7, rowspan=2, padx=(1, 40), pady=15, sticky="e")
+                      image_label = tk.Label(flight_frame, image=image, bg="lightblue")
+                      image_label.image = image
+                      image_label.grid(row=0, column=7, rowspan=2, padx=(1, 40), pady=15, sticky="e")
 
-        cursor.close()
-        conn.close()
+             cursor.close()
+             conn.close()
 
 
 
@@ -332,8 +337,11 @@ class FlightSelectionPage:
 
     def redirect_to_book_flight(self):
         self.propose_window.destroy()
+        is_round_trip = self.booking_type == "Round Trip"
         self.bookFlight_window = tk.Toplevel(self.root)
-        self.app = BookFlight.BookFlight(self.bookFlight_window)
+        self.app = BookFlight.BookFlight(self.bookFlight_window, is_round_trip=True)
+
+        self.app.create_window(is_round_trip)
 
     def reserve_flight(self, selected_flight):
         print(f"Selected Flight: Flight {selected_flight['flight_number']}, Departure: {selected_flight['departure']}, Arrival: {selected_flight['arrival']}")
