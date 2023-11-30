@@ -174,7 +174,6 @@ class FlightSelectionPage:
         modify_window.title(f"Modify Flight {flight['Flight_ID']}")
         modify_window.geometry("400x300")
 
-        # Exemple de champs modifiables : Prix, Dates de départ et d'arrivée
         price_label = tk.Label(modify_window, text="Price")
         price_label.pack()
         price_entry = tk.Entry(modify_window)
@@ -197,6 +196,29 @@ class FlightSelectionPage:
         confirm_button = tk.Button(modify_window, text="Confirm", command=lambda: self.update_flight(flight['Flight_ID'],price_entry.get(),departure_date_entry.get(),arrival_date_entry.get(), flight['Departure_Airport'], flight['Arrival_Airport']))
 
         confirm_button.pack()
+
+    def delete_flight(self, flight):
+        confirmation = messagebox.askyesno("Delete Flight", f"Do you want to delete Flight {flight['Flight_ID']}?")
+
+        if confirmation:
+            try:
+                conn = pymysql.connect(
+                    host='localhost',
+                    user='root',
+                    password='root',
+                    db='AirlineDatabase',
+                    port=8889
+                )
+                with conn.cursor() as cursor:
+                    sql = "DELETE FROM Flight WHERE Flight_ID = %s"
+                    cursor.execute(sql, (flight['Flight_ID'],))
+                conn.commit()
+                messagebox.showinfo("Success", f"Flight {flight['Flight_ID']} deleted successfully!")
+            except Exception as e:
+                messagebox.showerror("Error", f"An error occurred: {e}")
+            finally:
+                if conn:
+                    conn.close()
 
     def update_flight(self, flight_id, new_price, new_departure_date, new_arrival_date, new_departure_airport, new_arrival_airport):
         try:
