@@ -82,7 +82,7 @@ class BookFlight:
         self.create_window()
 
     def display_flight_info(self, flight_info):
-        labels_frame = tk.Frame(self.frame_account, bg="white")
+        labels_frame = tk.Frame(self.frame_flight, bg="white")
         labels_frame.pack()
 
         if flight_info:
@@ -107,7 +107,7 @@ class BookFlight:
         background_label.place(relwidth=1, relheight=1)
 
         image_path2 = "../Pictures/Logo.png"
-        self.image2 = tk.PhotoImage(file=image_path2)
+        self.image2 = tk.PhotoImage(file=image_path2)   
         self.image2 = self.image2.subsample(5)
         image_label2 = tk.Label(self.root, image=self.image2, bg="white")
         image_label2.place(x=self.header_height * 6.5, y=self.header_height * 0.1)
@@ -117,17 +117,21 @@ class BookFlight:
         frame_height = 400
         self.frame_account = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height, bd=2,
                                       relief=tk.GROOVE)
-        self.frame_account.place(relx=0.5, rely=0.5, anchor='center')  # Ajusté l'emplacement
+        self.frame_account.place(relx=0.5, rely=0.5, anchor='center')
 
-        flight_info_label = tk.Label(self.frame_account, text="Flight Information", font=("Helvetica", 16, "bold"),
+        self.frame_flight = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height, bd=2,
+                                     relief=tk.GROOVE)
+        self.frame_flight.place(relx=0.2, rely=0.5, anchor='center')
+
+        flight_info_label = tk.Label(self.frame_flight, text="Flight Information", font=("Helvetica", 16, "bold"),
                                      bg="white")
         flight_info_label.pack(pady=20)
 
-        tk.Label(self.frame_account, text="Outbound Flight Information", font=("Helvetica", 12, "bold"),
+        tk.Label(self.frame_flight, text="Outbound Flight Information", font=("Helvetica", 12, "bold"),
                  bg="white").pack(pady=5)
         self.display_flight_info(self.outbound_flight_info)
 
-        tk.Label(self.frame_account, text="Return Flight Information", font=("Helvetica", 12, "bold"), bg="white").pack(
+        tk.Label(self.frame_flight, text="Return Flight Information", font=("Helvetica", 12, "bold"), bg="white").pack(
             pady=5)
         self.display_flight_info(self.return_flight_info)
 
@@ -145,7 +149,7 @@ class BookFlight:
             'Price': price
         }
 
-        self.warning_label = tk.Label(self.frame_account, text="", font=("Helvetica", 12), bg="white", fg="red")
+        self.warning_label = tk.Label(self.frame_flight, text="", font=("Helvetica", 12), bg="white", fg="red")
         self.warning_label.pack(pady=5)
 
         if not config.is_user_logged_in:
