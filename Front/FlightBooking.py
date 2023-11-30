@@ -166,6 +166,8 @@ class FlightSelectionPage:
         cursor.close()
         conn.close()
 
+
+
     def modify_flight(self, flight):
         modify_window = tk.Toplevel(self.root)
         modify_window.title(f"Modify Flight {flight['Flight_ID']}")
@@ -324,6 +326,9 @@ class FlightSelectionPage:
         }
 
         self.redirect_to_book_flight()
+
+
+
 
     def redirect_to_book_flight(self):
         self.propose_window.destroy()

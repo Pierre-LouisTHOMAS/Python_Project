@@ -2,7 +2,6 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from tkinter import Toplevel, Entry, messagebox
 import config
-
 import pymysql
 
 class PaymentWindow:
@@ -26,8 +25,6 @@ class PaymentWindow:
         tk.Label(self.payment_window, text="CVV:", font=("Helvetica", 12), bg="#f0f0f0").pack(pady=5)
         self.cvv_entry = Entry(self.payment_window, validate="key", validatecommand=vcmd, font=("Helvetica", 12), show="*")
         self.cvv_entry.pack(pady=5)
-
-
 
         tk.Button(self.payment_window, text="Submit Payment", command=self.process_payment, font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white').pack(pady=10)
 
@@ -77,16 +74,56 @@ class BookFlight:
         self.window_height = root.winfo_screenheight()
         self.menu = None
         self.pay_button = None
-        self.information_button=None
+        self.information_button = None
+
+        self.outbound_flight_info = config.cart.get('outbound_flight', {})
+        self.return_flight_info = config.cart.get('return_flight', {})
 
         self.create_window()
+
+    def display_flight_info(self, flight_info, frame):
+        labels_frame = tk.Frame(frame, bg="white")
+        labels_frame.pack()
+
+        if flight_info:
+            for key, value in flight_info.items():
+                flight_label = tk.Label(labels_frame, text=f"{key}: {value}", bg="white", font=("Helvetica", 12))
+                flight_label.pack(pady=2)
+        else:
+            no_flight_label = tk.Label(labels_frame, text="No flight information available", font=("Helvetica", 12), bg="white")
+            no_flight_label.pack(pady=2)
 
     def redirect_to_flight_booking_page(self, event):
         self.root.destroy()
 
+    def flight_window_info(self, frame):
+        flight_info_label = tk.Label(frame, text="Flight Information", font=("Helvetica", 16, "bold"), bg="white")
+        flight_info_label.pack(pady=20)
+
+        tk.Label(frame, text="Outbound Flight Information", font=("Helvetica", 12, "bold"), bg="white").pack(pady=5)
+        self.display_flight_info(self.outbound_flight_info, frame)
+
+        tk.Label(frame, text="Return Flight Information", font=("Helvetica", 12, "bold"), bg="white").pack(pady=5)
+        self.display_flight_info(self.return_flight_info, frame)
+
+        departure_airport = config.selected_departure_airport
+        arrival_airport = config.selected_arrival_airport
+        departure_time = config.selected_departure_date
+        arrival_time = config.selected_arrival_date
+        price = config.total_price
+
+        config.cart['outbound_flight'] = {
+            'Departure': departure_airport,
+            'Arrival': arrival_airport,
+            'Departure Time': departure_time,
+            'Arrival Time': arrival_time,
+            'Price': price
+        }
+
     def create_window(self):
         self.background_image = Image.open("../Pictures/bg2.png")
-        self.background_photo = ImageTk.PhotoImage(self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
+        self.background_photo = ImageTk.PhotoImage(
+            self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
         background_label = tk.Label(self.root, image=self.background_photo)
         background_label.place(relwidth=1, relheight=1)
 
@@ -98,54 +135,34 @@ class BookFlight:
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_flight_booking_page(event))
 
         frame_width = 400
-        frame_height = 250
-        self.frame_account = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height, bd=2,
-                                      relief=tk.GROOVE)
-        self.frame_account.place(relx=0.7, rely=0.5, anchor='center')
+        frame_height = 400
 
-        flight_info_label = tk.Label(self.frame_account, text="Flight Information", font=("Helvetica", 16, "bold"), bg="white")
-        flight_info_label.pack(pady=20)
+        # Création de deux cadres, un pour les informations de vol et un pour le reste
+        frame_flight_info = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height, bd=2, relief=tk.GROOVE)
+        frame_flight_info.place(relx=0.25, rely=0.5, anchor='center')
 
-        departure_airport = config.selected_departure_airport
-        arrival_airport = config.selected_arrival_airport
-        departure_time = config.selected_departure_date
-        arrival_time = config.selected_arrival_date
-        price = config.total_price
+        frame_other_info = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height, bd=2, relief=tk.GROOVE)
+        frame_other_info.place(relx=0.75, rely=0.5, anchor='center')
 
-        labels_frame = tk.Frame(self.frame_account, bg="white")
-        labels_frame.pack()
+        # Afficher les informations de vol dans le cadre correspondant
+        self.flight_window_info(frame_flight_info)
 
-        departure_label = tk.Label(labels_frame, text=f"Departure: {departure_airport}", bg="white", font=("Helvetica", 12))
-        departure_label.pack(pady=5)
-
-        arrival_label = tk.Label(labels_frame, text=f"Arrival: {arrival_airport}", bg="white", font=("Helvetica", 12))
-        arrival_label.pack(pady=5)
-
-        departure_time_label = tk.Label(labels_frame, text=f"Departure Time: {departure_time}", bg="white", font=("Helvetica", 12))
-        departure_time_label.pack(pady=5)
-
-        arrival_time_label = tk.Label(labels_frame, text=f"Arrival Time: {arrival_time}", bg="white", font=("Helvetica", 12))
-        arrival_time_label.pack(pady=5)
-
-        price_label = tk.Label(self.frame_account, text=f"Price: {price}", bg="white", font=("Helvetica", 14, "bold"))
-        price_label.pack(pady=10)
-
-        self.warning_label = tk.Label(self.frame_account, text="", font=("Helvetica", 12), bg="white", fg="red")
+        self.warning_label = tk.Label(frame_other_info, text="", font=("Helvetica", 12), bg="white", fg="red")
         self.warning_label.pack(pady=5)
 
         if not config.is_user_logged_in:
-            self.information_button = tk.Button(self.frame_account, text="Information", command=self.show_questionnaire,
+            self.information_button = tk.Button(frame_other_info, text="Information", command=self.show_questionnaire,
                                                 font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
-            self.information_button.pack(pady=10)
+            self.information_button.pack(pady=5)
 
-            self.pay_button = tk.Button(self.frame_account, text="Pay", command=self.open_payment_window,
+            self.pay_button = tk.Button(frame_other_info, text="Pay", command=self.open_payment_window,
                                         font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white', state=tk.DISABLED)
-            self.pay_button.pack(pady=10)
+            self.pay_button.pack(pady=5)
         else:
-            self.show_user_info()
-            self.pay_button = tk.Button(self.frame_account, text="Pay", command=self.open_payment_window,
+            self.show_user_info(frame_other_info)
+            self.pay_button = tk.Button(frame_other_info, text="Pay", command=self.open_payment_window,
                                         font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
-            self.pay_button.pack(pady=10)
+            self.pay_button.pack(pady=5)
 
     def validate_questionnaire(self):
         first_name = self.first_name_entry.get()
@@ -158,12 +175,13 @@ class BookFlight:
         else:
             self.warning_label.config(text="")
             return True
+
     def open_payment_window(self):
         PaymentWindow(self.root)
 
-    def show_user_info(self):
+    def show_user_info(self, frame):
         user_info_text = f"First Name: {config.first_name_user}\nName: {config.last_name_user}\nType: {config.user_type}\nCategory: {config.member_category}"
-        user_info_display = tk.Label(self.frame_account, text=user_info_text, font=("Helvetica", 12), bg="white")
+        user_info_display = tk.Label(frame, text=user_info_text, font=("Helvetica", 12), bg="white")
         user_info_display.pack(pady=5)
 
     def show_questionnaire(self):
@@ -184,7 +202,7 @@ class BookFlight:
         self.email_entry = Entry(questionnaire_window, font=("Helvetica", 12))
         self.email_entry.pack(pady=5)
 
-        def get_questionnaire_info():
+        def get_questionnaire_info(frame):
             try:
                 if not self.validate_questionnaire():
                     return
@@ -208,12 +226,10 @@ class BookFlight:
                 conn.commit()
 
                 user_info_text = f"First Name: {first_name}\nLast Name: {last_name}\nEmail: {email}"
-                user_info_display = tk.Label(self.frame_account, text=user_info_text, font=("Helvetica", 12),
-                                             bg="white")
+                user_info_display = tk.Label(frame, text=user_info_text, font=("Helvetica", 12), bg="white")
                 user_info_display.pack(pady=5)
 
                 self.information_button.configure(state=tk.DISABLED)
-
                 self.pay_button.configure(state=tk.NORMAL)
 
                 questionnaire_window.destroy()
@@ -224,8 +240,8 @@ class BookFlight:
                 cursor.close()
                 conn.close()
 
-        submit_button = tk.Button(questionnaire_window, text="Submit", command=get_questionnaire_info,
-                                 font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
+        submit_button = tk.Button(questionnaire_window, text="Submit", command=lambda: get_questionnaire_info(frame),
+                                  font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
         submit_button.pack(pady=10)
 
 if __name__ == "__main__":
