@@ -61,9 +61,9 @@ class HomeEmployee:
 
         image_path = "../Pictures/barre_recherche.png"
         self.image_button = tk.PhotoImage(file=image_path)
-        image_button_label = tk.Label(self.root, image=self.image_button, cursor="hand2", bg="white")
-        image_button_label.place(x=self.window_width * 0.01, y=self.window_height * 0.06)
-        image_button_label.bind("<Button-1>", self.create_menu)
+        self.image_button_label = tk.Label(self.root, image=self.image_button, cursor="hand2",
+                                           bg="white")
+        self.image_button_label.place(x=10, y=self.window_height * 0.06)
 
         image_path2 = "../Pictures/Logo.png"
         self.image2 = tk.PhotoImage(file=image_path2)
@@ -72,13 +72,9 @@ class HomeEmployee:
         image_label2.place(x=self.window_width * 0.3, y=self.window_height * 0.03)
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
-
-        image_path4 = "../Pictures/AccountPicture.png"
-        self.image4 = tk.PhotoImage(file=image_path4)
-        self.image4 = self.image4.subsample(6)
-        image_label4 = tk.Label(self.root, image=self.image4, bg="white")
-        image_label4.place(x=self.window_width * 0.93, y=self.window_height * 0.04)
-        image_label4.bind("<Button-1>", self.redirect_to_account_information)
+        self.image4 = tk.PhotoImage(file="../Pictures/AccountPicture.png").subsample(6)
+        self.image_label4 = tk.Label(self.root, image=self.image4, bg="white")
+        self.image_label4.place(x=self.window_width * 0.93, y=self.window_height * 0.04)
 
         image_path3 = "../Pictures/bg4.png"
         self.image3 = tk.PhotoImage(file=image_path3)

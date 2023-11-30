@@ -370,20 +370,11 @@ class HomePageApp:
 
 #Update appication
     def update_ui(self):
-        if config.is_user_logged_in == True:
-            image_path4 = "../Pictures/AccountPicture.png"
-            self.image4 = tk.PhotoImage(file=image_path4)
-            self.image4 = self.image4.subsample(6)
-            image_label4 = tk.Label(self.root, image=self.image4, bg="white")
-            image_label4.place(x=self.window_width * 0.93, y=self.window_height * 0.04)
-            image_label4.bind("<Button-1>", self.redirect_to_account_information)
-
-            image_path1 = "../Pictures/Logo.png"
-            self.image1 = tk.PhotoImage(file=image_path1)
-            self.image1 = self.image1.subsample(6)
-            image_label1 = tk.Label(self.root, image=self.image1)
-            image_label1.place(x=self.header_height * 0.7, y=self.header_height * 0.08)
-            image_label1.bind("<Button-2>", self.redirect_to_home_page)
+        if config.is_user_logged_in:
+            if hasattr(self, 'image_label4'):
+                self.image_label4.place(x=self.window_width * 0.93, y=self.window_height * 0.04)
+            if hasattr(self, 'image_button_label'):
+                self.image_button_label.place(x=10, y=self.window_height * 0.06)
 
             if self.bouton_connection is not None:
                 self.bouton_connection.destroy()
@@ -392,19 +383,11 @@ class HomePageApp:
                 self.bouton_create_account.destroy()
                 self.bouton_create_account = None
 
-            if self.menu is None:
-                image_path = "../Pictures/barre_recherche.png"
-                self.image_button = tk.PhotoImage(file=image_path)
-                image_button_label = tk.Label(self.root, image=self.image_button, cursor="hand2")
-                image_button_label.place(x=10, y=self.window_height * 0.06)
-                image_button_label.bind("<Button-1>", self.create_menu)
-
-                self.menu = tk.Menu(self.root, tearoff=0)
-                self.menu.add_command(label="Booking history", command=self.redirect_to_history_flight)
-                self.menu.add_command(label="Your bills", command=self.redirect_to_bills_flight)
-
-
         else:
+            if hasattr(self, 'image_label4'):
+                self.image_label4.place_forget()
+            if hasattr(self, 'image_button_label'):
+                self.image_button_label.place_forget()
             if self.bouton_connection is None:
                 self.bouton_connection = tk.Button(self.root, text="Connection", width=15, command=self.open_connection_window)
                 self.bouton_connection.place(x=self.window_width * 0.7, y=self.window_height * 0.17)
