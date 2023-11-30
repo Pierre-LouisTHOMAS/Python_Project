@@ -47,7 +47,10 @@ class HomeEmployee:
         config.selected_departure_airport = None
         config.selected_arrival_airport = None
         config.selected_price = None
+        config.total_price = 0
+
         self.root.destroy()
+        config.is_user_logged_in = False
 
     def create_header(self):
         self.canvas = tk.Canvas(self.root, bg="white")
@@ -548,7 +551,7 @@ class HomeEmployee:
             messagebox.showerror("Error", f"Error on redirection {e}")
 
     def save(self):
-        print("Vous avez enregistré")
+        print("You saved")
 
 if __name__ == "__main__":
     root = tk.Tk()

@@ -89,15 +89,11 @@ class HomePageApp:
     def bouton_leave(self, event):
         event.widget.config(bg="SystemButtonFace")
 
-    def save(self):
-        print("Vous avez cliqué sur Enregistrer sous...")
-
     def redirect_to_plane_booking(self):
         self.plane_booking_window = tk.Toplevel(self.root)
         self.app = PlaneBooking.BookingApp(self.plane_booking_window)
 
     def redirect_to_bills_flight(self):
-        print("Redirection vers les factures des vols")
         self.bills_flight = tk.Toplevel(self.root)
         self.app = BillsCustomer.BillsHistory(self.bills_flight)
 
@@ -110,7 +106,6 @@ class HomePageApp:
             self.connection_window.destroy()
         elif self.provenance == 'Create':
             self.create_account_window.destroy()
-
         self.hide_additional_ui_elements()
 
     def redirect_to_employee_page(self, event):

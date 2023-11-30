@@ -14,13 +14,8 @@ listbox.insert(3, "Lisbon")
 listbox.insert(4, "Barcelona")
 listbox.insert(5, "Rome")
 
-# Function for printing the
 # selected listbox value(s)
 def selected_item():
-
-    # Traverse the tuple returned by
-    # curselection method and print
-    # corresponding value(s) in the listbox
     for i in listbox.curselection():
         print(listbox.get(i))
 

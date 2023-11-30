@@ -15,7 +15,7 @@ def myclick():
     print(useridval.get(),"  ",unameval.get())
     cust=customer(useridval.get(),unameval.get())
     print(db.fetch("Select * from customer"))
-    #print(cust.getcustid())
+
     data=(cust.getcustid(),cust.getcustname())
     db.execute_row("insert into customer(custid,cname) values(%s,%s)",data)
     messagebox.showinfo("Important info","Data insreted successfully")
@@ -33,9 +33,8 @@ def viewrecords():
     tree.heading("#2", text="CustNAME")
     tree.pack()
     for r in row:
-        #print("here ",r["custid"])
         tree.insert("", tkinter.END, values=(r["custid"],r["cname"]))
-        #tree.insert("", tkinter.END, values=)
+
     subwindow1.mainloop()
     mainwindow.destroy()
 

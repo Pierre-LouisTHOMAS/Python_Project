@@ -238,14 +238,15 @@ class FlightSelectionPage:
                 conn.close()
 
     def select_return_flight(self, selected_flight):
-        return_flight_window = tk.Toplevel(self.root)
-        return_flight_window.title("Select Return Flight")
-        return_flight_window.geometry("600x400")
+        self.propose_window.destroy()
+        self.return_flight_window = tk.Toplevel(self.root)
+        self.return_flight_window.title("Select Return Flight")
+        self.return_flight_window.geometry("600x400")
 
         departure_airport = selected_flight['Arrival_Airport']
         arrival_airport = selected_flight['Departure_Airport']
 
-        flight_list_frame = tk.Frame(return_flight_window)
+        flight_list_frame = tk.Frame(self.return_flight_window)
         flight_list_frame.pack(fill=tk.BOTH, expand=True)
 
         conn = pymysql.connect(
@@ -264,8 +265,7 @@ class FlightSelectionPage:
         if flights:
             for flight in flights:
                 flight_info = f"Flight ID: {flight['Flight_ID']}, Departure: {flight['Departure_Date']}, Arrival: {flight['Arrival_Date']}, Price: {flight['Price']}"
-                flight_button = tk.Button(flight_list_frame, text=flight_info,
-                                          command=lambda f=flight: self.add_to_cart_and_redirect(f))
+                flight_button = tk.Button(flight_list_frame, text=flight_info, command=lambda f=flight: self.add_to_cart_and_redirect(f))
                 flight_button.pack()
         else:
             no_flight_label = tk.Label(flight_list_frame, text="No flight available")
@@ -275,17 +275,17 @@ class FlightSelectionPage:
         conn.close()
 
     def propose_return_flight(self, selected_flight):
-        propose_window = tk.Toplevel(self.root)
-        propose_window.title("Book Return Flight")
-        propose_window.geometry("300x200")
+        self.propose_window = tk.Toplevel(self.root)
+        self.propose_window.title("Book Return Flight")
+        self.propose_window.geometry("300x200")
 
-        label = tk.Label(propose_window, text="Do you want to book a return flight?")
+        label = tk.Label(self.propose_window, text="Do you want to book a return flight?")
         label.pack()
 
-        yes_button = tk.Button(propose_window, text="Yes", command=lambda: self.select_return_flight(selected_flight))
+        yes_button = tk.Button(self.propose_window, text="Yes", command=lambda: self.select_return_flight(selected_flight))
         yes_button.pack()
 
-        no_button = tk.Button(propose_window, text="No", command=lambda: self.redirect_to_payment())
+        no_button = tk.Button(self.propose_window, text="No", command=lambda: self.redirect_to_book_flight())
         no_button.pack()
 
     def update_and_redirect(self, flight):
@@ -299,6 +299,7 @@ class FlightSelectionPage:
         self.propose_return_flight(flight)
 
     def add_to_cart_and_redirect(self, return_flight):
+        self.return_flight_window.destroy()
         if not hasattr(config, 'cart'):
             config.cart = {'outbound_flight': None, 'return_flight': None}
 
@@ -325,6 +326,7 @@ class FlightSelectionPage:
         self.redirect_to_book_flight()
 
     def redirect_to_book_flight(self):
+        self.propose_window.destroy()
         self.bookFlight_window = tk.Toplevel(self.root)
         self.app = BookFlight.BookFlight(self.bookFlight_window)
 
