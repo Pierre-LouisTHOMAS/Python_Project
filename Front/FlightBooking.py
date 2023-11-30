@@ -193,6 +193,29 @@ class FlightSelectionPage:
 
         confirm_button.pack()
 
+    def delete_flight(self, flight):
+        confirmation = messagebox.askyesno("Delete Flight", f"Do you want to delete Flight {flight['Flight_ID']}?")
+
+        if confirmation:
+            try:
+                conn = pymysql.connect(
+                    host='localhost',
+                    user='root',
+                    password='root',
+                    db='AirlineDatabase',
+                    port=8889
+                )
+                with conn.cursor() as cursor:
+                    sql = "DELETE FROM Flight WHERE Flight_ID = %s"
+                    cursor.execute(sql, (flight['Flight_ID'],))
+                conn.commit()
+                messagebox.showinfo("Success", f"Flight {flight['Flight_ID']} deleted successfully!")
+            except Exception as e:
+                messagebox.showerror("Error", f"An error occurred: {e}")
+            finally:
+                if conn:
+                    conn.close()
+
     def update_flight(self, flight_id, new_price, new_departure_date, new_arrival_date, new_departure_airport, new_arrival_airport):
         try:
             conn = pymysql.connect(
