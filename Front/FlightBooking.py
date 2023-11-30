@@ -97,7 +97,6 @@ class FlightSelectionPage:
         flight_data = cursor.fetchall()
 
         for flight in flight_data:
-            # Create a white band between each flight frame
             white_band = tk.Frame(frame, height=25, bg="white")
             white_band.pack(fill=tk.X)
 
@@ -136,7 +135,6 @@ class FlightSelectionPage:
             separator2 = ttk.Separator(flight_frame, orient="vertical")
             separator2.grid(row=0, column=4, rowspan=2, padx=10, sticky="ns")
 
-
             if config.user_discount is None:
                 config.user_discount = Decimal(0)
             else:
@@ -146,8 +144,7 @@ class FlightSelectionPage:
             price_label2 = tk.Label(flight_frame, text=f"Economy ticket : {config.total_price:.2f}", font=("Arial", 12), bg="lightblue")
             price_label2.grid(row=0, column=5, padx=(20, 40), pady=15, sticky="w")
 
-            reserve_button2 = tk.Button(flight_frame, text="Book", command=lambda f=flight: self.update_and_redirect(f),
-                                        bg="lightblue")
+            reserve_button2 = tk.Button(flight_frame, text="Book", command=lambda f=flight: self.update_and_redirect(f), bg="lightblue")
             reserve_button2.grid(row=1, column=5, padx=(30, 40), pady=10, sticky="n")
 
             if config.user_type == 'Employee':
@@ -174,7 +171,6 @@ class FlightSelectionPage:
         modify_window.title(f"Modify Flight {flight['Flight_ID']}")
         modify_window.geometry("400x300")
 
-        # Exemple de champs modifiables : Prix, Dates de départ et d'arrivée
         price_label = tk.Label(modify_window, text="Price")
         price_label.pack()
         price_entry = tk.Entry(modify_window)
@@ -193,7 +189,6 @@ class FlightSelectionPage:
         arrival_date_entry.pack()
         arrival_date_entry.insert(0, flight['Arrival_Date'])
 
-        #confirm_button = tk.Button(modify_window, text="Confirm", command=lambda: self.update_flight(flight['Flight_ID'], price_entry.get(),departure_date_entry.get(),arrival_date_entry.get()))
         confirm_button = tk.Button(modify_window, text="Confirm", command=lambda: self.update_flight(flight['Flight_ID'],price_entry.get(),departure_date_entry.get(),arrival_date_entry.get(), flight['Departure_Airport'], flight['Arrival_Airport']))
 
         confirm_button.pack()
@@ -219,14 +214,90 @@ class FlightSelectionPage:
             if conn:
                 conn.close()
 
+    def select_return_flight(self, selected_flight):
+        return_flight_window = tk.Toplevel(self.root)
+        return_flight_window.title("Select Return Flight")
+        return_flight_window.geometry("600x400")
+
+        departure_airport = selected_flight['Arrival_Airport']
+        arrival_airport = selected_flight['Departure_Airport']
+
+        flight_list_frame = tk.Frame(return_flight_window)
+        flight_list_frame.pack(fill=tk.BOTH, expand=True)
+
+        conn = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            db='AirlineDatabase',
+            port=8889
+        )
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+        cursor.execute("SELECT * FROM Flight WHERE Departure_Airport = %s AND Arrival_Airport = %s",
+                       (departure_airport, arrival_airport))
+        flights = cursor.fetchall()
+
+        if flights:
+            for flight in flights:
+                flight_info = f"Flight ID: {flight['Flight_ID']}, Departure: {flight['Departure_Date']}, Arrival: {flight['Arrival_Date']}, Price: {flight['Price']}"
+                flight_button = tk.Button(flight_list_frame, text=flight_info,
+                                          command=lambda f=flight: self.add_to_cart_and_redirect(f))
+                flight_button.pack()
+        else:
+            no_flight_label = tk.Label(flight_list_frame, text="No flight available")
+            no_flight_label.pack()
+
+        cursor.close()
+        conn.close()
+
+    def propose_return_flight(self, selected_flight):
+        propose_window = tk.Toplevel(self.root)
+        propose_window.title("Book Return Flight")
+        propose_window.geometry("300x200")
+
+        label = tk.Label(propose_window, text="Do you want to book a return flight?")
+        label.pack()
+
+        yes_button = tk.Button(propose_window, text="Yes", command=lambda: self.select_return_flight(selected_flight))
+        yes_button.pack()
+
+        no_button = tk.Button(propose_window, text="No", command=lambda: self.redirect_to_payment())
+        no_button.pack()
+
     def update_and_redirect(self, flight):
         config.selected_flight_id = flight['Flight_ID']
         config.selected_departure_date = flight['Departure_Date']
         config.selected_arrival_date = flight['Arrival_Date']
         config.selected_departure_airport = flight['Departure_Airport']
         config.selected_arrival_airport = flight['Arrival_Airport']
-        #config.selected_price = flight['Price']
         config.selected_price = config.total_price
+
+        self.propose_return_flight(flight)
+
+    def add_to_cart_and_redirect(self, return_flight):
+        if not hasattr(config, 'cart'):
+            config.cart = {'outbound_flight': None, 'return_flight': None}
+
+        config.cart['outbound_flight'] = {
+            'flight_id': config.selected_flight_id,
+            'departure_date': config.selected_departure_date,
+            'arrival_date': config.selected_arrival_date,
+            'departure_airport': config.selected_departure_airport,
+            'arrival_airport': config.selected_arrival_airport,
+            'price': config.selected_price,
+            'num_tickets': self.num_tickets
+        }
+
+        config.cart['return_flight'] = {
+            'flight_id': return_flight['Flight_ID'],
+            'departure_date': return_flight['Departure_Date'],
+            'arrival_date': return_flight['Arrival_Date'],
+            'departure_airport': return_flight['Departure_Airport'],
+            'arrival_airport': return_flight['Arrival_Airport'],
+            'price': return_flight['Price'],
+            'num_tickets': self.num_tickets
+        }
 
         self.redirect_to_book_flight()
 
