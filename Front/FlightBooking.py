@@ -153,7 +153,10 @@ class FlightSelectionPage:
             if config.user_type == 'Employee':
                 modify_button = tk.Button(flight_frame, text="Modify", command=lambda f=flight: self.modify_flight(f),
                                           bg="red")
-                modify_button.grid(row=1, column=7, padx=(30, 40), pady=10, sticky="n")
+                modify_button.grid(row=1, column=6, padx=(10, 10), pady=10, sticky="n")
+                delete_button = tk.Button(flight_frame, text="Delete", command=lambda f=flight: self.delete_flight(f),
+                                          bg="red")
+                delete_button.grid(row=1, column=7, padx=(10, 10), pady=10, sticky="n")
             else:
                 image_path = "../Pictures/avionResa.png"
                 image = tk.PhotoImage(file=image_path)
