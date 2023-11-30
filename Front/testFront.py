@@ -4,6 +4,7 @@ from tkinter import Toplevel, Entry, messagebox
 import config
 import pymysql
 
+
 class PaymentWindow:
     def __init__(self, parent):
         self.parent = parent
@@ -15,18 +16,22 @@ class PaymentWindow:
         vcmd = (self.payment_window.register(self.validate_input), "%P")
 
         tk.Label(self.payment_window, text="Card Number:", font=("Helvetica", 12), bg="#f0f0f0").pack(pady=5)
-        self.card_number_entry = Entry(self.payment_window, validate="key", validatecommand=vcmd, font=("Helvetica", 12))
+        self.card_number_entry = Entry(self.payment_window, validate="key", validatecommand=vcmd,
+                                       font=("Helvetica", 12))
         self.card_number_entry.pack(pady=5)
 
         tk.Label(self.payment_window, text="Expiration Date:", font=("Helvetica", 12), bg="#f0f0f0").pack(pady=5)
-        self.expiration_date_entry = Entry(self.payment_window, validate="key", validatecommand=vcmd, font=("Helvetica", 12))
+        self.expiration_date_entry = Entry(self.payment_window, validate="key", validatecommand=vcmd,
+                                           font=("Helvetica", 12))
         self.expiration_date_entry.pack(pady=5)
 
         tk.Label(self.payment_window, text="CVV:", font=("Helvetica", 12), bg="#f0f0f0").pack(pady=5)
-        self.cvv_entry = Entry(self.payment_window, validate="key", validatecommand=vcmd, font=("Helvetica", 12), show="*")
+        self.cvv_entry = Entry(self.payment_window, validate="key", validatecommand=vcmd, font=("Helvetica", 12),
+                               show="*")
         self.cvv_entry.pack(pady=5)
 
-        tk.Button(self.payment_window, text="Submit Payment", command=self.process_payment, font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white').pack(pady=10)
+        tk.Button(self.payment_window, text="Submit Payment", command=self.process_payment,
+                  font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white').pack(pady=10)
 
     def validate_input(self, value):
         return value.isdigit() or value == ""
@@ -63,8 +68,9 @@ class PaymentWindow:
 
         self.payment_window.destroy()
 
+
 class BookFlight:
-    def __init__(self, root):
+    def __init__(self, root, is_round_trip):
         self.root = root
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.root.title("Sky Travellers: Book Page")
@@ -76,13 +82,16 @@ class BookFlight:
         self.pay_button = None
         self.information_button = None
 
+        self.root = root
+        self.is_round_trip = is_round_trip
+
         self.outbound_flight_info = config.cart.get('outbound_flight', {})
         self.return_flight_info = config.cart.get('return_flight', {})
 
-        self.create_window()
+        self.create_window(is_round_trip)
 
     def display_flight_info(self, flight_info):
-        labels_frame = tk.Frame(self.frame_account, bg="white")
+        labels_frame = tk.Frame(self.frame_flight, bg="white")
         labels_frame.pack()
 
         if flight_info:
@@ -90,16 +99,21 @@ class BookFlight:
                 flight_label = tk.Label(labels_frame, text=f"{key}: {value}", bg="white", font=("Helvetica", 12))
                 flight_label.pack(pady=2)
         else:
-            no_flight_label = tk.Label(labels_frame, text="No flight information available", font=("Helvetica", 12), bg="white")
+            no_flight_label = tk.Label(labels_frame, text="No flight information available", font=("Helvetica", 12),
+                                       bg="white")
             no_flight_label.pack(pady=2)
 
     def redirect_to_flight_booking_page(self, event):
         self.root.destroy()
 
+    def create_window(self, is_round_trip):
 
+        departure_airport = ""
+        arrival_airport = ""
+        departure_time = ""
+        arrival_time = ""
+        price = ""
 
-
-    def create_window(self):
         self.background_image = Image.open("../Pictures/bg2.png")
         self.background_photo = ImageTk.PhotoImage(
             self.background_image.resize((self.window_width, self.window_height), Image.LANCZOS))
@@ -117,36 +131,69 @@ class BookFlight:
         frame_height = 400
         self.frame_account = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height, bd=2,
                                       relief=tk.GROOVE)
-        self.frame_account.place(relx=0.5, rely=0.5, anchor='center')  # Ajusté l'emplacement
+        self.frame_account.place(relx=0.5, rely=0.5, anchor='center')
 
-        flight_info_label = tk.Label(self.frame_account, text="Flight Information", font=("Helvetica", 16, "bold"),
-                                     bg="white")
-        flight_info_label.pack(pady=20)
+        self.frame_flight = tk.Frame(self.root, bg="white", width=frame_width, height=frame_height, bd=2,
+                                     relief=tk.GROOVE)
+        self.frame_flight.place(relx=0.2, rely=0.5, anchor='center')
 
-        tk.Label(self.frame_account, text="Outbound Flight Information", font=("Helvetica", 12, "bold"),
-                 bg="white").pack(pady=5)
-        self.display_flight_info(self.outbound_flight_info)
+        # Aller et retour
+        if is_round_trip:
+            flight_info_label = tk.Label(self.frame_flight, text="Flight Information", font=("Helvetica", 16, "bold"),
+                                         bg="white")
+            flight_info_label.pack(pady=20)
+            tk.Label(self.frame_flight, text="Outbound Flight Information", font=("Helvetica", 12, "bold"),
+                     bg="white").pack(pady=5)
+            self.display_flight_info(self.outbound_flight_info)
+            tk.Label(self.frame_flight, text="Return Flight Information", font=("Helvetica", 12, "bold"),
+                     bg="white").pack(
+                pady=5)
+            self.display_flight_info(self.return_flight_info)
 
-        tk.Label(self.frame_account, text="Return Flight Information", font=("Helvetica", 12, "bold"), bg="white").pack(
-            pady=5)
-        self.display_flight_info(self.return_flight_info)
+            departure_airport = config.selected_departure_airport
+            arrival_airport = config.selected_arrival_airport
+            departure_time = config.selected_departure_date
+            arrival_time = config.selected_arrival_date
+            price = config.total_price
 
-        departure_airport = config.selected_departure_airport
-        arrival_airport = config.selected_arrival_airport
-        departure_time = config.selected_departure_date
-        arrival_time = config.selected_arrival_date
-        price = config.total_price
+            config.cart['outbound_flight'] = {
+                'departure_airport': departure_airport,
+                'arrival_airport': arrival_airport,
+                'departure_date': departure_time,
+                'arrival_date': arrival_time,
+                'price': price
+            }
 
-        config.cart['outbound_flight'] = {
-            'Departure': departure_airport,
-            'Arrival': arrival_airport,
-            'Departure Time': departure_time,
-            'Arrival Time': arrival_time,
-            'Price': price
-        }
+            self.warning_label = tk.Label(self.frame_flight, text="", font=("Helvetica", 12), bg="white", fg="red")
+            self.warning_label.pack(pady=5)
 
-        self.warning_label = tk.Label(self.frame_account, text="", font=("Helvetica", 12), bg="white", fg="red")
-        self.warning_label.pack(pady=5)
+        # si pas retour
+        else:
+            departure_airport = config.selected_departure_airport
+            arrival_airport = config.selected_arrival_airport
+            departure_time = config.selected_departure_date
+            arrival_time = config.selected_arrival_date
+            price = config.total_price
+
+            labels_frame = tk.Frame(self.frame_account, bg="white")
+            labels_frame.pack()
+            departure_label = tk.Label(labels_frame, text=f"Departure: {departure_airport}", bg="white",
+                                       font=("Helvetica", 12))
+            departure_label.pack(pady=5)
+            arrival_label = tk.Label(labels_frame, text=f"Arrival: {arrival_airport}", bg="white",
+                                     font=("Helvetica", 12))
+            arrival_label.pack(pady=5)
+            departure_time_label = tk.Label(labels_frame, text=f"Departure Time: {departure_time}", bg="white",
+                                            font=("Helvetica", 12))
+            departure_time_label.pack(pady=5)
+            arrival_time_label = tk.Label(labels_frame, text=f"Arrival Time: {arrival_time}", bg="white",
+                                          font=("Helvetica", 12))
+            arrival_time_label.pack(pady=5)
+            price_label = tk.Label(self.frame_account, text=f"Price: {price}", bg="white",
+                                   font=("Helvetica", 14, "bold"))
+            price_label.pack(pady=10)
+            self.warning_label = tk.Label(self.frame_account, text="", font=("Helvetica", 12), bg="white", fg="red")
+            self.warning_label.pack(pady=5)
 
         if not config.is_user_logged_in:
             self.information_button = tk.Button(self.frame_account, text="Information", command=self.show_questionnaire,
@@ -241,8 +288,9 @@ class BookFlight:
                 conn.close()
 
         submit_button = tk.Button(questionnaire_window, text="Submit", command=get_questionnaire_info,
-                                 font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
+                                  font=("Helvetica", 12, "bold"), bg='#4CAF50', fg='white')
         submit_button.pack(pady=10)
+
 
 if __name__ == "__main__":
     root = tk.Tk()
