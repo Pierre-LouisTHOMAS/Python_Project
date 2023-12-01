@@ -141,8 +141,16 @@ class BookFlight:
         self.display_flight_info(self.outbound_flight_info)
 
         if config.return_flight_bool:
-            tk.Label(self.frame_flight, text="Return Flight Information", font=("Helvetica", 12, "bold"), bg="white").pack(pady=5)
-            self.display_flight_info(self.return_flight_info)
+            tk.Label(self.frame_flight, text="Return Flight Information", font=("Helvetica", 12, "bold"),
+                     bg="white").pack(pady=5)
+
+            if config.cart['return_flight']:
+                self.return_flight_info = config.cart['return_flight']
+                self.display_flight_info(self.return_flight_info)
+            else:
+                no_return_flight_label = tk.Label(self.frame_flight, text="No return flight information available",
+                                                  font=("Helvetica", 12), bg="white")
+                no_return_flight_label.pack(pady=2)
 
         self.warning_label = tk.Label(self.frame_flight, text="", font=("Helvetica", 12), bg="white", fg="red")
         self.warning_label.pack(pady=5)

@@ -18,6 +18,7 @@ class FlightSelectionPage:
         self.header_height = root.winfo_screenheight() * 0.20
         self.window_width = root.winfo_screenwidth()
         self.window_height = root.winfo_screenheight()
+
         canvas = tk.Canvas(root)
         canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar = tk.Scrollbar(root, command=canvas.yview)
@@ -108,10 +109,16 @@ class FlightSelectionPage:
                     config.user_discount = 0
 
                 discount_factor = Decimal(config.user_discount) / 100
+                print(f"Prix du vol : {flight['Price']}")
+                print(f"Nombre de billets : {self.num_tickets}")
+                print(f"Facteur de réduction : {discount_factor}")
                 config.total_price = flight['Price'] * Decimal(self.num_tickets) * (Decimal(1) - discount_factor)
+                print(f"Prix total : {config.total_price:.2f}")
 
-                price_label2 = tk.Label(flight_frame, text=f"Economy ticket : {config.total_price:.2f}",
+                print(f"config.total_price : {config.total_price:.2f}")
+                price_label2 = tk.Label(flight_frame, text=f"Billet économique : {config.total_price:.2f}",
                                         font=("Arial", 12), bg="lightblue")
+
                 price_label2.grid(row=0, column=5, padx=(20, 40), pady=15, sticky="w")
                 reserve_button2 = tk.Button(flight_frame, text="Book",
                                             command=lambda f=flight: self.update_and_redirect(f), bg="lightblue")
