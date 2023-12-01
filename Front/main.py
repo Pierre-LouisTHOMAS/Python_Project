@@ -4,7 +4,7 @@ from PIL import Image, ImageTk
 import hashlib
 import pymysql
 
-import config #global variables
+import config
 import PlaneBooking
 import EmployeePage
 import AccountInformation
@@ -71,7 +71,9 @@ class HomePageApp:
         self.image1 = tk.PhotoImage(file=image_path1)
         self.image1 = self.image1.subsample(6)
         image_label1 = tk.Label(self.root, image=self.image1)
-        image_label1.place(x=self.header_height * 0.4, y=self.header_height * 0.08)
+        image_label1.place(x=self.header_height * 0.5, y=self.header_height * 0.08)
+        self.provenance = "home"
+        image_label1.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
 
         image_path3 = "../Pictures/bg1.png"
         self.image3 = tk.PhotoImage(file=image_path3)
@@ -102,11 +104,33 @@ class HomePageApp:
         self.app = HistoryFlight.ReservationHistory(self.history_flight)
 
     def redirect_to_home_page(self, event):
-        if self.provenance == 'Connection':
-            self.connection_window.destroy()
-        elif self.provenance == 'Create':
-            self.create_account_window.destroy()
-        self.hide_additional_ui_elements()
+        if config.is_user_logged_in:
+            config.is_user_logged_in = False
+            config.user_email = None
+            config.user_id = None
+            config.first_name_user = None
+            config.last_name_user = None
+            config.user_type = None
+            config.member_category = None
+            config.flight_data = []
+            config.departure_date = None
+            config.departure_airport = None
+            config.arrival_airport = None
+            config.selected_flight_id = None
+            config.selected_departure_date = None
+            config.selected_arrival_date = None
+            config.selected_departure_airport = None
+            config.selected_arrival_airport = None
+            config.selected_price = None
+            config.total_price = 0
+            self.bouton_connection = None
+            self.bouton_create_account = None
+            self.update_ui()
+        else:
+            if self.provenance == 'Connection':
+                self.connection_window.destroy()
+            elif self.provenance == 'Create':
+                self.create_account_window.destroy()
 
     def redirect_to_employee_page(self, event):
         self.employeePage_window = tk.Toplevel(self.root)
@@ -175,6 +199,15 @@ class HomePageApp:
             self.periodic_update()
             if config.user_type == 'Employee':
                 self.redirect_to_employee_page(self)
+            else :
+                image_path = "../Pictures/barre_recherche.png"
+                self.image_button = tk.PhotoImage(file=image_path)
+                self.image_button_label = tk.Label(self.root, image=self.image_button, cursor="hand2", bg="white")
+                self.image_button_label.place(x=10, y=self.window_height * 0.06)
+
+                self.image4 = tk.PhotoImage(file="../Pictures/AccountPicture.png").subsample(6)
+                self.image_label4 = tk.Label(self.root, image=self.image4, bg="white")
+                self.image_label4.place(x=self.window_width * 0.93, y=self.window_height * 0.04)
 
         else:
             self.error_label.config(text="Email ou mot de passe incorrect!")
@@ -400,7 +433,6 @@ class HomePageApp:
                 self.bouton_create_account.bind('<Leave>', self.bouton_leave)
 
     def periodic_update(self):
-
         self.update_ui()
         self.root.after(500, self.periodic_update)
 

@@ -99,22 +99,24 @@ class FlightSelectionPage:
             number_ticket.grid(row=0, column=3, padx=(60, 40), pady=10, sticky="w")
             separator2 = ttk.Separator(flight_frame, orient="vertical")
             separator2.grid(row=0, column=4, rowspan=2, padx=10, sticky="ns")
-            if config.user_discount is None:
-                config.user_discount = Decimal(0)
-            else:
-                discount_factor = Decimal(config.user_discount) / Decimal(100)
-                config.total_price = flight['Price'] * Decimal(self.num_tickets) * (Decimal(1) - discount_factor)
+
+            if config.is_user_logged_in is False:
+                config.user_discount = 0
+
+            discount_factor = Decimal(config.user_discount) / 100
+            config.total_price = flight['Price'] * Decimal(self.num_tickets) * (Decimal(1) - discount_factor)
+
             price_label2 = tk.Label(flight_frame, text=f"Economy ticket : {config.total_price:.2f}", font=("Arial", 12), bg="lightblue")
             price_label2.grid(row=0, column=5, padx=(20, 40), pady=15, sticky="w")
             reserve_button2 = tk.Button(flight_frame, text="Book", command=lambda f=flight: self.update_and_redirect(f), bg="lightblue")
             reserve_button2.grid(row=1, column=5, padx=(30, 40), pady=10, sticky="n")
+
             if config.user_type == 'Employee':
-                modify_button = tk.Button(flight_frame, text="Modify", command=lambda f=flight: self.modify_flight(f),
-                                          bg="red")
+                modify_button = tk.Button(flight_frame, text="Modify", command=lambda f=flight: self.modify_flight(f), bg="red")
                 modify_button.grid(row=1, column=6, padx=(10, 10), pady=10, sticky="n")
-                delete_button = tk.Button(flight_frame, text="Delete", command=lambda f=flight: self.delete_flight(f),
-                                          bg="red")
+                delete_button = tk.Button(flight_frame, text="Delete", command=lambda f=flight: self.delete_flight(f), bg="red")
                 delete_button.grid(row=1, column=7, padx=(10, 10), pady=10, sticky="n")
+
             else:
                 image_path = "../Pictures/avionResa.png"
                 image = tk.PhotoImage(file=image_path)
@@ -122,10 +124,9 @@ class FlightSelectionPage:
                 image_label = tk.Label(flight_frame, image=image, bg="lightblue")
                 image_label.image = image
                 image_label.grid(row=0, column=7, rowspan=2, padx=(1, 40), pady=15, sticky="e")
+
         cursor.close()
         conn.close()
-
-
 
     def modify_flight(self, flight):
         modify_window = tk.Toplevel(self.root)
@@ -190,6 +191,7 @@ class FlightSelectionPage:
             if conn:
                 conn.close()
     def select_return_flight(self, selected_flight):
+        config.return_flight_bool = True
         self.propose_window.destroy()
         self.return_flight_window = tk.Toplevel(self.root)
         self.return_flight_window.title("Select Return Flight")
@@ -236,6 +238,18 @@ class FlightSelectionPage:
         config.selected_departure_airport = flight['Departure_Airport']
         config.selected_arrival_airport = flight['Arrival_Airport']
         config.selected_price = config.total_price
+
+        config.cart['outbound_flight'] = {
+            'Departure': config.selected_departure_airport,
+            'Arrival': config.selected_arrival_airport,
+            'Departure Time': config.selected_departure_date,
+            'Arrival Time': config.selected_arrival_date,
+            'Price': config.selected_price
+        }
+
+        self.outbound_flight_info = config.cart['outbound_flight']
+        config.return_flight_bool = False
+
         self.propose_return_flight(flight)
     def add_to_cart_and_redirect(self, return_flight):
         self.return_flight_window.destroy()

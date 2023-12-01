@@ -13,7 +13,6 @@ class BookingApp:
         self.root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}")
         self.root.title("Sky Travellers: Flight Research")
 
-
         self.header_height = root.winfo_screenheight() * 0.20
         self.window_width = root.winfo_screenwidth()
         self.window_height = root.winfo_screenheight()

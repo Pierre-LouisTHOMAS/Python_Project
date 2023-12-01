@@ -125,27 +125,24 @@ class BookFlight:
                                      bg="white")
         flight_info_label.pack(pady=20)
 
+        config.cart['outbound_flight'] = {
+            'Departure': config.selected_departure_airport,
+            'Arrival': config.selected_arrival_airport,
+            'Departure Time': config.selected_departure_date,
+            'Arrival Time': config.selected_arrival_date,
+            'Price': config.total_price
+        }
+
+        self.outbound_flight_info = config.cart['outbound_flight']
+        self.return_flight_info = None
+
         tk.Label(self.frame_flight, text="Outbound Flight Information", font=("Helvetica", 12, "bold"),
                  bg="white").pack(pady=5)
         self.display_flight_info(self.outbound_flight_info)
 
-
-        tk.Label(self.frame_flight, text="Return Flight Information", font=("Helvetica", 12, "bold"), bg="white").pack(
-            pady=5)
-        self.display_flight_info(self.return_flight_info)
-
-        departure_airport = config.selected_departure_airport
-        arrival_airport = config.selected_arrival_airport
-        departure_time = config.selected_departure_date
-        arrival_time = config.selected_arrival_date
-        price = config.total_price
-        config.cart['outbound_flight'] = {
-            'Departure': departure_airport,
-            'Arrival': arrival_airport,
-            'Departure Time': departure_time,
-            'Arrival Time': arrival_time,
-            'Price': price
-        }
+        if config.return_flight_bool:
+            tk.Label(self.frame_flight, text="Return Flight Information", font=("Helvetica", 12, "bold"), bg="white").pack(pady=5)
+            self.display_flight_info(self.return_flight_info)
 
         self.warning_label = tk.Label(self.frame_flight, text="", font=("Helvetica", 12), bg="white", fg="red")
         self.warning_label.pack(pady=5)

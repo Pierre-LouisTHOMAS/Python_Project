@@ -15,12 +15,15 @@ departure_date = None
 departure_airport = None
 arrival_airport = None
 num_tickets = None
+
 selected_flight_id = None
 selected_departure_date = None
 selected_arrival_date = None
 selected_departure_airport = None
 selected_arrival_airport = None
 selected_price = None
+
+return_flight_bool = False
 
 cart = {
     'outbound_flight': {},

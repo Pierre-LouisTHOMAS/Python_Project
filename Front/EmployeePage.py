@@ -61,9 +61,13 @@ class HomeEmployee:
 
         image_path = "../Pictures/barre_recherche.png"
         self.image_button = tk.PhotoImage(file=image_path)
-        self.image_button_label = tk.Label(self.root, image=self.image_button, cursor="hand2",
-                                           bg="white")
+        self.image_button_label = tk.Label(self.root, image=self.image_button, cursor="hand2", bg="white")
         self.image_button_label.place(x=10, y=self.window_height * 0.06)
+
+        self.image4 = tk.PhotoImage(file="../Pictures/AccountPicture.png").subsample(6)
+        self.image_label4 = tk.Label(self.root, image=self.image4, bg="white")
+        self.image_label4.place(x=self.window_width * 0.93, y=self.window_height * 0.04)
+        self.image_label4.bind("<Button-1>", self.redirect_to_account_information)
 
         image_path2 = "../Pictures/Logo.png"
         self.image2 = tk.PhotoImage(file=image_path2)
@@ -71,10 +75,6 @@ class HomeEmployee:
         image_label2 = tk.Label(self.root, image=self.image2, bg="white")
         image_label2.place(x=self.window_width * 0.3, y=self.window_height * 0.03)
         image_label2.bind("<Button-1>", lambda event: self.redirect_to_home_page(event))
-
-        self.image4 = tk.PhotoImage(file="../Pictures/AccountPicture.png").subsample(6)
-        self.image_label4 = tk.Label(self.root, image=self.image4, bg="white")
-        self.image_label4.place(x=self.window_width * 0.93, y=self.window_height * 0.04)
 
         image_path3 = "../Pictures/bg4.png"
         self.image3 = tk.PhotoImage(file=image_path3)
@@ -477,7 +477,6 @@ class HomeEmployee:
     def redirect_to_user_flight_history(self):
         try:
             user_email = self.email_var.get()
-
             if not user_email:
                 messagebox.showwarning("Warning", "Please select a user's email.")
                 return
@@ -545,9 +544,6 @@ class HomeEmployee:
 
         except Exception as e:
             messagebox.showerror("Error", f"Error on redirection {e}")
-
-    def save(self):
-        print("You saved")
 
 if __name__ == "__main__":
     root = tk.Tk()
