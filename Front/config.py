@@ -25,7 +25,5 @@ selected_price = None
 
 return_flight_bool = False
 
-cart = {
-    'outbound_flight': {},
-    'return_flight': {},
-}
+
+cart = {'outbound_flight': None, 'return_flight': None}
