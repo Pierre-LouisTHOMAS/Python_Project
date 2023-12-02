@@ -109,13 +109,7 @@ class FlightSelectionPage:
                     config.user_discount = 0
 
                 discount_factor = Decimal(config.user_discount) / 100
-                print(f"Prix du vol : {flight['Price']}")
-                print(f"Nombre de billets : {self.num_tickets}")
-                print(f"Facteur de réduction : {discount_factor}")
                 config.total_price = flight['Price'] * Decimal(self.num_tickets) * (Decimal(1) - discount_factor)
-                print(f"Prix total : {config.total_price:.2f}")
-
-                print(f"config.total_price : {config.total_price:.2f}")
                 price_label2 = tk.Label(flight_frame, text=f"Billet économique : {config.total_price:.2f}",
                                         font=("Arial", 12), bg="lightblue")
 
@@ -247,6 +241,9 @@ class FlightSelectionPage:
         no_button = tk.Button(self.propose_window, text="No", command=lambda: self.redirect_to_book_flight())
         no_button.pack()
     def update_and_redirect(self, flight):
+        discount_factor = Decimal(config.user_discount) / 100
+        config.total_price = flight['Price'] * Decimal(self.num_tickets) * (Decimal(1) - discount_factor)
+
         config.selected_flight_id = flight['Flight_ID']
         config.selected_departure_date = flight['Departure_Date']
         config.selected_arrival_date = flight['Arrival_Date']

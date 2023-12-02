@@ -3,6 +3,7 @@ from PIL import Image, ImageTk
 from tkinter import Toplevel, Entry, messagebox
 import config
 import pymysql
+from decimal import Decimal, ROUND_HALF_DOWN
 
 
 class PaymentWindow:
@@ -125,6 +126,7 @@ class BookFlight:
                                      bg="white")
         flight_info_label.pack(pady=20)
 
+        config.total_price = config.total_price.quantize(Decimal('0.00'), rounding=ROUND_HALF_DOWN)
         config.cart['outbound_flight'] = {
             'Departure': config.selected_departure_airport,
             'Arrival': config.selected_arrival_airport,
