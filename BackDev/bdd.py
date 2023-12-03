@@ -2,7 +2,6 @@ import pymysql
 
 def get_db_connection():
     try:
-        # Connexion à la base de données MySQL
         connection = pymysql.connect(
             host='localhost',
             user='root',
