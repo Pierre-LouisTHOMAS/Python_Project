@@ -204,10 +204,12 @@ class HomePageApp:
                 self.image_button = tk.PhotoImage(file=image_path)
                 self.image_button_label = tk.Label(self.root, image=self.image_button, cursor="hand2", bg="white")
                 self.image_button_label.place(x=10, y=self.window_height * 0.06)
+                self.image_button_label.bind("<Button-1>", self.create_menu)
 
                 self.image4 = tk.PhotoImage(file="../Pictures/AccountPicture.png").subsample(6)
                 self.image_label4 = tk.Label(self.root, image=self.image4, bg="white")
                 self.image_label4.place(x=self.window_width * 0.93, y=self.window_height * 0.04)
+                self.image_label4.bind("<Button-1>", self.redirect_to_account_information)
 
         else:
             self.error_label.config(text="Email ou mot de passe incorrect!")
