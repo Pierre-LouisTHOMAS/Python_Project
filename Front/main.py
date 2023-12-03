@@ -345,7 +345,7 @@ class HomePageApp:
         finally:
             conn.close()
 
-    def insert_client(self, first_name, last_name, type, category, email, password):
+    def insert_client(self, first_name, last_name, type, category, email, password, discount):
         conn = pymysql.connect(
             host='localhost',
             user='root',
@@ -356,11 +356,11 @@ class HomePageApp:
         try:
             with conn.cursor() as cursor:
                 hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-                sql = "INSERT INTO User (First_Name, Last_Name, Type, Category, Email, Password) VALUES (%s, %s, %s, %s, %s, %s)"
+                sql = "INSERT INTO User (First_Name, Last_Name, Type, Category, Email, Password, Discount) VALUES (%s, %s, %s, %s, %s, %s, %s)"
                 if type == 'Employee':
                     category = 'NULL'
 
-                cursor.execute(sql, (first_name, last_name, type, category, email, hashed_password))
+                cursor.execute(sql, (first_name, last_name, type, category, email, hashed_password, discount))
             conn.commit()
         except Exception as e:
             self.error_label.config(text=f"Database error: {e}")
@@ -376,6 +376,7 @@ class HomePageApp:
         category = self.category_var.get()
         email = self.email_entry.get()
         password = self.password_entry.get()
+        discount = 0
 
         if self.email_exists(email):
             self.error_label.config(text="Email already exists!")
@@ -386,7 +387,15 @@ class HomePageApp:
         if type == 'Employee' and code != '12':
             self.error_label.config(text="You are not a Employee")
             return
-        self.insert_client(first_name, last_name, type, category, email, password)
+        if category == 'child':
+            discount = 41
+        elif category == 'regular':
+            discount = 20
+        elif category == 'senior':
+            discount = 30
+        if type == 'Employee':
+            discount = 90
+        self.insert_client(first_name, last_name, type, category, email, password, discount)
         messagebox.showinfo("Success", "Account created successfully!")
         self.create_account_window.destroy()
 
